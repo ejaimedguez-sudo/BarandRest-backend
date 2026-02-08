@@ -12,7 +12,7 @@ Instrucciones seguras para crear y pushear el repo desde tu máquina local.
 
 3) Uso recomendado (con token en variable de entorno)
 PowerShell example:
-  $env:GITHUB_TOKEN = 'ghp_xxx'
+  $env:GITHUB_TOKEN = 'GITHUB_PAT_REDACTED'
   .\create_github_repo_via_token.ps1 youruser/BarandRest-backend
 
 Esto hará la llamada a la API para crear el repo y luego imprimirá los comandos `git` que debes ejecutar localmente para hacer el push.

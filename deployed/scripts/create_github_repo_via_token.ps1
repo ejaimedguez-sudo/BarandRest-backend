@@ -2,7 +2,7 @@
 Creates a GitHub repository using the `GITHUB_TOKEN` environment variable.
 
 Usage (PowerShell):
-  $env:GITHUB_TOKEN = 'ghp_xxx'
+    $env:GITHUB_TOKEN = 'GITHUB_PAT_REDACTED'
   .\create_github_repo_via_token.ps1 youruser/BarandRest-backend
 
 Notes:
@@ -18,7 +18,7 @@ param(
 
 $token = $env:GITHUB_TOKEN
 if (-not $token) {
-    Write-Error "Set environment variable GITHUB_TOKEN before running. Example:`n  $env:GITHUB_TOKEN='ghp_xxx'`nThen run: .\create_github_repo_via_token.ps1 youruser/BarandRest-backend"
+    Write-Error "Set environment variable GITHUB_TOKEN before running. Example:`n  $env:GITHUB_TOKEN='GITHUB_PAT_REDACTED'`nThen run: .\create_github_repo_via_token.ps1 youruser/BarandRest-backend"
     exit 1
 }
 
