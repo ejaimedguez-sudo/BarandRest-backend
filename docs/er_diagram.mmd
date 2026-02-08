@@ -1,0 +1,49 @@
+erDiagram
+    USERS ||--o{ ORDERS : places
+    USERS ||--o{ COMMISSIONS : receives
+    TABLES_RESTAURANT ||--o{ ORDERS : hosts
+    CUSTOMERS ||--o{ ORDERS : "makes"
+    ORDERS ||--o{ ORDER_ITEMS : contains
+    MENU_ITEMS ||--o{ ORDER_ITEMS : "is"
+    MENU_ITEMS ||--o{ MENU_ITEM_INGREDIENTS : composed_of
+    PRODUCTS ||--o{ MENU_ITEM_INGREDIENTS : "ingredient"
+    PRODUCTS ||--o{ STOCK_MOVEMENTS : has
+
+    USERS {
+      int id PK
+      string name
+      string role
+    }
+    PRODUCTS {
+      int id PK
+      string sku
+      string name
+      decimal cost
+      decimal stock
+    }
+    MENU_ITEMS {
+      int id PK
+      string code
+      string name
+      decimal price
+      decimal cost
+    }
+    MENU_ITEM_INGREDIENTS {
+      int id PK
+      int menu_item_id FK
+      int product_id FK
+      decimal quantity
+    }
+    ORDERS {
+      int id PK
+      int table_id FK
+      int waiter_id FK
+      decimal total
+    }
+    ORDER_ITEMS {
+      int id PK
+      int order_id FK
+      int menu_item_id FK
+      int quantity
+      decimal unit_price
+    }

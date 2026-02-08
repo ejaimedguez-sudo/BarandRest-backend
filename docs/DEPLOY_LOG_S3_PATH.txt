@@ -1,0 +1,19 @@
+S3 deploy logs folder
+======================
+
+Ubicación remota (carpeta):
+
+s3://barandrest/deploy_logs/
+
+Nota: los archivos tienen formato `DEPLOY_STATUS_YYYYMMDD_HHMMSS.txt`.
+Para obtener el nombre exacto del último archivo, ejecuta en el servidor/WSL:
+
+```bash
+rclone ls s3:barandrest/deploy_logs/ --max-depth 1
+# o para ver JSON
+rclone lsjson s3:barandrest/deploy_logs/ --max-depth 1
+```
+
+Si pegas la salida aquí, puedo añadir el nombre exacto al archivo `FINAL_DEPLOY_SUMMARY.md`.
+
+Generado por la automatización el 2026-02-07.

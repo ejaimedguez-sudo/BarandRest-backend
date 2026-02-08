@@ -1,0 +1,13 @@
+[Unit]
+Description=Laravel Scheduler Service
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+Environment=PATH=/usr/bin:/usr/local/bin
+WorkingDirectory=/var/www/barandrest
+ExecStart=/bin/sh -lc 'php /var/www/barandrest/artisan schedule:run >> /var/www/barandrest/storage/logs/schedule.log 2>&1'
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,12 @@
+[Unit]
+Description=Run Laravel scheduled tasks (one-shot)
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+Type=oneshot
+ExecStart=/usr/bin/php /var/www/barandrest/artisan schedule:run >> /var/www/barandrest/storage/logs/schedule.log 2>&1
+
+[Install]
+WantedBy=multi-user.target
