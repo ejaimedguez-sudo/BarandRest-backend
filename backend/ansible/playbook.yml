@@ -1,0 +1,48 @@
+---
+- name: Deploy BarAndRest backend from zip
+  hosts: barandrest
+  become: true
+  vars:
+    release_zip: /tmp/backend_release_clean.zip
+    deploy_path: /var/www/barandrest
+  tasks:
+    - name: Ensure deploy path exists
+      file:
+        path: "{{ deploy_path }}"
+        state: directory
+        owner: www-data
+        group: www-data
+
+    - name: Upload release zip
+      copy:
+        src: "{{ release_zip }}"
+        dest: /tmp/backend_release_clean.zip
+      delegate_to: localhost
+
+    - name: Unarchive release
+      unarchive:
+        src: /tmp/backend_release_clean.zip
+        dest: "{{ deploy_path }}"
+        remote_src: yes
+
+    - name: Install PHP deps
+      shell: |
+        cd {{ deploy_path }} && composer install --no-dev --optimize-autoloader
+      args:
+        chdir: "{{ deploy_path }}"
+
+    - name: Ensure .env exists
+      copy:
+        src: "{{ deploy_path }}/.env.example"
+        dest: "{{ deploy_path }}/.env"
+        remote_src: yes
+        force: no
+
+    - name: Run migrations and seed
+      shell: |
+        cd {{ deploy_path }} && php artisan key:generate --force && php artisan migrate --force && php artisan db:seed --force
+
+    - name: Ensure storage link
+      shell: php artisan storage:link || true
+      args:
+        chdir: "{{ deploy_path }}"

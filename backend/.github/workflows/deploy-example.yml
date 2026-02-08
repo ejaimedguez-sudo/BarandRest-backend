@@ -1,0 +1,47 @@
+name: Deploy (example)
+
+# This workflow is an example showing how to deploy the built ZIP artifact
+# to a server via SSH. It is disabled by default and REQUIRE you to set
+# repository secrets: `SSH_PRIVATE_KEY`, `DEPLOY_HOST`, `DEPLOY_USER`.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ secrets.SSH_PRIVATE_KEY != '' && secrets.DEPLOY_HOST != '' && secrets.DEPLOY_USER != '' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download artifact from CI run
+        uses: actions/download-artifact@v4
+        with:
+          name: backend_release
+          path: ./artifacts
+
+      - name: Copy artifact to remote via scp
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "artifacts/backend_release_artifact.zip"
+          target: "/tmp/backend_release_artifact.zip"
+
+      - name: Run deploy commands on remote
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            set -e
+            sudo systemctl stop nginx || true
+            sudo unzip -o /tmp/backend_release_artifact.zip -d /var/www/barandrest
+            cd /var/www/barandrest
+            composer install --no-dev --optimize-autoloader
+            php artisan migrate --force
+            php artisan cache:clear
+            sudo systemctl restart php-fpm || true
+            sudo systemctl restart nginx || true

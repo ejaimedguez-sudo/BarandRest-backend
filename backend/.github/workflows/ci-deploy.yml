@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  tests-and-artifact:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: Install dependencies
+        run: |
+          composer install --no-progress --no-suggest --prefer-dist --no-interaction
+
+      - name: Run tests
+        run: composer test
+
+      - name: Create release ZIP
+        run: |
+          zip -r backend_release_artifact.zip backend -x "**/storage/logs/*" "**/storage/framework/*" "**/.git/*" "**/node_modules/*"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend_release
+          path: backend_release_artifact.zip
