@@ -1,0 +1,32 @@
+﻿2026-02-08T01:34:48.2275860Z Current runner version: '2.331.0'
+2026-02-08T01:34:48.2310074Z ##[group]Runner Image Provisioner
+2026-02-08T01:34:48.2311435Z Hosted Compute Agent
+2026-02-08T01:34:48.2312307Z Version: 20260123.484
+2026-02-08T01:34:48.2313457Z Commit: 6bd6555ca37d84114959e1c76d2c01448ff61c5d
+2026-02-08T01:34:48.2314538Z Build Date: 2026-01-23T19:41:17Z
+2026-02-08T01:34:48.2315996Z Worker ID: {73a4a0d4-7cd0-4003-ad10-1674ca4cbabf}
+2026-02-08T01:34:48.2317299Z Azure Region: eastus2
+2026-02-08T01:34:48.2318196Z ##[endgroup]
+2026-02-08T01:34:48.2321056Z ##[group]Operating System
+2026-02-08T01:34:48.2322027Z Ubuntu
+2026-02-08T01:34:48.2322818Z 24.04.3
+2026-02-08T01:34:48.2323655Z LTS
+2026-02-08T01:34:48.2324479Z ##[endgroup]
+2026-02-08T01:34:48.2325526Z ##[group]Runner Image
+2026-02-08T01:34:48.2326643Z Image: ubuntu-24.04
+2026-02-08T01:34:48.2327518Z Version: 20260201.15.1
+2026-02-08T01:34:48.2329260Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260201.15/images/ubuntu/Ubuntu2404-Readme.md
+2026-02-08T01:34:48.2332254Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260201.15
+2026-02-08T01:34:48.2334041Z ##[endgroup]
+2026-02-08T01:34:48.2336154Z ##[group]GITHUB_TOKEN Permissions
+2026-02-08T01:34:48.2338786Z Contents: read
+2026-02-08T01:34:48.2339705Z Metadata: read
+2026-02-08T01:34:48.2340554Z Packages: read
+2026-02-08T01:34:48.2341425Z ##[endgroup]
+2026-02-08T01:34:48.2344406Z Secret source: Actions
+2026-02-08T01:34:48.2346292Z Prepare workflow directory
+2026-02-08T01:34:48.2818828Z Prepare all required actions
+2026-02-08T01:34:48.2877419Z Getting action download info
+2026-02-08T01:34:48.5019448Z Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
+2026-02-08T01:34:48.5969430Z Download action repository 'shivammathur/setup-php@v2' (SHA:44454db4f0199b8b9685a5d763dc37cbf79108e1)
+2026-02-08T01:34:48.9432426Z Complete job name: php

@@ -1,0 +1,145 @@
+﻿2026-02-08T01:34:48.2276839Z Current runner version: '2.331.0'
+2026-02-08T01:34:48.2310104Z ##[group]Runner Image Provisioner
+2026-02-08T01:34:48.2311455Z Hosted Compute Agent
+2026-02-08T01:34:48.2312320Z Version: 20260123.484
+2026-02-08T01:34:48.2313473Z Commit: 6bd6555ca37d84114959e1c76d2c01448ff61c5d
+2026-02-08T01:34:48.2314551Z Build Date: 2026-01-23T19:41:17Z
+2026-02-08T01:34:48.2316012Z Worker ID: {73a4a0d4-7cd0-4003-ad10-1674ca4cbabf}
+2026-02-08T01:34:48.2317320Z Azure Region: eastus2
+2026-02-08T01:34:48.2318212Z ##[endgroup]
+2026-02-08T01:34:48.2321083Z ##[group]Operating System
+2026-02-08T01:34:48.2322045Z Ubuntu
+2026-02-08T01:34:48.2322833Z 24.04.3
+2026-02-08T01:34:48.2323671Z LTS
+2026-02-08T01:34:48.2324493Z ##[endgroup]
+2026-02-08T01:34:48.2325542Z ##[group]Runner Image
+2026-02-08T01:34:48.2326658Z Image: ubuntu-24.04
+2026-02-08T01:34:48.2327530Z Version: 20260201.15.1
+2026-02-08T01:34:48.2329675Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260201.15/images/ubuntu/Ubuntu2404-Readme.md
+2026-02-08T01:34:48.2332275Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260201.15
+2026-02-08T01:34:48.2334060Z ##[endgroup]
+2026-02-08T01:34:48.2336176Z ##[group]GITHUB_TOKEN Permissions
+2026-02-08T01:34:48.2338812Z Contents: read
+2026-02-08T01:34:48.2339718Z Metadata: read
+2026-02-08T01:34:48.2340566Z Packages: read
+2026-02-08T01:34:48.2341436Z ##[endgroup]
+2026-02-08T01:34:48.2344431Z Secret source: Actions
+2026-02-08T01:34:48.2346315Z Prepare workflow directory
+2026-02-08T01:34:48.2818906Z Prepare all required actions
+2026-02-08T01:34:48.2877451Z Getting action download info
+2026-02-08T01:34:48.5019478Z Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
+2026-02-08T01:34:48.5969459Z Download action repository 'shivammathur/setup-php@v2' (SHA:44454db4f0199b8b9685a5d763dc37cbf79108e1)
+2026-02-08T01:34:48.9432448Z Complete job name: php
+2026-02-08T01:34:49.0089028Z ##[group]Run actions/checkout@v4
+2026-02-08T01:34:49.0089844Z with:
+2026-02-08T01:34:49.0090324Z   repository: ejaimedguez-sudo/BarandRest-backend
+2026-02-08T01:34:49.0091052Z   token: ***
+2026-02-08T01:34:49.0091421Z   ssh-strict: true
+2026-02-08T01:34:49.0091830Z   ssh-user: git
+2026-02-08T01:34:49.0092248Z   persist-credentials: true
+2026-02-08T01:34:49.0092684Z   clean: true
+2026-02-08T01:34:49.0093080Z   sparse-checkout-cone-mode: true
+2026-02-08T01:34:49.0093556Z   fetch-depth: 1
+2026-02-08T01:34:49.0093938Z   fetch-tags: false
+2026-02-08T01:34:49.0094331Z   show-progress: true
+2026-02-08T01:34:49.0095004Z   lfs: false
+2026-02-08T01:34:49.0095408Z   submodules: false
+2026-02-08T01:34:49.0095806Z   set-safe-directory: true
+2026-02-08T01:34:49.0096521Z ##[endgroup]
+2026-02-08T01:34:49.1160112Z Syncing repository: ejaimedguez-sudo/BarandRest-backend
+2026-02-08T01:34:49.1162155Z ##[group]Getting Git version info
+2026-02-08T01:34:49.1163016Z Working directory is '/home/runner/work/BarandRest-backend/BarandRest-backend'
+2026-02-08T01:34:49.1164058Z [command]/usr/bin/git version
+2026-02-08T01:34:49.1248944Z git version 2.52.0
+2026-02-08T01:34:49.1274765Z ##[endgroup]
+2026-02-08T01:34:49.1296258Z Temporarily overriding HOME='/home/runner/work/_temp/98c62224-7a4d-4a56-bb74-d412c6fd4af0' before making global git config changes
+2026-02-08T01:34:49.1297621Z Adding repository directory to the temporary git global config as a safe directory
+2026-02-08T01:34:49.1301737Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/BarandRest-backend/BarandRest-backend
+2026-02-08T01:34:49.1341777Z Deleting the contents of '/home/runner/work/BarandRest-backend/BarandRest-backend'
+2026-02-08T01:34:49.1344512Z ##[group]Initializing the repository
+2026-02-08T01:34:49.1348883Z [command]/usr/bin/git init /home/runner/work/BarandRest-backend/BarandRest-backend
+2026-02-08T01:34:49.1459739Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-02-08T01:34:49.1460829Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-02-08T01:34:49.1462257Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-02-08T01:34:49.1463468Z hint: call:
+2026-02-08T01:34:49.1464260Z hint:
+2026-02-08T01:34:49.1465222Z hint: 	git config --global init.defaultBranch <name>
+2026-02-08T01:34:49.1466132Z hint:
+2026-02-08T01:34:49.1466989Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-02-08T01:34:49.1468094Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-02-08T01:34:49.1468818Z hint:
+2026-02-08T01:34:49.1469184Z hint: 	git branch -m <name>
+2026-02-08T01:34:49.1469606Z hint:
+2026-02-08T01:34:49.1470170Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-02-08T01:34:49.1471666Z Initialized empty Git repository in /home/runner/work/BarandRest-backend/BarandRest-backend/.git/
+2026-02-08T01:34:49.1477345Z [command]/usr/bin/git remote add origin https://github.com/ejaimedguez-sudo/BarandRest-backend
+2026-02-08T01:34:49.1512216Z ##[endgroup]
+2026-02-08T01:34:49.1513432Z ##[group]Disabling automatic garbage collection
+2026-02-08T01:34:49.1517276Z [command]/usr/bin/git config --local gc.auto 0
+2026-02-08T01:34:49.1546068Z ##[endgroup]
+2026-02-08T01:34:49.1547262Z ##[group]Setting up auth
+2026-02-08T01:34:49.1553263Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-02-08T01:34:49.1584199Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-02-08T01:34:49.1950247Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-02-08T01:34:49.1983216Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-02-08T01:34:49.2216033Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-02-08T01:34:49.2256317Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-02-08T01:34:49.2505141Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-02-08T01:34:49.2545223Z ##[endgroup]
+2026-02-08T01:34:49.2556926Z ##[group]Fetching the repository
+2026-02-08T01:34:49.2558359Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +7c5846cec75e5c8b0da2c36e8bafaf8742a0f60a:refs/remotes/origin/main
+2026-02-08T01:34:49.8803516Z From https://github.com/ejaimedguez-sudo/BarandRest-backend
+2026-02-08T01:34:49.8805623Z  * [new ref]         7c5846cec75e5c8b0da2c36e8bafaf8742a0f60a -> origin/main
+2026-02-08T01:34:49.8837335Z ##[endgroup]
+2026-02-08T01:34:49.8838662Z ##[group]Determining the checkout info
+2026-02-08T01:34:49.8840718Z ##[endgroup]
+2026-02-08T01:34:49.8845338Z [command]/usr/bin/git sparse-checkout disable
+2026-02-08T01:34:49.8887851Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-02-08T01:34:49.8915309Z ##[group]Checking out the ref
+2026-02-08T01:34:49.8918873Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+2026-02-08T01:34:49.8966759Z Switched to a new branch 'main'
+2026-02-08T01:34:49.8969655Z branch 'main' set up to track 'origin/main'.
+2026-02-08T01:34:49.8976645Z ##[endgroup]
+2026-02-08T01:34:49.9012354Z [command]/usr/bin/git log -1 --format=%H
+2026-02-08T01:34:49.9034096Z 7c5846cec75e5c8b0da2c36e8bafaf8742a0f60a
+2026-02-08T01:34:49.9280116Z ##[group]Run shivammathur/setup-php@v2
+2026-02-08T01:34:49.9280997Z with:
+2026-02-08T01:34:49.9281454Z   php-version: 8.3
+2026-02-08T01:34:49.9282029Z   ini-file: production
+2026-02-08T01:34:49.9282997Z   github-token: ***
+2026-02-08T01:34:49.9283546Z ##[endgroup]
+2026-02-08T01:34:49.9987122Z [command]/usr/bin/bash /home/runner/work/_actions/shivammathur/setup-php/v2/src/scripts/run.sh
+2026-02-08T01:34:50.0400648Z 
+2026-02-08T01:34:50.0401816Z [90;1m==> [0m[37;1mSetup PHP[0m
+2026-02-08T01:34:53.7577603Z [32;1m✓ [0m[34;1mPHP [0m[90;1mUpdated to PHP 8.3.30[0m
+2026-02-08T01:34:53.7579026Z 
+2026-02-08T01:34:53.7579439Z [90;1m==> [0m[37;1mSetup Tools[0m
+2026-02-08T01:34:54.1530306Z [32;1m✓ [0m[34;1mcomposer [0m[90;1mAdded composer 2.9.3[0m
+2026-02-08T01:34:54.1531271Z 
+2026-02-08T01:34:54.1532067Z [90;1m==> [0m[37;1mSponsor setup-php[0m
+2026-02-08T01:34:54.1533557Z [32;1m✓ [0m[34;1msetup-php [0m[90;1mhttps://setup-php.com/sponsor[0m
+2026-02-08T01:34:54.1735837Z ##[group]Run cd backend && composer install --no-progress --no-suggest --prefer-dist --no-interaction
+2026-02-08T01:34:54.1736639Z [36;1mcd backend && composer install --no-progress --no-suggest --prefer-dist --no-interaction[0m
+2026-02-08T01:34:54.1775300Z shell: /usr/bin/bash -e {0}
+2026-02-08T01:34:54.1775638Z env:
+2026-02-08T01:34:54.1775871Z   COMPOSER_PROCESS_TIMEOUT: 0
+2026-02-08T01:34:54.1776197Z   COMPOSER_NO_INTERACTION: 1
+2026-02-08T01:34:54.1776458Z   COMPOSER_NO_AUDIT: 1
+2026-02-08T01:34:54.1776713Z ##[endgroup]
+2026-02-08T01:34:54.1852003Z /home/runner/work/_temp/77669ec5-bed5-4c7e-9076-8326c126ae02.sh: line 1: cd: backend: No such file or directory
+2026-02-08T01:34:54.1864532Z ##[error]Process completed with exit code 1.
+2026-02-08T01:34:54.1988556Z Post job cleanup.
+2026-02-08T01:34:54.2938398Z [command]/usr/bin/git version
+2026-02-08T01:34:54.2975321Z git version 2.52.0
+2026-02-08T01:34:54.3019607Z Temporarily overriding HOME='/home/runner/work/_temp/1a578fd6-e61a-4fd8-9884-6d12e22b2952' before making global git config changes
+2026-02-08T01:34:54.3021072Z Adding repository directory to the temporary git global config as a safe directory
+2026-02-08T01:34:54.3034024Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/BarandRest-backend/BarandRest-backend
+2026-02-08T01:34:54.3068994Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-02-08T01:34:54.3103020Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-02-08T01:34:54.3333489Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-02-08T01:34:54.3354533Z http.https://github.com/.extraheader
+2026-02-08T01:34:54.3367834Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-02-08T01:34:54.3398197Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-02-08T01:34:54.3618364Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-02-08T01:34:54.3650810Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-02-08T01:34:54.3987443Z Cleaning up orphan processes

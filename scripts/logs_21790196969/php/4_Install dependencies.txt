@@ -1,0 +1,10 @@
+﻿2026-02-08T01:34:54.1735806Z ##[group]Run cd backend && composer install --no-progress --no-suggest --prefer-dist --no-interaction
+2026-02-08T01:34:54.1736633Z [36;1mcd backend && composer install --no-progress --no-suggest --prefer-dist --no-interaction[0m
+2026-02-08T01:34:54.1775281Z shell: /usr/bin/bash -e {0}
+2026-02-08T01:34:54.1775634Z env:
+2026-02-08T01:34:54.1775868Z   COMPOSER_PROCESS_TIMEOUT: 0
+2026-02-08T01:34:54.1776194Z   COMPOSER_NO_INTERACTION: 1
+2026-02-08T01:34:54.1776455Z   COMPOSER_NO_AUDIT: 1
+2026-02-08T01:34:54.1776692Z ##[endgroup]
+2026-02-08T01:34:54.1851985Z /home/runner/work/_temp/77669ec5-bed5-4c7e-9076-8326c126ae02.sh: line 1: cd: backend: No such file or directory
+2026-02-08T01:34:54.1864514Z ##[error]Process completed with exit code 1.
