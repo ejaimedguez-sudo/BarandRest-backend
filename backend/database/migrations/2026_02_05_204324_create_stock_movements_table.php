@@ -14,6 +14,11 @@ return new class extends Migration
         if (!Schema::hasTable('stock_movements')) {
             Schema::create('stock_movements', function (Blueprint $table) {
                 $table->id();
+                $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
+                $table->decimal('quantity', 10, 3)->default(0);
+                $table->enum('type', ['in', 'out'])->default('in');
+                $table->text('notes')->nullable();
+                $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
                 $table->timestamps();
             });
         }

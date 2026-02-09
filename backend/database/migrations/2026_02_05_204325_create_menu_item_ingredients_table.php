@@ -14,6 +14,10 @@ return new class extends Migration
         if (!Schema::hasTable('menu_item_ingredients')) {
             Schema::create('menu_item_ingredients', function (Blueprint $table) {
                 $table->id();
+                $table->foreignId('menu_item_id')->constrained('menu_items')->onDelete('cascade');
+                $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
+                $table->decimal('quantity', 10, 3)->default(0);
+                $table->string('unit')->nullable();
                 $table->timestamps();
             });
         }

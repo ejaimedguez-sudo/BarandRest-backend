@@ -14,6 +14,10 @@ return new class extends Migration
         if (!Schema::hasTable('table_restaurants')) {
             Schema::create('table_restaurants', function (Blueprint $table) {
                 $table->id();
+                $table->string('name')->nullable();
+                $table->integer('capacity')->default(1);
+                $table->string('location')->nullable();
+                $table->text('notes')->nullable();
                 $table->timestamps();
             });
         }
