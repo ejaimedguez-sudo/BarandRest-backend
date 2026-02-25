@@ -1,1 +1,0 @@
-0000000000000000000000000000000000000000 8a119d7f4461c73b47197b80f4cecb3c97796919 Eduardo Jaime <ejaimedguez@gmail.com> 1770322768 -0600	clone: from C:/Users/ejaim/AppData/Local/Composer/vcs/https---github.com-laravel-laravel.git/
