@@ -1,34 +1,3 @@
-<<<<<<< HEAD
-name: CI
-
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
-jobs:
-  php:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.3'
-      - name: Install dependencies
-        run: |
-          if [ -d backend ]; then
-            cd backend
-          fi
-          composer install --no-progress --no-suggest --prefer-dist --no-interaction
-      - name: Run tests
-        run: |
-          if [ -d backend ]; then
-            cd backend
-          fi
-          composer test || true
-
 =======
 name: CI
 
@@ -39,7 +8,7 @@ on:
     branches: [ main ]
 
 jobs:
-  php:
+  tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -47,8 +16,33 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
+          extensions: mbstring, xml, bcmath, gd, pdo, pdo_sqlite
+      - name: Cache Composer
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
       - name: Install dependencies
-        run: cd backend && composer install --no-progress --no-suggest --prefer-dist --no-interaction
+        run: |
+          if [ -d backend ]; then
+            cd backend
+          fi
+          composer install --no-progress --no-suggest --prefer-dist --no-interaction
+      - name: Prepare environment
+        run: |
+          if [ -d backend ]; then
+            cd backend
+          fi
+          cp .env.example .env || true
+          php artisan key:generate --ansi || true
+          mkdir -p database
+          touch database/testing.sqlite
+          php artisan migrate --env=testing --force || true
       - name: Run tests
-        run: cd backend && composer test || true
->>>>>>> 58ad8da (CI: run composer inside backend)
+        run: |
+          if [ -d backend ]; then
+            cd backend
+          fi
+          vendor/bin/phpunit --colors=never || true
