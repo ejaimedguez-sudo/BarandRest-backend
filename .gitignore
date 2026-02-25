@@ -1,1 +1,7 @@
 backend_git_backup_/
+repo-mirror.git
+backup_pre_history_clean.bundle
+backup_pre_clean.bundle
+remote-check-report.txt
+composer-setup.php
+backend/composer-setup.php
