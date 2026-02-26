@@ -16,9 +16,27 @@ Linux/macOS:
 Windows (PowerShell):
 
 - `./scripts/health_check.ps1` — equivalente para Windows de los chequeos de salud.
+- `./scripts/register_health_check_task.ps1` — registra una tarea programada para ejecutar health checks periódicos.
+- `./scripts/unregister_health_check_task.ps1` — elimina la tarea programada de health checks.
 
 Recomendación:
 
 - Asegúrate de tener PHP y Composer en el PATH.
 - Para ejecutar los workflows de GitHub Actions localmente necesitas Docker y la herramienta `act`.
 - Antes de merge/deploy, ejecuta health checks para confirmar estado operativo del backend.
+
+Tarea programada (Windows):
+
+- Registrar (cada 15 min):
+
+	`powershell -ExecutionPolicy Bypass -File .\scripts\register_health_check_task.ps1 -IntervalMinutes 15`
+
+- Registrar y además ejecutar al inicio del sistema:
+
+	`powershell -ExecutionPolicy Bypass -File .\scripts\register_health_check_task.ps1 -IntervalMinutes 15 -RunAtStartup`
+
+	Nota: en algunos equipos, `-RunAtStartup` puede requerir ejecutar PowerShell como administrador.
+
+- Eliminar:
+
+	`powershell -ExecutionPolicy Bypass -File .\scripts\unregister_health_check_task.ps1`
