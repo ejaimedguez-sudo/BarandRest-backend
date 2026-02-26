@@ -22,3 +22,10 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Evitar subir certificados/llaves y carpetas de secretos
+*.pem
+*.crt
+secrets/
+secrets/*
+!.env.example
