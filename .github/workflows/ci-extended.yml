@@ -1,0 +1,44 @@
+name: CI - Extended
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-and-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v4
+        with:
+          php-version: '8.2'
+          extensions: mbstring, xml, zip, gd
+      - name: Install dependencies
+        run: |
+          cd backend
+          composer install --no-interaction --prefer-dist
+      - name: Composer audit
+        working-directory: backend
+        run: composer audit || true
+      - name: Run tests
+        working-directory: backend
+        run: |
+          if [ -f vendor/bin/phpunit ]; then
+            vendor/bin/phpunit --testdox
+          else
+            composer test -- --testdox || true
+          fi
+      - name: Run Pint (style)
+        working-directory: backend
+        run: |
+          if command -v vendor/bin/pint >/dev/null 2>&1; then
+            vendor/bin/pint --test
+          else
+            echo 'pint not available'
+          fi
+      - name: List outdated
+        working-directory: backend
+        run: composer outdated --direct || true

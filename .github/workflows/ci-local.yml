@@ -1,0 +1,36 @@
+name: CI - Backend tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+      - name: Prepare environment
+        run: |
+          cp backend/.env.example backend/.env || true
+          cd backend
+          php -r "file_exists('database/database.sqlite') || touch('database/database.sqlite');"
+          composer install --no-interaction --prefer-dist
+      - name: Run migrations and seed
+        working-directory: backend
+        run: |
+          php artisan migrate --force
+          php artisan db:seed --force
+      - name: Run tests
+        working-directory: backend
+        run: |
+          if [ -f vendor/bin/phpunit ]; then
+            vendor/bin/phpunit --testdox
+          else
+            composer test -- --testdox
+          fi

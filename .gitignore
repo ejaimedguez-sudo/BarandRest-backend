@@ -5,3 +5,11 @@ backup_pre_clean.bundle
 remote-check-report.txt
 composer-setup.php
 backend/composer-setup.php
+# Secrets and key files
+*.key
+*.pem
+*.crt
+secrets/
+secrets/*
+.env.local
+.env.*.local
