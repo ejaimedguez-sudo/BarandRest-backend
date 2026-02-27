@@ -2,6 +2,21 @@
 
 Estos scripts automatizan la puesta en marcha del entorno de desarrollo local y las comprobaciones básicas.
 
+Flujo recomendado (1 comando):
+
+Windows (PowerShell):
+
+- `powershell -ExecutionPolicy Bypass -File .\scripts\run_all.ps1` — setup + tests + health check.
+- `powershell -ExecutionPolicy Bypass -File .\scripts\run_all.ps1 -Start` — además inicia servidor y worker.
+- `powershell -ExecutionPolicy Bypass -File .\scripts\run_all.ps1 -SkipTests` — omite tests.
+
+Linux/macOS:
+
+- `chmod +x ./scripts/*.sh` (solo la primera vez, si aplica).
+- `./scripts/run_all.sh` — setup + tests + health check.
+- `./scripts/run_all.sh --start` — además inicia servidor y worker.
+- `./scripts/run_all.sh --skip-tests` — omite tests.
+
 Windows (PowerShell):
 
 - `.\scripts\setup_local.ps1` — instala dependencias, copia `.env`, crea `database/database.sqlite`, ejecuta migraciones y seeders y cachea configuraciones.

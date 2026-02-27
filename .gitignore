@@ -2,6 +2,7 @@ backend_git_backup_/
 repo-mirror.git
 backup_pre_history_clean.bundle
 backup_pre_clean.bundle
+*.bundle
 remote-check-report.txt
 composer-setup.php
 backend/composer-setup.php
@@ -13,3 +14,12 @@ secrets/
 secrets/*
 .env.local
 .env.*.local
+
+# Runtime and accidental artifacts
+**/storage/laravel_dev_server.pid
+**/storage/last_audit_output.txt
+**/patches/patch_bundle.zip
+backend/release/*.zip
+
+# Never commit deploy private keys
+**/deploy/keys/deploy_key
