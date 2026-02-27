@@ -21,6 +21,28 @@ Opciones útiles:
 - Omitir prueba HTTP: `./scripts/preflight.ps1 -SkipHttp`
 - Cambiar puerto de prueba HTTP: `./scripts/preflight.ps1 -Port 8080`
 
+## Autoarranque en Windows (server + queue + scheduler)
+
+Para dejar el sistema levantándose automáticamente al iniciar sesión:
+
+```powershell
+./scripts/setup_windows_autostart.ps1 -RunNow
+```
+
+O con batch:
+
+```cmd
+scripts\setup_windows_autostart.bat
+```
+
+Con permisos suficientes crea tareas programadas en `BarandRest\` para:
+
+- `LaravelServer`
+- `LaravelQueueWorker`
+- `LaravelScheduler`
+
+Si no hay permisos de administrador, aplica fallback automático creando launchers en la carpeta Startup del usuario actual.
+
 Pasos para validar que la aplicación funciona en un entorno local (Windows XAMPP):
 
 1. Instalar dependencias

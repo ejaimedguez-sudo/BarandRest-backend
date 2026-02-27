@@ -1,6 +1,8 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
+namespace Tests\Feature;
+
+use Tests\TestCase;
 
 class ReportsExportTest extends TestCase
 {
