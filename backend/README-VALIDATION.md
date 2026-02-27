@@ -1,5 +1,26 @@
 # Validación rápida local
 
+## Preflight automatizado (recomendado)
+
+Desde `backend/`, ejecuta todo el procedimiento con un solo comando:
+
+```powershell
+./scripts/preflight.ps1
+```
+
+O usando batch:
+
+```cmd
+scripts\preflight.bat
+```
+
+Opciones útiles:
+
+- Omitir npm install: `./scripts/preflight.ps1 -SkipNpm`
+- Omitir auditorías: `./scripts/preflight.ps1 -SkipAudit`
+- Omitir prueba HTTP: `./scripts/preflight.ps1 -SkipHttp`
+- Cambiar puerto de prueba HTTP: `./scripts/preflight.ps1 -Port 8080`
+
 Pasos para validar que la aplicación funciona en un entorno local (Windows XAMPP):
 
 1. Instalar dependencias
