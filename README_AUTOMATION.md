@@ -7,6 +7,7 @@ Flujo recomendado (1 comando):
 Windows (PowerShell):
 
 - `powershell -ExecutionPolicy Bypass -File .\scripts\run_all.ps1` — setup + tests + health check.
+- `powershell -ExecutionPolicy Bypass -File .\scripts\pre_release_check.ps1` — validación de configuración segura pre-release.
 - `powershell -ExecutionPolicy Bypass -File .\scripts\run_all.ps1 -Start` — además inicia servidor y worker.
 - `powershell -ExecutionPolicy Bypass -File .\scripts\run_all.ps1 -SkipTests` — omite tests.
 
@@ -14,6 +15,7 @@ Linux/macOS:
 
 - `chmod +x ./scripts/*.sh` (solo la primera vez, si aplica).
 - `./scripts/run_all.sh` — setup + tests + health check.
+- `./scripts/pre_release_check.sh` — validación de configuración segura pre-release.
 - `./scripts/run_all.sh --start` — además inicia servidor y worker.
 - `./scripts/run_all.sh --skip-tests` — omite tests.
 

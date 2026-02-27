@@ -49,7 +49,6 @@ Route::get('reports/monthly', [ReportsController::class, 'monthly']);
 Route::get('reports/yearly', [ReportsController::class, 'yearly']);
 Route::get('reports/download/{filename}', [\App\Http\Controllers\API\ReportDownloadController::class, 'download']);
 Route::post('reports/daily/queue', [\App\Http\Controllers\API\ReportsQueueController::class, 'queueDaily']);
-Route::post('reports/daily/queue', [ReportsQueueController::class, 'queueDaily']);
 Route::get('reports/export/excel', [ReportExportController::class, 'exportExcel']);
 Route::get('reports/export/pdf', [ReportExportController::class, 'exportPdf']);
 Route::post('commissions/compute', [\App\Http\Controllers\API\CommissionController::class, 'compute']);

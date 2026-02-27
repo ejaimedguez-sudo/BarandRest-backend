@@ -12,8 +12,8 @@ class DashboardMetricsTest extends TestCase
 
     public function test_metrics_endpoint_requires_api_key_and_returns_structure()
     {
-        // Use configured API key (from .env) for this test
-        $apiKey = env('DASHBOARD_API_KEY') ?: 'change_me_to_a_secure_value';
+        // Use configured API key from config (compatible with config cache)
+        $apiKey = (string) config('dashboard.api_key', 'change_me_to_a_secure_value');
 
         // Create a closed order to appear in metrics
         DB::table('orders')->insert([

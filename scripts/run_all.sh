@@ -26,25 +26,28 @@ done
 
 echo "== BarandRest local automation (Linux/macOS) =="
 
-echo "[1/4] Running setup..."
+echo "[1/5] Running setup..."
 "$SCRIPT_DIR/setup_local.sh"
 
 if [ "$SKIP_TESTS" = false ]; then
-  echo "[2/4] Running backend tests..."
+  echo "[2/5] Running backend tests..."
   cd "$BACKEND_DIR"
   php artisan test
 else
-  echo "[2/4] Skipping backend tests (--skip-tests)"
+  echo "[2/5] Skipping backend tests (--skip-tests)"
 fi
 
-echo "[3/4] Running health checks..."
+echo "[3/5] Running health checks..."
 "$SCRIPT_DIR/health_check.sh"
 
+echo "[4/5] Running pre-release checks..."
+"$SCRIPT_DIR/pre_release_check.sh"
+
 if [ "$START" = true ]; then
-  echo "[4/4] Starting server and queue worker in background..."
+  echo "[5/5] Starting server and queue worker in background..."
   "$SCRIPT_DIR/start_local.sh"
 else
-  echo "[4/4] Start skipped. Use --start to launch server and worker."
+  echo "[5/5] Start skipped. Use --start to launch server and worker."
 fi
 
 echo "Automation completed successfully."
