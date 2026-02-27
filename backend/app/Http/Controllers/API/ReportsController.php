@@ -80,6 +80,30 @@ class ReportsController extends Controller
     public function monthly(Request $request)
     {
         $year = $request->query('year', date('Y'));
+        $driver = DB::connection()->getDriverName();
+
+        if ($driver === 'sqlite') {
+            $monthExpression = "CAST(strftime('%m', created_at) AS INTEGER)";
+            $q = DB::table('orders')
+                ->selectRaw("{$monthExpression} as month, SUM(total) as sales, COUNT(*) as orders")
+                ->whereRaw("CAST(strftime('%Y', created_at) AS INTEGER) = ?", [(int) $year])
+                ->groupByRaw($monthExpression)
+                ->orderBy('month');
+
+            return response()->json($q->get());
+        }
+
+        if ($driver === 'pgsql') {
+            $monthExpression = 'EXTRACT(MONTH FROM created_at)';
+            $q = DB::table('orders')
+                ->selectRaw("{$monthExpression} as month, SUM(total) as sales, COUNT(*) as orders")
+                ->whereRaw('EXTRACT(YEAR FROM created_at) = ?', [(int) $year])
+                ->groupByRaw($monthExpression)
+                ->orderBy('month');
+
+            return response()->json($q->get());
+        }
+
         $q = DB::table('orders')
             ->selectRaw('MONTH(created_at) as month, SUM(total) as sales, COUNT(*) as orders')
             ->whereYear('created_at', $year)
@@ -90,6 +114,28 @@ class ReportsController extends Controller
 
     public function yearly(Request $request)
     {
+        $driver = DB::connection()->getDriverName();
+
+        if ($driver === 'sqlite') {
+            $yearExpression = "CAST(strftime('%Y', created_at) AS INTEGER)";
+            $q = DB::table('orders')
+                ->selectRaw("{$yearExpression} as year, SUM(total) as sales, COUNT(*) as orders")
+                ->groupByRaw($yearExpression)
+                ->orderBy('year');
+
+            return response()->json($q->get());
+        }
+
+        if ($driver === 'pgsql') {
+            $yearExpression = 'EXTRACT(YEAR FROM created_at)';
+            $q = DB::table('orders')
+                ->selectRaw("{$yearExpression} as year, SUM(total) as sales, COUNT(*) as orders")
+                ->groupByRaw($yearExpression)
+                ->orderBy('year');
+
+            return response()->json($q->get());
+        }
+
         $q = DB::table('orders')
             ->selectRaw('YEAR(created_at) as year, SUM(total) as sales, COUNT(*) as orders')
             ->groupByRaw('YEAR(created_at)')

@@ -16,7 +16,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         ComputeCommissions::class,
-        \App\Console\Commands\SendDailyReports::class,
+        \App\Console\Commands\SendDailyReportsCommand::class,
     ];
 
     /**
