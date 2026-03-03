@@ -18,8 +18,17 @@ secrets/*
 # Runtime and accidental artifacts
 **/storage/laravel_dev_server.pid
 **/storage/last_audit_output.txt
+**/storage/logs/health_check_*.log
+**/storage/logs/dev_runtime_check_test_*.out.log
+**/storage/logs/dev_runtime_check_test_*.err.log
 **/patches/patch_bundle.zip
 backend/release/*.zip
+backend/scripts/runtime_processes.json
 
 # Never commit deploy private keys
 **/deploy/keys/deploy_key
+
+# Root-level accidental/temporary artifacts
+bootstrap()
+backend_full_*.zip
+temp_logs_*.zip

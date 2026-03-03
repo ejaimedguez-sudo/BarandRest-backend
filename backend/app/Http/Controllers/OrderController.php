@@ -37,11 +37,12 @@ class OrderController extends Controller
             'table_id' => 'nullable|integer|exists:tables_restaurant,id',
             'customer_id' => 'nullable|integer|exists:customers,id',
             'waiter_id' => 'nullable|integer|exists:users,id',
-            'status' => 'nullable|string',
+            'status' => 'nullable|in:open,closed,cancelled',
             'order_items' => 'required|array|min:1',
             'order_items.*.menu_item_id' => 'required|integer|exists:menu_items,id',
             'order_items.*.quantity' => 'required|numeric|min:1',
             'order_items.*.price' => 'nullable|numeric|min:0',
+            'order_items.*.unit_price' => 'nullable|numeric|min:0',
         ]);
 
         $order = null;
@@ -63,7 +64,9 @@ class OrderController extends Controller
                 $qty = is_numeric($item['quantity']) ? (float)$item['quantity'] : 0.0;
 
                 $unitCost = $menuItem->calculateCostFromIngredients();
-                $unitPrice = isset($item['price']) ? (float)$item['price'] : ($menuItem->price ?? $menuItem->suggestPrice(30) ?? 0.0);
+                $unitPrice = isset($item['unit_price'])
+                    ? (float)$item['unit_price']
+                    : (isset($item['price']) ? (float)$item['price'] : ($menuItem->price ?? $menuItem->suggestPrice(30) ?? 0.0));
 
                 $lineTotal = $unitPrice * $qty;
                 $total += $lineTotal;

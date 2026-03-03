@@ -1,5 +1,8 @@
 Param(
-    [string]$LogPath = ""
+    [string]$LogPath = "",
+    [string]$PhpExe = 'php',
+    [string]$BaseUrl = 'http://127.0.0.1:8000',
+    [switch]$FailOnSmoke
 )
 
 $ErrorActionPreference = 'Stop'
@@ -18,17 +21,32 @@ try {
     Set-Location "$PSScriptRoot\..\backend"
 
     Write-Host "- Checking migrations status"
-    php artisan migrate:status
+    & $PhpExe artisan migrate:status
 
     Write-Host "- Listing routes"
-    php artisan route:list
+    & $PhpExe artisan route:list
 
     Write-Host "- Running smoke request to /up (if server is up)"
-    try {
-        $response = Invoke-WebRequest -Uri "http://127.0.0.1:8000/up" -TimeoutSec 5 -UseBasicParsing
-        Write-Host "Smoke check status:" $response.StatusCode
-    } catch {
-        Write-Host "Server not listening on 127.0.0.1:8000"
+    $smokeOk = $false
+    for ($attempt = 1; $attempt -le 2; $attempt++) {
+        try {
+            $response = Invoke-WebRequest -Uri "$BaseUrl/up" -TimeoutSec 10 -UseBasicParsing
+            Write-Host "Smoke check status:" $response.StatusCode
+            $smokeOk = $true
+            break
+        } catch {
+            if ($attempt -lt 2) {
+                Start-Sleep -Seconds 2
+            }
+        }
+    }
+
+    if (-not $smokeOk) {
+        $message = "Server not listening on $BaseUrl"
+        Write-Host $message
+        if ($FailOnSmoke) {
+            throw $message
+        }
     }
 } finally {
     if ($LogPath) {

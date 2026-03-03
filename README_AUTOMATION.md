@@ -33,6 +33,10 @@ Linux/macOS:
 Windows (PowerShell):
 
 - `./scripts/health_check.ps1` — equivalente para Windows de los chequeos de salud.
+- `./scripts/dev_runtime_check_test.ps1` — inicia runtime (`serve` + `queue` + `scheduler`), ejecuta health check y corre tests (`Feature,Unit`) en un solo comando.
+- `./scripts/dev_runtime_check_test_background.ps1` — ejecuta el mismo flujo en segundo plano (PowerShell oculto), devolviendo PID y ruta de log.
+- `./scripts/dev_runtime_check_test.ps1 -SkipTests` — ejecuta inicio + health check sin correr tests.
+- `./scripts/dev_runtime_check_test.ps1 -StopOnFinish` — al terminar, detiene los procesos gestionados del runtime.
 - `./scripts/register_health_check_task.ps1` — registra una tarea programada para ejecutar health checks periódicos.
 - `./scripts/unregister_health_check_task.ps1` — elimina la tarea programada de health checks.
 
