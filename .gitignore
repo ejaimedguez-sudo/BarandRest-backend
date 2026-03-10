@@ -32,3 +32,15 @@ backend/scripts/runtime_processes.json
 bootstrap()
 backend_full_*.zip
 temp_logs_*.zip
+
+# JavaScript/TypeScript artifacts
+**/node_modules/
+**/dist/
+**/.expo/
+**/.expo-shared/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local runtime env for new Node backend
+platform/backend-node/.env
