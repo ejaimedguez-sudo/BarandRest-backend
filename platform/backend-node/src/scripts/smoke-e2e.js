@@ -63,16 +63,24 @@ async function run() {
       items: [{ menuItemId: menu[0].id, qty: 2, unitPrice: Number(menu[0].price || 0) || 100 }]
     })
   });
-  assert(securedOrder.id, "No se creo orden protegida");
+  assert(securedOrder.order?.id, "No se creo orden protegida");
 
-  console.log("[6/8] Generar ticket para orden...");
-  const ticket = await request(`/api/billing/tickets/${securedOrder.id}`, {
+  console.log("[6/10] Agregar items adicionales como caja...");
+  const addItems = await request(`/api/ops/orders/${securedOrder.order.id}/add-items`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ items: [{ menuItemId: menu[0].id, qty: 1, unitPrice: Number(menu[0].price || 0) || 100 }] })
+  });
+  assert(addItems.order?.id, "No se agregaron items adicionales");
+
+  console.log("[7/10] Generar ticket para orden...");
+  const ticket = await request(`/api/billing/tickets/${securedOrder.order.id}`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` }
   });
   assert(ticket.id, "No se genero ticket");
 
-  console.log("[7/8] Registrar pago y factura...");
+  console.log("[8/10] Registrar pago y factura...");
   const payment = await request(`/api/billing/payments/${ticket.id}`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },
@@ -91,7 +99,7 @@ async function run() {
   });
   assert(invoice.id, "No se genero factura");
 
-  console.log("[8/8] Consultar dashboard BI...");
+  console.log("[9/10] Consultar dashboard BI...");
   const from = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().slice(0, 10);
   const to = new Date().toISOString().slice(0, 10);
   const dashboard = await request(`/api/dashboard/sales?from=${from}&to=${to}`, {
@@ -99,10 +107,21 @@ async function run() {
   });
   assert(dashboard.sales && typeof dashboard.sales.current !== "undefined", "Dashboard sin metricas");
 
+  console.log("[10/10] Consultar series temporales y comisiones...");
+  const series = await request(`/api/dashboard/sales/timeseries?from=${from}&to=${to}&granularity=daily`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  assert(Array.isArray(series.series), "Series temporales no disponibles");
+
+  const commissions = await request(`/api/dashboard/waiters/commissions?from=${from}&to=${to}&commissionPct=5`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  assert(Array.isArray(commissions.waiters), "Comisiones por mesero no disponibles");
+
   console.log("Smoke E2E OK");
   console.log(JSON.stringify({
     guestOrderId: guestOrder.orderId,
-    securedOrderId: securedOrder.id,
+    securedOrderId: securedOrder.order.id,
     ticketId: ticket.id,
     paymentId: payment.id,
     invoiceId: invoice.id,

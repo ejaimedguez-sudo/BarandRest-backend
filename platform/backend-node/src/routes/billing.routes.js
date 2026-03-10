@@ -13,6 +13,11 @@ function calculateTotals(orderItems) {
 
 router.post("/tickets/:orderId", authRequired, withRoles("cajero", "administrador", "gerente"), async (req, res) => {
   try {
+    const existing = await Ticket.findOne({ where: { OrderId: req.params.orderId } });
+    if (existing) {
+      return res.json(existing);
+    }
+
     const order = await Order.findByPk(req.params.orderId, { include: [OrderItem] });
     if (!order) return res.status(404).json({ message: "Orden no encontrada" });
 
@@ -38,6 +43,21 @@ router.post("/payments/:ticketId", authRequired, withRoles("cajero", "administra
       externalRef: req.body.externalRef || null,
       status: req.body.status || "approved"
     });
+
+    if (row.status === "approved") {
+      const ticket = await Ticket.findByPk(req.params.ticketId);
+      const paidRows = await Payment.findAll({ where: { TicketId: req.params.ticketId, status: "approved" } });
+      const paidTotal = paidRows.reduce((acc, payment) => acc + Number(payment.amount || 0), 0);
+
+      if (ticket && paidTotal >= Number(ticket.total)) {
+        const order = await Order.findByPk(ticket.OrderId);
+        if (order) {
+          order.status = "paid";
+          await order.save();
+        }
+      }
+    }
+
     return res.status(201).json(row);
   } catch (error) {
     return res.status(400).json({ message: "No se pudo registrar pago", detail: error.message });
@@ -46,6 +66,11 @@ router.post("/payments/:ticketId", authRequired, withRoles("cajero", "administra
 
 router.post("/invoices/:ticketId", authRequired, withRoles("cajero", "administrador", "gerente"), async (req, res) => {
   try {
+    const existing = await Invoice.findOne({ where: { TicketId: req.params.ticketId } });
+    if (existing) {
+      return res.json(existing);
+    }
+
     const ticket = await Ticket.findByPk(req.params.ticketId);
     if (!ticket) return res.status(404).json({ message: "Ticket no encontrado" });
 

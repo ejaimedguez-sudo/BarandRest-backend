@@ -53,6 +53,15 @@ Roles soportados:
 
 La API usa JWT y middleware RBAC por endpoint.
 
+Usuarios demo (creados por `npm run seed:demo`):
+- `admin@barandrest.local`
+- `gerente@barandrest.local`
+- `mesero@barandrest.local`
+- `cajero@barandrest.local`
+- `barra@barandrest.local`
+- `cocina@barandrest.local`
+- Password comun: `Demo12345`
+
 ## Arranque rapido (Windows/XAMPP)
 
 1. Crear DB:
@@ -117,9 +126,11 @@ Este smoke valida: auth, menu QR/publico, ordenes, ticket, pago, factura y dashb
   - `GET /api/menu/public/table/:tableId/qr`
 - Operacion
   - `POST /api/ops/tables`
+  - `GET /api/ops/tables`
   - `PATCH /api/ops/tables/:id/assign-waiter`
   - `POST /api/ops/orders`
   - `POST /api/ops/orders/guest`
+  - `POST /api/ops/orders/:id/add-items`
   - `PATCH /api/ops/orders/:id/status`
 - Recetas/costos
   - `POST /api/recipes/ingredients`
@@ -136,6 +147,8 @@ Este smoke valida: auth, menu QR/publico, ordenes, ticket, pago, factura y dashb
   - `POST /api/billing/invoices/:ticketId`
 - BI
   - `GET /api/dashboard/sales?from=YYYY-MM-DD&to=YYYY-MM-DD`
+  - `GET /api/dashboard/sales/timeseries?from=YYYY-MM-DD&to=YYYY-MM-DD&granularity=daily|weekly|monthly|yearly`
+  - `GET /api/dashboard/waiters/commissions?from=YYYY-MM-DD&to=YYYY-MM-DD&commissionPct=5`
 
 ## Integraciones externas pendientes
 
