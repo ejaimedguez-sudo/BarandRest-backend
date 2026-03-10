@@ -93,3 +93,16 @@ Hecho: configuración inicial preparada; continúa con las acciones que indiques
 		```
 
 Si quieres que ejecute el comando ahora para generar comisiones de ejemplo en tu base de datos, confirma y lo ejecuto; o si prefieres, escribo tests de integración que arranquen Laravel y validen el flujo completo.
+
+## Nueva arquitectura modular (Node + React + React Native)
+
+Se agrego una implementacion paralela para cumplir requerimientos de aplicacion web y movil con backend Node.js:
+
+- `platform/backend-node`: API Express + JWT + roles + Sequelize + MySQL.
+- `platform/web-react`: panel web administrativo en React (Vite).
+- `platform/mobile-react-native`: app movil en React Native (Expo).
+- `platform/sql/platform_schema.sql`: creacion de DB objetivo en MySQL/XAMPP.
+
+Documento principal de esta nueva arquitectura:
+
+- `platform/README_PLATFORM.md`
