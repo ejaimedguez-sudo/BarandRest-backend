@@ -191,9 +191,11 @@ DB_HOST=localhost DB_PORT=3306 DB_NAME=barandrest_platform DB_USER=barandrest_ap
 Workflow incluido:
 - `.github/workflows/platform-ci.yml`
 - `.github/workflows/platform-release.yml`
+- `.github/workflows/platform-deploy.yml`
 
 `platform-ci.yml` valida backend (syntax checks), build web y entorno mobile en pushes/PRs sobre `platform/**`.
 `platform-release.yml` genera un bundle desplegable bajo demanda (`workflow_dispatch`).
+`platform-deploy.yml` despliega por SSH a `staging`/`production` via `workflow_dispatch`.
 
 ## Produccion
 

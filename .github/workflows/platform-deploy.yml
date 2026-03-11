@@ -1,0 +1,76 @@
+name: Platform Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Target environment"
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+      runSmoke:
+        description: "Run backend smoke test after deploy"
+        required: true
+        default: false
+        type: boolean
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEPLOY_SSH_HOST }}
+          username: ${{ secrets.DEPLOY_SSH_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: ${{ secrets.DEPLOY_SSH_PORT || 22 }}
+          script_stop: true
+          script: |
+            set -e
+            APP_PATH="${{ secrets.DEPLOY_APP_PATH }}"
+            BACKEND_PATH="$APP_PATH/platform/backend-node"
+            WEB_PATH="$APP_PATH/platform/web-react"
+
+            cd "$APP_PATH"
+            git fetch origin main
+            git reset --hard origin/main
+
+            if [ -n "${{ secrets.BACKEND_ENV_FILE }}" ]; then
+              printf "%s" "${{ secrets.BACKEND_ENV_FILE }}" > "$BACKEND_PATH/.env"
+            fi
+
+            cd "$BACKEND_PATH"
+            npm ci --omit=dev
+
+            cd "$WEB_PATH"
+            npm ci
+            npm run build
+
+            sudo systemctl restart barandrest-backend
+            sleep 2
+            sudo systemctl --no-pager status barandrest-backend | head -n 20
+
+            curl -fsS http://127.0.0.1:4100/health
+
+      - name: Optional smoke test
+        if: ${{ inputs.runSmoke == true }}
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEPLOY_SSH_HOST }}
+          username: ${{ secrets.DEPLOY_SSH_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: ${{ secrets.DEPLOY_SSH_PORT || 22 }}
+          script_stop: true
+          script: |
+            set -e
+            APP_PATH="${{ secrets.DEPLOY_APP_PATH }}"
+            cd "$APP_PATH/platform/backend-node"
+            npm run smoke:e2e

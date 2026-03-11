@@ -162,6 +162,20 @@ Para workflows CI/release y despliegue manual:
 - `CFDI_API_KEY`
 - `JWT_SECRET`
 
+Para deploy automatico con `.github/workflows/platform-deploy.yml` (por `workflow_dispatch` y `environment`):
+- `DEPLOY_SSH_HOST`
+- `DEPLOY_SSH_PORT` (opcional, default `22`)
+- `DEPLOY_SSH_USER`
+- `DEPLOY_SSH_KEY`
+- `DEPLOY_APP_PATH` (ejemplo `/var/www/barandrest`)
+- `BACKEND_ENV_FILE` (contenido completo del `.env` productivo en un solo secret)
+
+Flujo recomendado:
+1. Crear `environment` en GitHub: `staging` y `production`.
+2. Cargar secretos por environment.
+3. Ejecutar workflow manual `Platform Deploy` y seleccionar environment.
+4. Activar `runSmoke=true` para validar deploy en staging.
+
 ## 10. Endurecimiento final recomendado
 
 - Restringir `CORS_ORIGINS` a dominios exactos (sin `*`).
