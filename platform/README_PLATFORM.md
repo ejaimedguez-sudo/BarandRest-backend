@@ -195,6 +195,11 @@ Workflow incluido:
 `platform-ci.yml` valida backend (syntax checks), build web y entorno mobile en pushes/PRs sobre `platform/**`.
 `platform-release.yml` genera un bundle desplegable bajo demanda (`workflow_dispatch`).
 
+## Produccion
+
+- Plantilla de variables productivas: `platform/backend-node/.env.production.example`
+- Runbook de despliegue: `platform/DEPLOY_PROD.md`
+
 ## Integraciones externas pendientes
 
 - Pasarela de pagos real: activar `PAYMENT_PROVIDER=stripe-like` y credenciales del proveedor.
