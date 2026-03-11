@@ -23,11 +23,11 @@ async function request(path, options = {}) {
 }
 
 async function run() {
-  console.log("[1/8] Health check...");
+  console.log("[1/11] Health check...");
   const health = await request("/health");
   assert(health.status === "ok", "Health check fallo");
 
-  console.log("[2/8] Login admin demo...");
+  console.log("[2/11] Login admin demo...");
   const login = await request("/api/auth/login", {
     method: "POST",
     body: JSON.stringify({ email: "admin@barandrest.local", password: "Demo12345" })
@@ -35,11 +35,11 @@ async function run() {
   assert(login.token, "No se obtuvo token");
   const token = login.token;
 
-  console.log("[3/8] Leer menu publico...");
+  console.log("[3/11] Leer menu publico...");
   const menu = await request("/api/menu/public");
   assert(Array.isArray(menu) && menu.length > 0, "Menu publico vacio");
 
-  console.log("[4/8] Crear orden comensal QR...");
+  console.log("[4/11] Crear orden comensal QR...");
   const guestOrder = await request("/api/ops/orders/guest", {
     method: "POST",
     body: JSON.stringify({
@@ -51,7 +51,7 @@ async function run() {
   });
   assert(guestOrder.orderId, "No se creo orden guest");
 
-  console.log("[5/8] Tomar orden como mesero/caja via endpoint protegido...");
+  console.log("[5/11] Tomar orden como mesero/caja via endpoint protegido...");
   const securedOrder = await request("/api/ops/orders", {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },
@@ -65,7 +65,7 @@ async function run() {
   });
   assert(securedOrder.order?.id, "No se creo orden protegida");
 
-  console.log("[6/10] Agregar items adicionales como caja...");
+  console.log("[6/11] Agregar items adicionales como caja...");
   const addItems = await request(`/api/ops/orders/${securedOrder.order.id}/add-items`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },
@@ -73,14 +73,14 @@ async function run() {
   });
   assert(addItems.order?.id, "No se agregaron items adicionales");
 
-  console.log("[7/10] Generar ticket para orden...");
+  console.log("[7/11] Generar ticket para orden...");
   const ticket = await request(`/api/billing/tickets/${securedOrder.order.id}`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` }
   });
   assert(ticket.id, "No se genero ticket");
 
-  console.log("[8/10] Registrar pago y factura...");
+  console.log("[8/11] Registrar pago y factura...");
   const payment = await request(`/api/billing/payments/${ticket.id}`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },
@@ -99,7 +99,7 @@ async function run() {
   });
   assert(invoice.id, "No se genero factura");
 
-  console.log("[9/10] Consultar dashboard BI...");
+  console.log("[9/11] Consultar dashboard BI...");
   const from = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().slice(0, 10);
   const to = new Date().toISOString().slice(0, 10);
   const dashboard = await request(`/api/dashboard/sales?from=${from}&to=${to}`, {
@@ -136,6 +136,10 @@ async function run() {
 }
 
 run().catch((err) => {
-  console.error("Smoke E2E FAIL", err.message);
+  if (String(err.message || "").includes("fetch failed")) {
+    console.error("Smoke E2E FAIL API no disponible. Inicia primero el backend: npm start");
+  } else {
+    console.error("Smoke E2E FAIL", err.message);
+  }
   process.exit(1);
 });

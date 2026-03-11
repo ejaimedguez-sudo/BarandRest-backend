@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { endpoints } from "./api";
+import { API_BASE, endpoints } from "./api";
 
 const modules = [
   "Menu QR",
@@ -13,7 +13,7 @@ const modules = [
 
 function Login({ onLogin }) {
   const [email, setEmail] = useState("admin@barandrest.local");
-  const [password, setPassword] = useState("admin123");
+  const [password, setPassword] = useState("Demo12345");
   const [error, setError] = useState("");
 
   const submit = async (e) => {
@@ -76,8 +76,12 @@ function RealtimeFeed({ user }) {
     const token = localStorage.getItem("barandrest_token");
     if (!token) return;
 
-    fetch("http://localhost:4100/api/realtime/events", {
-      headers: { Authorization: `Bearer ${token}` }
+    const controller = new AbortController();
+    let cancelled = false;
+
+    fetch(`${API_BASE}/realtime/events`, {
+      headers: { Authorization: `Bearer ${token}` },
+      signal: controller.signal
     })
       .then(async (res) => {
         if (!res.body) return;
@@ -87,7 +91,7 @@ function RealtimeFeed({ user }) {
 
         while (true) {
           const { done, value } = await reader.read();
-          if (done) break;
+          if (done || cancelled) break;
           buffer += decoder.decode(value, { stream: true });
 
           const chunks = buffer.split("\n\n");
@@ -109,6 +113,11 @@ function RealtimeFeed({ user }) {
         }
       })
       .catch(() => {});
+
+    return () => {
+      cancelled = true;
+      controller.abort();
+    };
   }, [user]);
 
   return (

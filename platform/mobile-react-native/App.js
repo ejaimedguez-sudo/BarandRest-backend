@@ -1,8 +1,15 @@
 import React, { useState } from "react";
+import { Platform } from "react-native";
 import { SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
 
-const API_BASE = "http://localhost:4100/api";
+const FALLBACK_API_BASE = Platform.select({
+  android: "http://10.0.2.2:4100/api",
+  ios: "http://localhost:4100/api",
+  default: "http://localhost:4100/api"
+});
+
+const API_BASE = process.env.EXPO_PUBLIC_API_BASE || FALLBACK_API_BASE;
 
 export default function App() {
   const [tableId, setTableId] = useState("1");

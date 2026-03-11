@@ -123,6 +123,9 @@ npm install
 npm run start
 ```
 
+Variable util para mobile:
+- `EXPO_PUBLIC_API_BASE` (ejemplo: `http://192.168.1.50:4100/api` para pruebas en dispositivo fisico)
+
 ## Validacion end-to-end
 
 Con API arriba y seed demo cargado:
