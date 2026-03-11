@@ -53,6 +53,12 @@ Roles soportados:
 
 La API usa JWT y middleware RBAC por endpoint.
 
+Hardening activo:
+- `helmet` para headers de seguridad.
+- `express-rate-limit` para throttling global.
+- `requestId` por peticion.
+- Auditoria persistente en tabla `AuditLogs`.
+
 Usuarios demo (creados por `npm run seed:demo`):
 - `admin@barandrest.local`
 - `gerente@barandrest.local`
@@ -80,6 +86,18 @@ npm run start
 Nota MySQL/XAMPP en Windows:
 - Si `root` solo funciona en modo local, usa `DB_HOST=localhost` (no `127.0.0.1`).
 - Evita `#` sin comillas en `DB_PASSWORD` dentro de `.env`, porque `dotenv` lo interpreta como comentario.
+
+Variables de integracion en `.env`:
+- `PAYMENT_PROVIDER=mock|stripe-like`
+- `PAYMENT_API_URL=...`
+- `PAYMENT_API_KEY=...`
+- `PAYMENT_CURRENCY=MXN`
+- `CFDI_PROVIDER=mock|api`
+- `CFDI_API_URL=...`
+- `CFDI_API_KEY=...`
+- `CORS_ORIGINS=http://localhost:5173,http://localhost:19006`
+- `RATE_LIMIT_WINDOW_MS=60000`
+- `RATE_LIMIT_MAX=120`
 
 3. Seed de roles (opcional, ya se auto-crean al iniciar API):
 ```bash
@@ -145,16 +163,43 @@ Este smoke valida: auth, menu QR/publico, ordenes, ticket, pago, factura y dashb
   - `POST /api/billing/tickets/:orderId`
   - `POST /api/billing/payments/:ticketId`
   - `POST /api/billing/invoices/:ticketId`
+  - Idempotencia de ticket por orden e invoice por ticket.
 - BI
   - `GET /api/dashboard/sales?from=YYYY-MM-DD&to=YYYY-MM-DD`
   - `GET /api/dashboard/sales/timeseries?from=YYYY-MM-DD&to=YYYY-MM-DD&granularity=daily|weekly|monthly|yearly`
   - `GET /api/dashboard/waiters/commissions?from=YYYY-MM-DD&to=YYYY-MM-DD&commissionPct=5`
+  - `GET /api/dashboard/audit/recent?limit=100`
+- Realtime (SSE autenticado)
+  - `GET /api/realtime/events`
+
+## Backups
+
+Windows PowerShell:
+```powershell
+cd platform/backend-node
+./scripts/db-backup.ps1 -Host localhost -Port 3306 -Database barandrest_platform -User barandrest_app -Password "tu_password"
+```
+
+Bash:
+```bash
+cd platform/backend-node
+DB_HOST=localhost DB_PORT=3306 DB_NAME=barandrest_platform DB_USER=barandrest_app DB_PASSWORD=tu_password ./scripts/db-backup.sh
+```
+
+## CI/CD
+
+Workflow incluido:
+- `.github/workflows/platform-ci.yml`
+- `.github/workflows/platform-release.yml`
+
+`platform-ci.yml` valida backend (syntax checks), build web y entorno mobile en pushes/PRs sobre `platform/**`.
+`platform-release.yml` genera un bundle desplegable bajo demanda (`workflow_dispatch`).
 
 ## Integraciones externas pendientes
 
-- Pasarela de pagos: reemplazar validacion mock en `backend-node/src/routes/billing.routes.js`.
-- Facturacion CFDI: reemplazar `uuidProvider` fake por llamada real de timbrado.
-- Notificaciones push: integrar para estatus de orden en cocina/barra.
+- Pasarela de pagos real: activar `PAYMENT_PROVIDER=stripe-like` y credenciales del proveedor.
+- Facturacion CFDI real: activar `CFDI_PROVIDER=api` y credenciales de timbrado.
+- Notificaciones push mobile (FCM/APNS) para complementar el canal realtime SSE actual.
 
 ## Notas de escalabilidad
 

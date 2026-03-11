@@ -68,6 +68,68 @@ function Dashboard() {
   );
 }
 
+function RealtimeFeed({ user }) {
+  const [events, setEvents] = useState([]);
+
+  useEffect(() => {
+    if (!user) return;
+    const token = localStorage.getItem("barandrest_token");
+    if (!token) return;
+
+    fetch("http://localhost:4100/api/realtime/events", {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(async (res) => {
+        if (!res.body) return;
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+
+          const chunks = buffer.split("\n\n");
+          buffer = chunks.pop() || "";
+
+          for (const chunk of chunks) {
+            const dataLine = chunk
+              .split("\n")
+              .find((line) => line.startsWith("data: "));
+            if (!dataLine) continue;
+
+            try {
+              const payload = JSON.parse(dataLine.slice(6));
+              setEvents((prev) => [payload, ...prev].slice(0, 12));
+            } catch {
+              // Ignore malformed event payloads.
+            }
+          }
+        }
+      })
+      .catch(() => {});
+  }, [user]);
+
+  return (
+    <section className="card">
+      <h2>Realtime Operacion</h2>
+      {events.length === 0 ? (
+        <p>Esperando eventos...</p>
+      ) : (
+        <div className="events">
+          {events.map((evt, idx) => (
+            <div className="event" key={`${evt.type}-${evt.occurredAt}-${idx}`}>
+              <strong>{evt.type}</strong>
+              <span>{new Date(evt.occurredAt).toLocaleString()}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
 export default function App() {
   const [user, setUser] = useState(() => {
     const raw = localStorage.getItem("barandrest_user");
@@ -91,6 +153,7 @@ export default function App() {
       </section>
 
       <Dashboard />
+      <RealtimeFeed user={user} />
     </main>
   );
 }

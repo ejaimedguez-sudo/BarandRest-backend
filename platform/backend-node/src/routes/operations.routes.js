@@ -2,6 +2,7 @@ import { Router } from "express";
 import { z } from "zod";
 import { sequelize } from "../config/db.js";
 import { consumeInventoryForOrderItem } from "../services/order-workflow.js";
+import { publishEvent } from "../realtime/event-bus.js";
 import { Order, OrderItem, RestaurantTable, User, MenuItem } from "../models.js";
 import { authRequired, withRoles } from "../middlewares/auth.js";
 
@@ -91,6 +92,12 @@ router.post("/orders", authRequired, withRoles("mesero", "cajero", "administrado
   }
 
   const result = await createOrderAndItems({ payload: parsed.data, user: req.user });
+  publishEvent("order.created", {
+    orderId: result.order.id,
+    source: result.order.source,
+    tableId: result.order.RestaurantTableId,
+    userId: req.user.id
+  });
   return res.status(201).json(result);
 });
 
@@ -110,6 +117,13 @@ router.post("/orders/guest", async (req, res) => {
     payload: parsed.data,
     user: null,
     sourceOverride: parsed.data.useWaiter ? "waiter" : "qr"
+  });
+
+  publishEvent("order.created", {
+    orderId: result.order.id,
+    source: result.order.source,
+    tableId: result.order.RestaurantTableId,
+    userId: null
   });
 
   return res.status(201).json({ message: "Comanda creada", orderId: result.order.id, consumption: result.consumption });
@@ -157,6 +171,11 @@ router.post(
     });
 
     const hydrated = await Order.findByPk(order.id, { include: [{ model: OrderItem, include: [MenuItem] }] });
+    publishEvent("order.items_added", {
+      orderId: hydrated.id,
+      addedByUserId: req.user.id,
+      itemsCount: parsed.data.items.length
+    });
     return res.json({ message: "Items agregados", order: hydrated, consumption });
   }
 );
@@ -171,6 +190,7 @@ router.patch("/orders/:id/status", authRequired, withRoles("mesero", "jefe_barra
   if (!order) return res.status(404).json({ message: "Orden no encontrada" });
   order.status = req.body.status;
   await order.save();
+  publishEvent("order.status_changed", { orderId: order.id, status: order.status, byUserId: req.user.id });
   return res.json(order);
 });
 

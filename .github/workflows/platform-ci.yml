@@ -1,0 +1,61 @@
+name: Platform CI
+
+on:
+  push:
+    paths:
+      - "platform/**"
+      - ".github/workflows/platform-ci.yml"
+  pull_request:
+    paths:
+      - "platform/**"
+      - ".github/workflows/platform-ci.yml"
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: platform/backend-node
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: platform/backend-node/package-lock.json
+      - run: npm ci
+      - run: node --check src/server.js
+      - run: node --check src/routes/operations.routes.js
+      - run: node --check src/routes/billing.routes.js
+      - run: node --check src/routes/dashboard.routes.js
+      - run: node --check src/scripts/smoke-e2e.js
+
+  web:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: platform/web-react
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: platform/web-react/package-lock.json
+      - run: npm ci
+      - run: npm run build
+
+  mobile:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: platform/mobile-react-native
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: platform/mobile-react-native/package-lock.json
+      - run: npm ci
+      - run: npx expo --version

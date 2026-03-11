@@ -112,6 +112,19 @@ export const InventoryMovement = sequelize.define("InventoryMovement", {
   reason: { type: DataTypes.STRING(180), allowNull: true }
 });
 
+export const AuditLog = sequelize.define("AuditLog", {
+  requestId: { type: DataTypes.STRING(50), allowNull: true },
+  method: { type: DataTypes.STRING(10), allowNull: false },
+  path: { type: DataTypes.STRING(255), allowNull: false },
+  userId: { type: DataTypes.INTEGER, allowNull: true },
+  role: { type: DataTypes.STRING(60), allowNull: true },
+  statusCode: { type: DataTypes.INTEGER, allowNull: false },
+  durationMs: { type: DataTypes.INTEGER, allowNull: false },
+  ipAddress: { type: DataTypes.STRING(80), allowNull: true },
+  userAgent: { type: DataTypes.STRING(255), allowNull: true },
+  payload: { type: DataTypes.TEXT("long"), allowNull: true }
+});
+
 Role.hasMany(User);
 User.belongsTo(Role);
 

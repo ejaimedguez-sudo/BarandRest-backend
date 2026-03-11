@@ -2,7 +2,7 @@ import { Router } from "express";
 import dayjs from "dayjs";
 import { Op } from "sequelize";
 import { authRequired, withRoles } from "../middlewares/auth.js";
-import { Order, OrderItem, RestaurantTable, User } from "../models.js";
+import { AuditLog, Order, OrderItem, RestaurantTable, User } from "../models.js";
 
 const router = Router();
 
@@ -133,6 +133,12 @@ router.get("/waiters/commissions", authRequired, withRoles("administrador", "ger
     commissionPct,
     waiters: Object.values(waiterMap)
   });
+});
+
+router.get("/audit/recent", authRequired, withRoles("administrador", "gerente"), async (req, res) => {
+  const limit = Math.min(Number(req.query.limit || 100), 500);
+  const rows = await AuditLog.findAll({ order: [["createdAt", "DESC"]], limit });
+  return res.json(rows);
 });
 
 export default router;

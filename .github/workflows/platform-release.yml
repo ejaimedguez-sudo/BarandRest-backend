@@ -1,0 +1,44 @@
+name: Platform Release Bundle
+
+on:
+  workflow_dispatch:
+
+jobs:
+  bundle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Build backend dependencies
+        working-directory: platform/backend-node
+        run: npm ci --omit=dev
+
+      - name: Build web
+        working-directory: platform/web-react
+        run: |
+          npm ci
+          npm run build
+
+      - name: Install mobile dependencies
+        working-directory: platform/mobile-react-native
+        run: npm ci
+
+      - name: Create release bundle
+        run: |
+          mkdir -p release-bundle
+          cp -r platform release-bundle/platform
+          rm -rf release-bundle/platform/web-react/node_modules
+          rm -rf release-bundle/platform/mobile-react-native/node_modules
+          rm -rf release-bundle/platform/backend-node/node_modules
+          tar -czf barandrest-platform-bundle.tar.gz -C release-bundle .
+
+      - name: Upload bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: barandrest-platform-bundle
+          path: barandrest-platform-bundle.tar.gz

@@ -2,6 +2,9 @@ import { Router } from "express";
 import dayjs from "dayjs";
 import { authRequired, withRoles } from "../middlewares/auth.js";
 import { Invoice, Order, OrderItem, Payment, Ticket } from "../models.js";
+import { processPayment } from "../providers/payment-provider.js";
+import { stampInvoice } from "../providers/cfdi-provider.js";
+import { publishEvent } from "../realtime/event-bus.js";
 
 const router = Router();
 
@@ -28,6 +31,8 @@ router.post("/tickets/:orderId", authRequired, withRoles("cajero", "administrado
       ...totals
     });
 
+    publishEvent("ticket.created", { ticketId: ticket.id, orderId: order.id, total: Number(ticket.total) });
+
     return res.status(201).json(ticket);
   } catch (error) {
     return res.status(400).json({ message: "No se pudo generar ticket", detail: error.message });
@@ -36,12 +41,18 @@ router.post("/tickets/:orderId", authRequired, withRoles("cajero", "administrado
 
 router.post("/payments/:ticketId", authRequired, withRoles("cajero", "administrador", "gerente"), async (req, res) => {
   try {
+    const providerResult = await processPayment({
+      amount: Number(req.body.amount),
+      method: req.body.method,
+      reference: `TICKET-${req.params.ticketId}-${Date.now()}`
+    });
+
     const row = await Payment.create({
       TicketId: req.params.ticketId,
       method: req.body.method,
       amount: req.body.amount,
-      externalRef: req.body.externalRef || null,
-      status: req.body.status || "approved"
+      externalRef: req.body.externalRef || providerResult.externalRef || null,
+      status: providerResult.approved ? "approved" : req.body.status || "pending"
     });
 
     if (row.status === "approved") {
@@ -54,9 +65,18 @@ router.post("/payments/:ticketId", authRequired, withRoles("cajero", "administra
         if (order) {
           order.status = "paid";
           await order.save();
+          publishEvent("order.paid", { orderId: order.id, ticketId: ticket.id, paidTotal });
         }
       }
     }
+
+    publishEvent("payment.created", {
+      paymentId: row.id,
+      ticketId: Number(req.params.ticketId),
+      amount: Number(row.amount),
+      status: row.status,
+      provider: providerResult.provider
+    });
 
     return res.status(201).json(row);
   } catch (error) {
@@ -74,13 +94,28 @@ router.post("/invoices/:ticketId", authRequired, withRoles("cajero", "administra
     const ticket = await Ticket.findByPk(req.params.ticketId);
     if (!ticket) return res.status(404).json({ message: "Ticket no encontrado" });
 
-    // Aqui se conectaria la API timbradora/facturacion.
+    const stamped = await stampInvoice({
+      ticket,
+      fiscalData: {
+        fiscalName: req.body.fiscalName,
+        rfc: req.body.rfc,
+        email: req.body.email
+      }
+    });
+
     const invoice = await Invoice.create({
       TicketId: ticket.id,
       fiscalName: req.body.fiscalName,
       rfc: req.body.rfc,
       email: req.body.email,
-      uuidProvider: `FAKE-${ticket.folio}`
+      uuidProvider: stamped.uuid
+    });
+
+    publishEvent("invoice.created", {
+      invoiceId: invoice.id,
+      ticketId: ticket.id,
+      uuid: invoice.uuidProvider,
+      provider: stamped.provider
     });
 
     return res.status(201).json(invoice);

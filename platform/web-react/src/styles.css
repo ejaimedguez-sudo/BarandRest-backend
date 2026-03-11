@@ -78,6 +78,26 @@ button {
 
 .error { color: #a60f0f; }
 
+.events {
+  display: grid;
+  gap: 8px;
+}
+
+.event {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  background: #f3ece2;
+  border: 1px solid #e4d7c7;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.event span {
+  color: #6c5a49;
+  font-size: 0.92rem;
+}
+
 @media (max-width: 768px) {
   main { padding: 14px; }
   .hero { padding: 18px; }

@@ -107,7 +107,7 @@ async function run() {
   });
   assert(dashboard.sales && typeof dashboard.sales.current !== "undefined", "Dashboard sin metricas");
 
-  console.log("[10/10] Consultar series temporales y comisiones...");
+  console.log("[10/11] Consultar series temporales y comisiones...");
   const series = await request(`/api/dashboard/sales/timeseries?from=${from}&to=${to}&granularity=daily`, {
     headers: { Authorization: `Bearer ${token}` }
   });
@@ -117,6 +117,12 @@ async function run() {
     headers: { Authorization: `Bearer ${token}` }
   });
   assert(Array.isArray(commissions.waiters), "Comisiones por mesero no disponibles");
+
+  console.log("[11/11] Consultar auditoria reciente...");
+  const audits = await request("/api/dashboard/audit/recent?limit=20", {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  assert(Array.isArray(audits), "Auditoria no disponible");
 
   console.log("Smoke E2E OK");
   console.log(JSON.stringify({
