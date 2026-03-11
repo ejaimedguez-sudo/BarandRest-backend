@@ -28,14 +28,14 @@ jobs:
       - name: Deploy over SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.DEPLOY_SSH_HOST }}
-          username: ${{ secrets.DEPLOY_SSH_USER }}
-          key: ${{ secrets.DEPLOY_SSH_KEY }}
-          port: ${{ secrets.DEPLOY_SSH_PORT || 22 }}
+          host: ${{ secrets.DEPLOY_SSH_HOST || secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_SSH_USER || secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY || secrets.DEPLOY_SSH_PRIVATE_KEY || secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.DEPLOY_SSH_PORT || secrets.DEPLOY_PORT || 22 }}
           script_stop: true
           script: |
             set -e
-            APP_PATH="${{ secrets.DEPLOY_APP_PATH }}"
+            APP_PATH="${{ secrets.DEPLOY_APP_PATH || '/var/www/barandrest' }}"
             BACKEND_PATH="$APP_PATH/platform/backend-node"
             WEB_PATH="$APP_PATH/platform/web-react"
 
@@ -43,7 +43,7 @@ jobs:
             git fetch origin main
             git reset --hard origin/main
 
-            if [ -n "${{ secrets.BACKEND_ENV_FILE }}" ]; then
+            if [ -n "${{ secrets.BACKEND_ENV_FILE || '' }}" ]; then
               printf "%s" "${{ secrets.BACKEND_ENV_FILE }}" > "$BACKEND_PATH/.env"
             fi
 
@@ -64,13 +64,13 @@ jobs:
         if: ${{ inputs.runSmoke == true }}
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.DEPLOY_SSH_HOST }}
-          username: ${{ secrets.DEPLOY_SSH_USER }}
-          key: ${{ secrets.DEPLOY_SSH_KEY }}
-          port: ${{ secrets.DEPLOY_SSH_PORT || 22 }}
+          host: ${{ secrets.DEPLOY_SSH_HOST || secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_SSH_USER || secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY || secrets.DEPLOY_SSH_PRIVATE_KEY || secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.DEPLOY_SSH_PORT || secrets.DEPLOY_PORT || 22 }}
           script_stop: true
           script: |
             set -e
-            APP_PATH="${{ secrets.DEPLOY_APP_PATH }}"
+            APP_PATH="${{ secrets.DEPLOY_APP_PATH || '/var/www/barandrest' }}"
             cd "$APP_PATH/platform/backend-node"
             npm run smoke:e2e
