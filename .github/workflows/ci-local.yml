@@ -21,6 +21,7 @@ jobs:
           cd backend
           php -r "file_exists('database/database.sqlite') || touch('database/database.sqlite');"
           composer install --no-interaction --prefer-dist
+          php artisan key:generate --force || true
       - name: Run migrations and seed
         working-directory: backend
         run: |

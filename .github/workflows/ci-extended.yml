@@ -12,14 +12,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Setup PHP
-        uses: shivammathur/setup-php@v4
+        uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
           extensions: mbstring, xml, zip, gd
       - name: Install dependencies
         run: |
           cd backend
+          cp .env.example .env || true
           composer install --no-interaction --prefer-dist
+          php artisan key:generate --force || true
       - name: Composer audit
         working-directory: backend
         run: composer audit || true
