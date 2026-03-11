@@ -198,7 +198,10 @@ Workflow incluido:
 
 `platform-ci.yml` valida backend (syntax checks), build web y entorno mobile en pushes/PRs sobre `platform/**`.
 `platform-release.yml` genera un bundle desplegable bajo demanda (`workflow_dispatch`).
-`platform-deploy.yml` despliega por SSH a `staging`/`production` via `workflow_dispatch`.
+`platform-deploy.yml` despliega de forma automatica por SSH:
+- Push a `main` + cambios en `platform/**`: `staging` con smoke test.
+- Si `staging` pasa: promocion automatica a `production`.
+- Tambien permite ejecucion manual (`workflow_dispatch`) en `all`/`staging`/`production`.
 
 ## Produccion
 

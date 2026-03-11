@@ -1,6 +1,11 @@
 name: Platform Deploy
 
 on:
+  push:
+    branches: [ main ]
+    paths:
+      - "platform/**"
+      - ".github/workflows/platform-deploy.yml"
   workflow_dispatch:
     inputs:
       environment:
@@ -8,24 +13,26 @@ on:
         required: true
         type: choice
         options:
+          - all
           - staging
           - production
       runSmoke:
         description: "Run backend smoke test after deploy"
         required: true
-        default: false
+        default: true
         type: boolean
 
 jobs:
-  deploy:
+  deploy-staging:
     runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
+    environment: staging
+    if: ${{ github.event_name == 'push' || inputs.environment == 'all' || inputs.environment == 'staging' }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Deploy over SSH
+      - name: Deploy staging over SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.DEPLOY_SSH_HOST || secrets.DEPLOY_HOST }}
@@ -45,6 +52,9 @@ jobs:
 
             if [ -n "${{ secrets.BACKEND_ENV_FILE || '' }}" ]; then
               printf "%s" "${{ secrets.BACKEND_ENV_FILE }}" > "$BACKEND_PATH/.env"
+            elif [ ! -f "$BACKEND_PATH/.env" ]; then
+              echo "Falta BACKEND_ENV_FILE y no existe .env en servidor" >&2
+              exit 1
             fi
 
             cd "$BACKEND_PATH"
@@ -60,8 +70,8 @@ jobs:
 
             curl -fsS http://127.0.0.1:4100/health
 
-      - name: Optional smoke test
-        if: ${{ inputs.runSmoke == true }}
+      - name: Staging smoke test
+        if: ${{ github.event_name == 'push' || inputs.runSmoke == true }}
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.DEPLOY_SSH_HOST || secrets.DEPLOY_HOST }}
@@ -74,3 +84,51 @@ jobs:
             APP_PATH="${{ secrets.DEPLOY_APP_PATH || '/var/www/barandrest' }}"
             cd "$APP_PATH/platform/backend-node"
             npm run smoke:e2e
+
+  deploy-production:
+    runs-on: ubuntu-latest
+    environment: production
+    needs: [deploy-staging]
+    if: ${{ needs.deploy-staging.result == 'success' && (github.event_name == 'push' || inputs.environment == 'all' || inputs.environment == 'production') }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy production over SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEPLOY_SSH_HOST || secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_SSH_USER || secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY || secrets.DEPLOY_SSH_PRIVATE_KEY || secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.DEPLOY_SSH_PORT || secrets.DEPLOY_PORT || 22 }}
+          script_stop: true
+          script: |
+            set -e
+            APP_PATH="${{ secrets.DEPLOY_APP_PATH || '/var/www/barandrest' }}"
+            BACKEND_PATH="$APP_PATH/platform/backend-node"
+            WEB_PATH="$APP_PATH/platform/web-react"
+
+            cd "$APP_PATH"
+            git fetch origin main
+            git reset --hard origin/main
+
+            if [ -n "${{ secrets.BACKEND_ENV_FILE || '' }}" ]; then
+              printf "%s" "${{ secrets.BACKEND_ENV_FILE }}" > "$BACKEND_PATH/.env"
+            elif [ ! -f "$BACKEND_PATH/.env" ]; then
+              echo "Falta BACKEND_ENV_FILE y no existe .env en servidor" >&2
+              exit 1
+            fi
+
+            cd "$BACKEND_PATH"
+            npm ci --omit=dev
+
+            cd "$WEB_PATH"
+            npm ci
+            npm run build
+
+            sudo systemctl restart barandrest-backend
+            sleep 2
+            sudo systemctl --no-pager status barandrest-backend | head -n 20
+
+            curl -fsS http://127.0.0.1:4100/health

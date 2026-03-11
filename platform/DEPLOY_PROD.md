@@ -173,8 +173,13 @@ Para deploy automatico con `.github/workflows/platform-deploy.yml` (por `workflo
 Flujo recomendado:
 1. Crear `environment` en GitHub: `staging` y `production`.
 2. Cargar secretos por environment.
-3. Ejecutar workflow manual `Platform Deploy` y seleccionar environment.
+3. Ejecutar workflow manual `Platform Deploy` y seleccionar `all`/`staging`/`production`.
 4. Activar `runSmoke=true` para validar deploy en staging.
+
+Modo completamente automatico (sin intervencion de usuario):
+- Cada push a `main` con cambios en `platform/**` ejecuta `deploy-staging`.
+- Si `staging` termina OK, el workflow promueve automaticamente a `production`.
+- El smoke test de staging se ejecuta automaticamente en `push`.
 
 Automatizacion local para cargar secrets (PowerShell):
 
