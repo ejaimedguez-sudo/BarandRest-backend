@@ -1,5 +1,9 @@
 name: Platform Deploy
 
+concurrency:
+  group: platform-deploy-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
     branches: [ main ]
@@ -23,9 +27,49 @@ on:
         type: boolean
 
 jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' || inputs.environment == 'all' || inputs.environment == 'staging' || inputs.environment == 'production' }}
+    outputs:
+      host: ${{ steps.vars.outputs.host }}
+      port: ${{ steps.vars.outputs.port }}
+      appPath: ${{ steps.vars.outputs.appPath }}
+    steps:
+      - name: Resolve deploy variables
+        id: vars
+        shell: bash
+        run: |
+          HOST="${{ secrets.DEPLOY_SSH_HOST || secrets.DEPLOY_HOST }}"
+          PORT="${{ secrets.DEPLOY_SSH_PORT || secrets.DEPLOY_PORT || 22 }}"
+          APP_PATH="${{ secrets.DEPLOY_APP_PATH || '/var/www/barandrest' }}"
+
+          if [[ -z "$HOST" ]]; then
+            echo "DEPLOY host no configurado (DEPLOY_SSH_HOST o DEPLOY_HOST)." >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+
+          echo "host=$HOST" >> "$GITHUB_OUTPUT"
+          echo "port=$PORT" >> "$GITHUB_OUTPUT"
+          echo "appPath=$APP_PATH" >> "$GITHUB_OUTPUT"
+          echo "Preflight variables resueltas." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Check TCP reachability
+        shell: bash
+        run: |
+          HOST="${{ steps.vars.outputs.host }}"
+          PORT="${{ steps.vars.outputs.port }}"
+          echo "Probando conectividad TCP a $HOST:$PORT" >> "$GITHUB_STEP_SUMMARY"
+          if ! timeout 10 bash -lc "</dev/tcp/$HOST/$PORT" 2>/dev/null; then
+            echo "No hay conectividad TCP a $HOST:$PORT desde GitHub Actions (timeout)." >> "$GITHUB_STEP_SUMMARY"
+            echo "Revisa firewall/NAT/security group y estado de sshd." >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+          echo "Conectividad TCP OK a $HOST:$PORT." >> "$GITHUB_STEP_SUMMARY"
+
   deploy-staging:
     runs-on: ubuntu-latest
     environment: staging
+    needs: [preflight]
     if: ${{ github.event_name == 'push' || inputs.environment == 'all' || inputs.environment == 'staging' }}
 
     steps:
@@ -35,14 +79,16 @@ jobs:
       - name: Deploy staging over SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.DEPLOY_SSH_HOST || secrets.DEPLOY_HOST }}
+          host: ${{ needs.preflight.outputs.host }}
           username: ${{ secrets.DEPLOY_SSH_USER || secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY || secrets.DEPLOY_SSH_PRIVATE_KEY || secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.DEPLOY_SSH_PORT || secrets.DEPLOY_PORT || 22 }}
+          port: ${{ needs.preflight.outputs.port }}
           script_stop: true
+          timeout: 20s
+          command_timeout: 12m
           script: |
             set -e
-            APP_PATH="${{ secrets.DEPLOY_APP_PATH || '/var/www/barandrest' }}"
+            APP_PATH="${{ needs.preflight.outputs.appPath }}"
             BACKEND_PATH="$APP_PATH/platform/backend-node"
             WEB_PATH="$APP_PATH/platform/web-react"
 
@@ -74,21 +120,23 @@ jobs:
         if: ${{ github.event_name == 'push' || inputs.runSmoke == true }}
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.DEPLOY_SSH_HOST || secrets.DEPLOY_HOST }}
+          host: ${{ needs.preflight.outputs.host }}
           username: ${{ secrets.DEPLOY_SSH_USER || secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY || secrets.DEPLOY_SSH_PRIVATE_KEY || secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.DEPLOY_SSH_PORT || secrets.DEPLOY_PORT || 22 }}
+          port: ${{ needs.preflight.outputs.port }}
           script_stop: true
+          timeout: 20s
+          command_timeout: 10m
           script: |
             set -e
-            APP_PATH="${{ secrets.DEPLOY_APP_PATH || '/var/www/barandrest' }}"
+            APP_PATH="${{ needs.preflight.outputs.appPath }}"
             cd "$APP_PATH/platform/backend-node"
             npm run smoke:e2e
 
   deploy-production:
     runs-on: ubuntu-latest
     environment: production
-    needs: [deploy-staging]
+    needs: [preflight, deploy-staging]
     if: ${{ needs.deploy-staging.result == 'success' && (github.event_name == 'push' || inputs.environment == 'all' || inputs.environment == 'production') }}
 
     steps:
@@ -98,14 +146,16 @@ jobs:
       - name: Deploy production over SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.DEPLOY_SSH_HOST || secrets.DEPLOY_HOST }}
+          host: ${{ needs.preflight.outputs.host }}
           username: ${{ secrets.DEPLOY_SSH_USER || secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY || secrets.DEPLOY_SSH_PRIVATE_KEY || secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.DEPLOY_SSH_PORT || secrets.DEPLOY_PORT || 22 }}
+          port: ${{ needs.preflight.outputs.port }}
           script_stop: true
+          timeout: 20s
+          command_timeout: 12m
           script: |
             set -e
-            APP_PATH="${{ secrets.DEPLOY_APP_PATH || '/var/www/barandrest' }}"
+            APP_PATH="${{ needs.preflight.outputs.appPath }}"
             BACKEND_PATH="$APP_PATH/platform/backend-node"
             WEB_PATH="$APP_PATH/platform/web-react"
 
