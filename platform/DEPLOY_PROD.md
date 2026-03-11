@@ -176,6 +176,31 @@ Flujo recomendado:
 3. Ejecutar workflow manual `Platform Deploy` y seleccionar environment.
 4. Activar `runSmoke=true` para validar deploy en staging.
 
+Automatizacion local para cargar secrets (PowerShell):
+
+```powershell
+cd C:\xampp\htdocs\apps\BarandRest\platform\scripts
+.\setup-github-env-secrets.ps1 \
+    -Environment staging \
+    -DeployHost "TU_HOST" \
+    -DeployUser "TU_USUARIO" \
+    -DeployAppPath "/var/www/barandrest" \
+    -SshKeyPath "C:\keys\barandrest_deploy" \
+    -BackendEnvPath "C:\xampp\htdocs\apps\BarandRest\platform\backend-node\.env.production.example"
+```
+
+Automatizacion local para cargar secrets (bash):
+
+```bash
+cd /path/to/BarandRest/platform/scripts
+./setup-github-env-secrets.sh staging TU_HOST TU_USUARIO /var/www/barandrest ~/.ssh/barandrest_deploy ../backend-node/.env.production.example
+```
+
+Primer despliegue recomendado:
+1. Ejecutar `Platform Deploy` con `environment=staging` y `runSmoke=true`.
+2. Verificar log del job y endpoint `health`.
+3. Repetir en `production` con `runSmoke=false`.
+
 ## 10. Endurecimiento final recomendado
 
 - Restringir `CORS_ORIGINS` a dominios exactos (sin `*`).

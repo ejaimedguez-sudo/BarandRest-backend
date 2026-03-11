@@ -201,6 +201,9 @@ Workflow incluido:
 
 - Plantilla de variables productivas: `platform/backend-node/.env.production.example`
 - Runbook de despliegue: `platform/DEPLOY_PROD.md`
+- Scripts para cargar secrets en GitHub Environments:
+  - `platform/scripts/setup-github-env-secrets.ps1`
+  - `platform/scripts/setup-github-env-secrets.sh`
 
 ## Integraciones externas pendientes
 
