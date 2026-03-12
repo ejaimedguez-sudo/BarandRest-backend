@@ -161,6 +161,8 @@
             display: grid;
             gap: 10px;
             align-content: start;
+            max-height: 78vh;
+            overflow: auto;
         }
 
         .sidebar h2 {
@@ -191,6 +193,11 @@
             font-size: 14px;
         }
 
+        .action-btn.active {
+            border-color: color-mix(in srgb, var(--accent) 78%, #fff 22%);
+            background: var(--accent-soft);
+        }
+
         .action-btn span {
             color: var(--muted);
             font-size: 12px;
@@ -200,6 +207,27 @@
             margin-top: 6px;
             border-top: 1px solid var(--border);
             padding-top: 10px;
+            display: grid;
+            gap: 8px;
+        }
+
+        .menu-section {
+            margin-top: 4px;
+            border-top: 1px dashed var(--border);
+            padding-top: 10px;
+            display: grid;
+            gap: 8px;
+        }
+
+        .menu-section h3 {
+            margin: 0;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--muted);
+        }
+
+        .menu-list {
             display: grid;
             gap: 8px;
         }
@@ -305,22 +333,8 @@
                     <strong>Recargar Dashboard</strong>
                     <span>Actualiza la vista embebida</span>
                 </button>
-                <button class="action-btn" id="btnDashboard">
-                    <strong>Ir a Dashboard</strong>
-                    <span>Vuelve al tablero principal</span>
-                </button>
-                <button class="action-btn" id="btnProducts">
-                    <strong>Ver Productos (API)</strong>
-                    <span>Revision rapida de inventario JSON</span>
-                </button>
-                <button class="action-btn" id="btnMonthly">
-                    <strong>Reporte Mensual (API)</strong>
-                    <span>Resumen consolidado por mes</span>
-                </button>
-                <button class="action-btn" id="btnYearly">
-                    <strong>Reporte Anual (API)</strong>
-                    <span>Resumen consolidado por ano</span>
-                </button>
+
+                <div id="fullMenu"></div>
 
                 <div class="quick-links">
                     <a href="/up" target="_blank" rel="noopener noreferrer">Estado de salud /up</a>
@@ -347,6 +361,8 @@
         const openTab = document.getElementById('openTab');
         const loading = document.getElementById('frameLoading');
         const themeSelect = document.getElementById('themeSelect');
+        const fullMenu = document.getElementById('fullMenu');
+        let currentPath = '/dashboard';
 
         function getTheme() {
             const selected = themeSelect.value || localStorage.getItem('barandrest-theme') || 'clasico';
@@ -370,6 +386,70 @@
             const themed = withTheme(src);
             openTab.href = themed;
             frame.src = themed;
+            currentPath = src;
+            highlightActiveMenu(src);
+        }
+
+        function highlightActiveMenu(src) {
+            document.querySelectorAll('[data-menu-src]').forEach((btn) => {
+                btn.classList.toggle('active', btn.dataset.menuSrc === src);
+            });
+        }
+
+        function renderMenu() {
+            const sections = [
+                {
+                    title: 'Principal',
+                    items: [
+                        { label: 'Dashboard', hint: 'Vista general del negocio', src: '/dashboard' },
+                        { label: 'Salud del sistema', hint: 'Endpoint /up', src: '/up' }
+                    ]
+                },
+                {
+                    title: 'Inventario y Catalogo',
+                    items: [
+                        { label: 'Productos', hint: 'Listado de productos', src: '/api/products' },
+                        { label: 'Menu Items', hint: 'Listado del menu', src: '/api/menu-items' },
+                        { label: 'Mesas', hint: 'Listado de mesas', src: '/api/tables' }
+                    ]
+                },
+                {
+                    title: 'Operacion',
+                    items: [
+                        { label: 'Ordenes', hint: 'Flujo de ordenes', src: '/api/orders' },
+                        { label: 'Clientes', hint: 'Base de clientes', src: '/api/customers' },
+                        { label: 'Comisiones', hint: 'Comisiones registradas', src: '/api/commissions' },
+                        { label: 'Gastos', hint: 'Control de gastos', src: '/api/expenses' }
+                    ]
+                },
+                {
+                    title: 'Reportes',
+                    items: [
+                        { label: 'Reporte Diario', hint: 'Resumen diario', src: '/api/reports/daily' },
+                        { label: 'Reporte Semanal', hint: 'Resumen semanal', src: '/api/reports/weekly' },
+                        { label: 'Reporte Mensual', hint: 'Resumen mensual', src: '/api/reports/monthly' },
+                        { label: 'Reporte Anual', hint: 'Resumen anual', src: '/api/reports/yearly' },
+                        { label: 'Reporte de Ventas', hint: 'Analitica de ventas', src: '/api/reports/sales' },
+                        { label: 'Exportar Excel', hint: 'Generar exportacion', src: '/api/reports/export/excel' },
+                        { label: 'Exportar PDF', hint: 'Generar exportacion', src: '/api/reports/export/pdf' }
+                    ]
+                }
+            ];
+
+            fullMenu.innerHTML = sections.map((section) => {
+                const buttons = section.items.map((item) => {
+                    return `<button class="action-btn" data-menu-src="${item.src}"><strong>${item.label}</strong><span>${item.hint}</span></button>`;
+                }).join('');
+                return `<section class="menu-section"><h3>${section.title}</h3><div class="menu-list">${buttons}</div></section>`;
+            }).join('');
+
+            document.querySelectorAll('[data-menu-src]').forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    loadView(btn.dataset.menuSrc, btn.querySelector('strong').textContent || 'Vista');
+                });
+            });
+
+            highlightActiveMenu(currentPath);
         }
 
         frame.addEventListener('load', () => {
@@ -393,10 +473,7 @@
         applyTheme(initialTheme);
         loadView('/dashboard', 'Dashboard Operativo');
 
-        document.getElementById('btnDashboard').addEventListener('click', () => loadView('/dashboard', 'Dashboard Operativo'));
-        document.getElementById('btnProducts').addEventListener('click', () => loadView('/api/products', 'Productos (API)'));
-        document.getElementById('btnMonthly').addEventListener('click', () => loadView('/api/reports/monthly', 'Reporte Mensual (API)'));
-        document.getElementById('btnYearly').addEventListener('click', () => loadView('/api/reports/yearly', 'Reporte Anual (API)'));
+        renderMenu();
     </script>
 </body>
 </html>
