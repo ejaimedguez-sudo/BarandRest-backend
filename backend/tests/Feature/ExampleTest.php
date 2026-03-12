@@ -14,6 +14,7 @@ class ExampleTest extends TestCase
     {
         $response = $this->get('/');
 
-        $response->assertRedirect('/dashboard');
+        $response->assertStatus(200)
+            ->assertSee('Centro de Control BarandRest');
     }
 }
