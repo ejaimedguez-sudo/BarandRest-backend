@@ -8,14 +8,14 @@
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700" rel="stylesheet" />
     <style>
         :root {
-            --bg-1: #0f172a;
-            --bg-2: #111827;
-            --panel: #1f2937;
-            --panel-soft: #111c31;
+            --bg-1: #140b08;
+            --bg-2: #23130b;
+            --panel: #2a170e;
+            --panel-soft: #1c0f09;
             --text: #e5e7eb;
-            --muted: #9ca3af;
-            --accent: #f59e0b;
-            --accent-soft: rgba(245, 158, 11, 0.2);
+            --muted: #d3c7be;
+            --accent: #e06000;
+            --accent-soft: rgba(224, 96, 0, 0.22);
             --ok: #10b981;
             --border: rgba(255, 255, 255, 0.12);
         }
@@ -28,8 +28,8 @@
             color: var(--text);
             min-height: 100vh;
             background:
-                radial-gradient(900px 500px at -10% -20%, rgba(249, 115, 22, 0.2), transparent 55%),
-                radial-gradient(900px 500px at 110% -20%, rgba(16, 185, 129, 0.15), transparent 55%),
+                radial-gradient(900px 500px at -10% -20%, rgba(224, 96, 0, 0.28), transparent 55%),
+                radial-gradient(900px 500px at 110% -20%, rgba(224, 160, 32, 0.22), transparent 55%),
                 linear-gradient(180deg, var(--bg-1), var(--bg-2));
         }
 
@@ -52,6 +52,22 @@
             align-items: center;
             gap: 12px;
             flex-wrap: wrap;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand img {
+            width: 56px;
+            height: 56px;
+            object-fit: contain;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: rgba(0, 0, 0, 0.25);
+            padding: 6px;
         }
 
         .hero h1 {
@@ -114,8 +130,8 @@
 
         .action-btn:hover {
             transform: translateY(-1px);
-            border-color: rgba(245, 158, 11, 0.65);
-            background: rgba(245, 158, 11, 0.08);
+            border-color: rgba(224, 160, 32, 0.75);
+            background: var(--accent-soft);
         }
 
         .action-btn strong {
@@ -137,7 +153,7 @@
         }
 
         .quick-links a {
-            color: #fde68a;
+            color: #ffdca8;
             text-decoration: none;
             font-size: 13px;
         }
@@ -212,8 +228,13 @@
     <main class="shell">
         <section class="hero">
             <div>
-                <h1>BarandRest - Centro de Operaciones</h1>
-                <p>Portada principal con accesos utiles y dashboard embebido para una operacion continua.</p>
+                <div class="brand">
+                    <img src="/assets/branding/comanda-deg.png" alt="Logo BarandRest">
+                    <div>
+                        <h1>BarandRest - Centro de Operaciones</h1>
+                        <p>Portada principal con accesos utiles y dashboard embebido para una operacion continua.</p>
+                    </div>
+                </div>
             </div>
             <div class="badge">Sistema listo</div>
         </section>

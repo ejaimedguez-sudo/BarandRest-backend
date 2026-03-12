@@ -9,13 +9,13 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
-      --bg: #f4f7fb;
+      --bg: #f9f1eb;
       --panel: #ffffff;
-      --text: #0f172a;
-      --muted: #64748b;
-      --border: #e2e8f0;
-      --line: #2563eb;
-      --line-soft: rgba(37, 99, 235, 0.15);
+      --text: #2b160c;
+      --muted: #7f5d4a;
+      --border: #f0dccd;
+      --line: #e06000;
+      --line-soft: rgba(224, 96, 0, 0.14);
       --danger: #b91c1c;
     }
 
@@ -25,7 +25,23 @@
       margin: 0;
       font-family: "Figtree", "Segoe UI", sans-serif;
       color: var(--text);
-      background: radial-gradient(1000px 400px at 0% -30%, rgba(37,99,235,0.08), transparent 60%), var(--bg);
+      background: radial-gradient(1000px 400px at 0% -30%, rgba(224,96,0,0.12), transparent 60%), var(--bg);
+    }
+
+    .brand-mini {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-mini img {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #fff;
+      padding: 4px;
     }
 
     .wrap {
@@ -57,8 +73,8 @@
     .tag {
       padding: 8px 12px;
       border-radius: 999px;
-      background: #dbeafe;
-      color: #1d4ed8;
+      background: #ffedd5;
+      color: #9a3412;
       font-size: 12px;
       font-weight: 700;
     }
@@ -147,20 +163,20 @@
 
     .bar-label {
       font-size: 12px;
-      color: #334155;
+      color: #5b3f31;
       margin-bottom: 4px;
     }
 
     .bar-track {
       height: 10px;
       border-radius: 999px;
-      background: #e2e8f0;
+      background: #f3e0d3;
       overflow: hidden;
     }
 
     .bar-fill {
       height: 100%;
-      background: linear-gradient(90deg, #1d4ed8, #3b82f6);
+      background: linear-gradient(90deg, #c2410c, #e06000);
     }
 
     .error {
@@ -186,8 +202,13 @@
   <main class="wrap">
     <section class="head">
       <div>
-        <h1>Dashboard</h1>
-        <p>Rendimiento semanal y resumen rapido de ventas.</p>
+        <div class="brand-mini">
+          <img src="/assets/branding/comanda-deg.png" alt="Logo BarandRest">
+          <div>
+            <h1>Dashboard</h1>
+            <p>Rendimiento semanal y resumen rapido de ventas.</p>
+          </div>
+        </div>
       </div>
       <div class="tag">Actualizado en vivo</div>
     </section>
@@ -289,8 +310,8 @@
               datasets: [{
                 label: 'Ventas',
                 data: sales,
-                borderColor: '#2563eb',
-                backgroundColor: 'rgba(37, 99, 235, 0.15)',
+                borderColor: '#e06000',
+                backgroundColor: 'rgba(224, 96, 0, 0.14)',
                 fill: true,
                 tension: 0.35,
                 pointRadius: 3,
@@ -304,7 +325,7 @@
                 legend: { display: false }
               },
               scales: {
-                y: { beginAtZero: true, grid: { color: 'rgba(148, 163, 184, 0.25)' } },
+                y: { beginAtZero: true, grid: { color: 'rgba(160, 120, 90, 0.22)' } },
                 x: { grid: { display: false } }
               }
             }
