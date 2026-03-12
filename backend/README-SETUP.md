@@ -1,9 +1,52 @@
-BarAndRest — Setup rápido (local / producción)
+Ordena Facil — Setup rapido (local / produccion)
 ===============================================
 
 Instrucciones para poner en marcha la aplicación localmente (Windows/XAMPP) y recomendaciones de producción.
 
 Local (Windows, usando XAMPP):
+
+Instalador universal recomendado (PC/laptop + instalacion guiada para tablet/movil):
+
+```powershell
+./scripts/install_universal.ps1
+```
+
+o por batch:
+
+```cmd
+scripts\install_universal.bat
+```
+
+Actualizador para equipos ya instalados (trae cambios y reaplica instalacion):
+
+```powershell
+./scripts/update_universal.ps1
+```
+
+Construccion de instaladores actualizados (cada cambio de app):
+
+```powershell
+./scripts/build_installers.ps1
+```
+
+Opcional, sincronizando antes con `main`:
+
+```powershell
+./scripts/build_installers.ps1 -SyncLatest -Branch main
+```
+
+Salida esperada en `backend/release/`:
+- ZIP portable con el estado actual de la app.
+- EXE instalador si Inno Setup 6 esta instalado.
+
+Actualizacion automatica en GitHub Actions:
+
+- Workflow: `backend/.github/workflows/build-installers.yml`
+- Se ejecuta en cada push a `main` sobre cambios en `backend/**`.
+- Instala Inno Setup 6 en runner Windows y compila tambien el instalador EXE.
+- Publica como artifacts:
+  - ZIP portable actualizado (`OrdenaFacil-backend-*.zip`)
+  - EXE instalador (`OrdenaFacil-Installer-*.exe`)
 
 1. Copia/edita `.env` desde `.env.example` y ajusta variables DB y MAIL.
 

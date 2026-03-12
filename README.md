@@ -1,4 +1,4 @@
-# BarandRest — Gestión para Bares y Restaurantes
+# Ordena Facil - Gestion para Bares y Restaurantes
 
 Proyecto inicial para una aplicación de administración de bares y restaurantes.
 
@@ -17,12 +17,12 @@ cp .env.example .env
 php artisan key:generate
 ```
 
-2. Crear base de datos MySQL (ej. `barandrest`) y configurar `.env` con credenciales.
+2. Crear base de datos MySQL (ej. `ordena_facil`) y configurar `.env` con credenciales.
 
 3. Importar esquema inicial (si no usas migraciones aún):
 
 ```bash
-mysql -u root -p barandrest < ../database/initial_schema.sql
+mysql -u root -p ordena_facil < ../database/initial_schema.sql
 ```
 
 4. Ejecutar servidor de desarrollo:

@@ -15,14 +15,15 @@ class SecurityHeaders
         $response = $next($request);
 
         // Basic security headers
-        $response->headers->set('X-Frame-Options', 'DENY');
+        // Allow internal iframe usage (welcome -> dashboard/API) on same origin.
+        $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
         $response->headers->set('X-Content-Type-Options', 'nosniff');
         $response->headers->set('X-XSS-Protection', '1; mode=block');
         $response->headers->set('Referrer-Policy', 'no-referrer-when-downgrade');
         $response->headers->set('Permissions-Policy', 'geolocation=(), microphone=()');
 
         // Content Security Policy - conservative default
-        $csp = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;";
+        $csp = "default-src 'self'; frame-ancestors 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;";
         $response->headers->set('Content-Security-Policy', $csp);
 
         // HSTS for HTTPS (only if request is secure)

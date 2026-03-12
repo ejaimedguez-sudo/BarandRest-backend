@@ -22,7 +22,7 @@ function Run-Step($name, [scriptblock]$action) {
 $projectRoot = Split-Path -Parent $PSScriptRoot
 Set-Location $projectRoot
 
-Step "Preflight BarandRest (backend)"
+Step "Preflight Ordena Facil (backend)"
 Write-Host "Directorio: $projectRoot"
 
 $composerCmd = $null

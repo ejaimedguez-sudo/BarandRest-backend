@@ -1,0 +1,48 @@
+name: Build Installers
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend/**'
+  workflow_dispatch:
+
+jobs:
+  build-installers:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Inno Setup
+        shell: pwsh
+        run: |
+          choco install innosetup --no-progress -y
+          where.exe iscc.exe
+
+      - name: Build installer artifacts
+        shell: pwsh
+        run: |
+          ./scripts/build_installers.ps1
+
+      - name: Validate release outputs
+        shell: pwsh
+        run: |
+          Get-ChildItem ./release | Format-Table Name, Length, LastWriteTime
+          $zip = Get-ChildItem ./release/OrdenaFacil-backend-*.zip -ErrorAction SilentlyContinue
+          $exe = Get-ChildItem ./release/OrdenaFacil-Installer-*.exe -ErrorAction SilentlyContinue
+          if (-not $zip) { throw 'No se genero ZIP instalable.' }
+          if (-not $exe) { throw 'No se genero EXE instalable.' }
+
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ordena-facil-installers-${{ github.run_number }}
+          path: |
+            backend/release/OrdenaFacil-backend-*.zip
+            backend/release/OrdenaFacil-Installer-*.exe
+          if-no-files-found: error

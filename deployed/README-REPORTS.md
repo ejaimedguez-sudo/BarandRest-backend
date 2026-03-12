@@ -12,7 +12,7 @@ Pasos para tener reportes programados y envío por email funcionando:
    - `MAIL_PASSWORD=secreto`
    - `MAIL_ENCRYPTION=tls`
    - `MAIL_FROM_ADDRESS=no-reply@tu-dominio.com`
-   - `MAIL_FROM_NAME="BarAndRest"`
+   - `MAIL_FROM_NAME="Ordena Facil"`
    - `MAIL_REPORT_RECIPIENT=admin@tu-dominio.com` (destinatarios separados por coma)
    - `QUEUE_CONNECTION=database` (recomendado para producción)
 

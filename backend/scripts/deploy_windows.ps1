@@ -1,6 +1,6 @@
 param(
     [string]$ZipPath = "backend_release_clean.zip",
-    [string]$TargetDir = "C:\inetpub\wwwroot\barandrest"
+    [string]$TargetDir = "C:\inetpub\wwwroot\ordena-facil"
 )
 
 Write-Host "Deploying $ZipPath to $TargetDir"

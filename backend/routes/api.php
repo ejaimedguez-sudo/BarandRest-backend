@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\ProductController;
@@ -14,6 +13,8 @@ use App\Http\Controllers\API\ReportController;
 use App\Http\Controllers\API\ReportsQueueController;
 use App\Http\Controllers\API\ReportExportController;
 use App\Http\Controllers\API\PrintController;
+use App\Http\Controllers\API\AuthUserController;
+use App\Http\Controllers\API\SystemCapabilitiesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,9 +27,7 @@ use App\Http\Controllers\API\PrintController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::middleware('auth:sanctum')->get('/user', AuthUserController::class);
 
 // API resource routes
 Route::apiResource('products', ProductController::class);
@@ -48,13 +47,16 @@ Route::get('reports/weekly', [ReportsController::class, 'weekly']);
 Route::get('reports/monthly', [ReportsController::class, 'monthly']);
 Route::get('reports/yearly', [ReportsController::class, 'yearly']);
 Route::get('reports/download/{filename}', [\App\Http\Controllers\API\ReportDownloadController::class, 'download']);
-Route::post('reports/daily/queue', [\App\Http\Controllers\API\ReportsQueueController::class, 'queueDaily']);
+Route::post('reports/daily/queue', [\App\Http\Controllers\API\ReportsQueueController::class, 'queueDaily'])->middleware('role:admin,gerente');
 Route::get('reports/export/excel', [ReportExportController::class, 'exportExcel']);
 Route::get('reports/export/pdf', [ReportExportController::class, 'exportPdf']);
-Route::post('commissions/compute', [\App\Http\Controllers\API\CommissionController::class, 'compute']);
-Route::post('print/ticket', [PrintController::class, 'ticket']);
+Route::post('commissions/compute', [\App\Http\Controllers\API\CommissionController::class, 'compute'])->middleware('role:admin,gerente');
+Route::post('print/ticket', [PrintController::class, 'ticket'])->middleware('role:admin,gerente,caja,cocina,mesero');
 
 // Dashboard
 use App\Http\Controllers\API\DashboardController;
 Route::get('dashboard/metrics', [DashboardController::class, 'metrics'])->middleware(\App\Http\Middleware\DashboardApiKeyAuth::class);
-Route::post('dashboard/clear-cache', [DashboardController::class, 'clearCache'])->middleware(\App\Http\Middleware\DashboardApiKeyAuth::class);
+Route::post('dashboard/clear-cache', [DashboardController::class, 'clearCache'])
+    ->middleware([\App\Http\Middleware\DashboardApiKeyAuth::class, 'role:admin,gerente']);
+
+Route::get('system/capabilities', SystemCapabilitiesController::class)->middleware('role');

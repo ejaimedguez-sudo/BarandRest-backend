@@ -1,0 +1,22 @@
+{
+  "name": "Ordena Facil",
+  "short_name": "OrdenaFacil",
+  "description": "Sistema de operacion para bares y restaurantes.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#2a1409",
+  "theme_color": "#F2911B",
+  "icons": [
+    {
+      "src": "/assets/branding/comanda-deg.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/branding/comanda-deg.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

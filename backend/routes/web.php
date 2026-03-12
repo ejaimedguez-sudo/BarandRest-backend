@@ -2,14 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::view('/', 'welcome');
+Route::view('/dashboard', 'dashboard')->name('dashboard');
 
-Route::get('/dashboard', function () {
-    if (view()->exists('dashboard')) {
-        return view('dashboard');
-    }
-
-    return view('dashboard.index');
-})->name('dashboard');
+Route::view('/install', 'install')->name('install');
+Route::view('/viewer/api', 'api-viewer')->name('viewer.api');

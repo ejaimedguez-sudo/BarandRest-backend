@@ -68,9 +68,9 @@ sudo systemctl start laravel-worker
 2. Create a service:
 
 ```powershell
-nssm install LaraveQueueWorker "C:\\xampp\\php\\php.exe" "C:\\xampp\\htdocs\\apps\\BarandRest\\backend\\artisan" "queue:work --sleep=3 --tries=3 --timeout=0"
-nssm set LaraveQueueWorker AppDirectory C:\xampp\htdocs\apps\BarandRest\backend
-nssm start LaraveQueueWorker
+nssm install OrdenaFacilQueueWorker "C:\\xampp\\php\\php.exe" "C:\\xampp\\htdocs\\apps\\OrdenaFacil\\backend\\artisan" "queue:work --sleep=3 --tries=3 --timeout=0"
+nssm set OrdenaFacilQueueWorker AppDirectory C:\xampp\htdocs\apps\OrdenaFacil\backend
+nssm start OrdenaFacilQueueWorker
 ```
 
 ## Notes

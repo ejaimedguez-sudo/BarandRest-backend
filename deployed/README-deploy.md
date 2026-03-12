@@ -1,4 +1,4 @@
-## BarAndRest — Deploy checklist and server steps
+## Ordena Facil - Deploy checklist and server steps
 
 This document lists recommended commands and steps to enable production services on the server after the code has been copied (via Ansible or manually).
 

@@ -5,6 +5,8 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Support\Facades\Artisan;
+use App\Http\Middleware\EnsureRole;
+use App\Http\Middleware\SecurityHeaders;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -14,7 +16,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->append(SecurityHeaders::class);
+
+        $middleware->alias([
+            'role' => EnsureRole::class,
+        ]);
     })
     ->withSchedule(function (Schedule $schedule): void {
         $schedule->call(function () {

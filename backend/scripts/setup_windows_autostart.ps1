@@ -1,5 +1,5 @@
 Param(
-    [string]$ProjectDir = "C:\xampp\htdocs\apps\BarandRest\backend",
+    [string]$ProjectDir = "C:\xampp\htdocs\apps\OrdenaFacil\backend",
     [string]$PhpExe = "php",
     [int]$Port = 8000,
     [switch]$RunNow
@@ -12,7 +12,7 @@ function Step($message) {
 }
 
 function Register-Task($taskName, $command) {
-    $fullTaskName = "BarandRest\$taskName"
+    $fullTaskName = "OrdenaFacil\$taskName"
     & schtasks /Create /F /SC ONLOGON /TN $fullTaskName /TR $command | Out-Null
     if ($LASTEXITCODE -ne 0) {
         throw "No se pudo registrar tarea: $fullTaskName"
@@ -21,7 +21,7 @@ function Register-Task($taskName, $command) {
 }
 
 function Run-Task($taskName) {
-    $fullTaskName = "BarandRest\$taskName"
+    $fullTaskName = "OrdenaFacil\$taskName"
     & schtasks /Run /TN $fullTaskName | Out-Null
     if ($LASTEXITCODE -ne 0) {
         throw "No se pudo ejecutar tarea: $fullTaskName"
@@ -45,7 +45,7 @@ if (-not (Test-Path $ProjectDir)) {
     throw "No existe el directorio del proyecto: $ProjectDir"
 }
 
-Step "Configurando autoarranque Windows para BarandRest"
+Step "Configurando autoarranque Windows para Ordena Facil"
 Write-Host "ProjectDir: $ProjectDir"
 Write-Host "PHP: $PhpExe"
 
@@ -69,17 +69,17 @@ try {
     }
 
     Step "Resumen tareas programadas"
-    & schtasks /Query /TN "BarandRest\LaravelServer" /FO LIST /V
-    & schtasks /Query /TN "BarandRest\LaravelQueueWorker" /FO LIST /V
-    & schtasks /Query /TN "BarandRest\LaravelScheduler" /FO LIST /V
+    & schtasks /Query /TN "OrdenaFacil\LaravelServer" /FO LIST /V
+    & schtasks /Query /TN "OrdenaFacil\LaravelQueueWorker" /FO LIST /V
+    & schtasks /Query /TN "OrdenaFacil\LaravelScheduler" /FO LIST /V
 }
 catch {
     $tasksConfigured = $false
     Write-Warning "No se pudo configurar Task Scheduler (probable falta de permisos). Se aplicará fallback por Startup del usuario."
 
-    Create-StartupLauncher -fileName "barandrest_server_autostart.cmd" -command $serverCmd
-    Create-StartupLauncher -fileName "barandrest_worker_autostart.cmd" -command $workerCmd
-    Create-StartupLauncher -fileName "barandrest_scheduler_autostart.cmd" -command $schedulerCmd
+    Create-StartupLauncher -fileName "ordena_facil_server_autostart.cmd" -command $serverCmd
+    Create-StartupLauncher -fileName "ordena_facil_worker_autostart.cmd" -command $workerCmd
+    Create-StartupLauncher -fileName "ordena_facil_scheduler_autostart.cmd" -command $schedulerCmd
 
     if ($RunNow) {
         Step "Ejecutando procesos ahora (fallback Startup)"

@@ -35,7 +35,7 @@ O con batch:
 scripts\setup_windows_autostart.bat
 ```
 
-Con permisos suficientes crea tareas programadas en `BarandRest\` para:
+Con permisos suficientes crea tareas programadas en `Ordena Facil\` para:
 
 - `LaravelServer`
 - `LaravelQueueWorker`

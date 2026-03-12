@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Simple deployment helper for Linux servers (run on the target server)
-# Usage: sudo ./deploy_linux.sh /path/to/backend_release_clean.zip /var/www/barandrest
+# Usage: sudo ./deploy_linux.sh /path/to/backend_release_clean.zip /var/www/ordena-facil
 
 ZIP_PATH="$1"
 TARGET_DIR="$2"

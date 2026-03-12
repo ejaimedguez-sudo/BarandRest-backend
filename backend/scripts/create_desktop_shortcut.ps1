@@ -2,7 +2,7 @@ Param(
     [string]$ProjectDir = (Split-Path -Parent $PSScriptRoot),
     [int]$Port = 8000,
     [string]$AppPath = '/',
-    [string]$ShortcutName = 'BarandRest - Iniciar',
+    [string]$ShortcutName = 'Ordena Facil - Iniciar',
     [switch]$CreateStopShortcut,
     [switch]$CreateStartMenuShortcuts,
     [string]$IconPath = ''
@@ -49,7 +49,7 @@ if ([string]::IsNullOrWhiteSpace($startMenuPrograms)) {
     throw 'No se pudo resolver la ruta del Menu Inicio.'
 }
 
-$startMenuFolder = Join-Path $startMenuPrograms 'BarandRest'
+$startMenuFolder = Join-Path $startMenuPrograms 'Ordena Facil'
 if ($CreateStartMenuShortcuts -and -not (Test-Path $startMenuFolder)) {
     New-Item -ItemType Directory -Path $startMenuFolder | Out-Null
 }
@@ -59,9 +59,12 @@ if (-not (Test-Path $runtimeScript)) {
     throw "No existe runtime.ps1 en: $runtimeScript"
 }
 
-$defaultIconPath = Join-Path $PSScriptRoot 'assets\barandrest.ico'
+$defaultIconPath = Join-Path $PSScriptRoot 'assets\ordena-facil.ico'
+$legacyIconPath = Join-Path $PSScriptRoot 'assets\barandrest.ico'
 if ([string]::IsNullOrWhiteSpace($IconPath) -and (Test-Path $defaultIconPath)) {
     $IconPath = $defaultIconPath
+} elseif ([string]::IsNullOrWhiteSpace($IconPath) -and (Test-Path $legacyIconPath)) {
+    $IconPath = $legacyIconPath
 }
 
 $phpExe = (Get-Command php -ErrorAction SilentlyContinue)
@@ -83,7 +86,7 @@ $startShortcutParams = @{
     TargetPath = 'powershell.exe'
     Arguments = $startArguments
     WorkingDirectory = $ProjectDir
-    Description = 'Inicia BarandRest (server + queue + scheduler) y abre el navegador.'
+    Description = 'Inicia Ordena Facil (server + queue + scheduler) y abre el navegador.'
     IconLocation = $icon
 }
 
@@ -99,7 +102,7 @@ if ($CreateStartMenuShortcuts) {
         TargetPath = 'powershell.exe'
         Arguments = $startArguments
         WorkingDirectory = $ProjectDir
-        Description = 'Inicia BarandRest (server + queue + scheduler) y abre el navegador.'
+        Description = 'Inicia Ordena Facil (server + queue + scheduler) y abre el navegador.'
         IconLocation = $icon
     }
 
@@ -108,7 +111,7 @@ if ($CreateStartMenuShortcuts) {
 }
 
 if ($CreateStopShortcut) {
-    $stopShortcutPath = Join-Path $desktop 'BarandRest - Detener.lnk'
+    $stopShortcutPath = Join-Path $desktop 'Ordena Facil - Detener.lnk'
     $stopArguments = "-NoProfile -ExecutionPolicy Bypass -Command `"& '$runtimeScript' -Action stop -ProjectDir '$ProjectDir' -Port $Port`""
 
     $stopShortcutParams = @{
@@ -116,7 +119,7 @@ if ($CreateStopShortcut) {
         TargetPath = 'powershell.exe'
         Arguments = $stopArguments
         WorkingDirectory = $ProjectDir
-        Description = 'Detiene procesos gestionados de BarandRest.'
+        Description = 'Detiene procesos gestionados de Ordena Facil.'
         IconLocation = "$env:SystemRoot\System32\shell32.dll,131"
     }
 
@@ -125,14 +128,14 @@ if ($CreateStopShortcut) {
     Write-Host "Acceso directo creado: $stopShortcutPath" -ForegroundColor Green
 
     if ($CreateStartMenuShortcuts) {
-        $startMenuStopPath = Join-Path $startMenuFolder 'BarandRest - Detener.lnk'
+        $startMenuStopPath = Join-Path $startMenuFolder 'Ordena Facil - Detener.lnk'
 
         $startMenuStopParams = @{
             Path = $startMenuStopPath
             TargetPath = 'powershell.exe'
             Arguments = $stopArguments
             WorkingDirectory = $ProjectDir
-            Description = 'Detiene procesos gestionados de BarandRest.'
+            Description = 'Detiene procesos gestionados de Ordena Facil.'
             IconLocation = "$env:SystemRoot\System32\shell32.dll,131"
         }
 

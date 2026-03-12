@@ -3,7 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dashboard - BarandRest</title>
+  <title>Dashboard - Ordena Facil</title>
+  <meta name="theme-color" content="#F2911B">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/branding/comanda-deg.png" type="image/png">
+  <link rel="apple-touch-icon" href="/assets/branding/comanda-deg.png">
   <link rel="preconnect" href="https://fonts.bunny.net">
   <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -237,7 +241,7 @@
     <section class="head">
       <div>
         <div class="brand-mini">
-          <img src="/assets/branding/comanda-deg.png" alt="Logo BarandRest">
+          <img src="/assets/branding/comanda-deg.png" alt="Logo Ordena Facil">
           <div>
             <h1>Dashboard</h1>
             <p>Rendimiento semanal y resumen rapido de ventas.</p>
@@ -281,6 +285,12 @@
   </main>
 
   <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js').catch(() => {});
+      });
+    }
+
     function fmt(value) {
       return new Intl.NumberFormat('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(value || 0));
     }
@@ -377,10 +387,11 @@
     (function applyThemeFromContext() {
       const params = new URLSearchParams(window.location.search);
       const fromUrl = params.get('theme');
-      const fromStorage = localStorage.getItem('barandrest-theme');
+      const fromStorage = localStorage.getItem('ordena-facil-theme') || localStorage.getItem('barandrest-theme');
       const theme = (fromUrl === 'premium' || fromStorage === 'premium') ? 'premium' : 'clasico';
       document.documentElement.setAttribute('data-theme', theme);
-      localStorage.setItem('barandrest-theme', theme);
+      localStorage.setItem('ordena-facil-theme', theme);
+      localStorage.removeItem('barandrest-theme');
     })();
   </script>
 </body>

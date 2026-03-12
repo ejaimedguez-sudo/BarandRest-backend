@@ -2,6 +2,6 @@
 <body>
     <p>{{ $body }}</p>
     <p>If you received this, SMTP and mail sending are configured.</p>
-    <p>Regards,<br/>BarAndRest</p>
+    <p>Regards,<br/>Ordena Facil</p>
 </body>
 </html>
