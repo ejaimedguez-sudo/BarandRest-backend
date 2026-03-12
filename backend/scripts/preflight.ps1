@@ -73,6 +73,12 @@ Run-Step "Caches Laravel" {
     php artisan view:cache
 }
 
+Run-Step "Preparar entorno para pruebas (sin cache)" {
+    # RefreshDatabase and other test helpers may invoke Artisan commands
+    # that become interactive when config cache forces a non-testing env.
+    php artisan optimize:clear
+}
+
 if (-not $SkipAudit) {
     Run-Step "Auditoría Composer" {
         Invoke-Expression "$composerCmd audit --no-interaction"
@@ -97,6 +103,12 @@ Run-Step "Pruebas backend" {
 Run-Step "Flujo de reporte + cola" {
     php artisan reports:daily
     php artisan queue:work --once
+}
+
+Run-Step "Restaurar caches Laravel" {
+    php artisan config:cache
+    php artisan event:cache
+    php artisan view:cache
 }
 
 if (-not $SkipHttp) {
