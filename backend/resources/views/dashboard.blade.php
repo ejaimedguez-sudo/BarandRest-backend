@@ -8,15 +8,49 @@
   <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    :root {
-      --bg: #f9f1eb;
-      --panel: #ffffff;
-      --text: #2b160c;
-      --muted: #7f5d4a;
-      --border: #f0dccd;
-      --line: #e06000;
-      --line-soft: rgba(224, 96, 0, 0.14);
+    :root,
+    :root[data-theme="clasico"] {
+      --c1: #F2C230;
+      --c2: #F2911B;
+      --c3: #F24607;
+      --c4: #BF1304;
+      --c5: #730C02;
+      --bg: #fdf2e8;
+      --panel: #fffaf7;
+      --text: #3a1a0e;
+      --muted: #8f5f45;
+      --border: #f3d9c8;
+      --line: var(--c3);
+      --line-soft: rgba(242, 70, 7, 0.16);
       --danger: #b91c1c;
+      --tag-bg: #ffedd5;
+      --tag-text: #9a3412;
+      --bar-track: #f7ddce;
+      --bar-grad-1: #c2410c;
+      --bar-grad-2: #f2911b;
+      --grid: rgba(191, 19, 4, 0.18);
+    }
+
+    :root[data-theme="premium"] {
+      --c1: #F2C230;
+      --c2: #F2911B;
+      --c3: #F24607;
+      --c4: #BF1304;
+      --c5: #730C02;
+      --bg: #1b0f0b;
+      --panel: #26140f;
+      --text: #f8e9d6;
+      --muted: #d8bca4;
+      --border: rgba(242, 194, 48, 0.2);
+      --line: var(--c1);
+      --line-soft: rgba(242, 194, 48, 0.14);
+      --danger: #fecaca;
+      --tag-bg: rgba(242, 194, 48, 0.14);
+      --tag-text: #fef3c7;
+      --bar-track: #3b2016;
+      --bar-grad-1: #F2911B;
+      --bar-grad-2: #F2C230;
+      --grid: rgba(242, 194, 48, 0.18);
     }
 
     * { box-sizing: border-box; }
@@ -73,8 +107,8 @@
     .tag {
       padding: 8px 12px;
       border-radius: 999px;
-      background: #ffedd5;
-      color: #9a3412;
+      background: var(--tag-bg);
+      color: var(--tag-text);
       font-size: 12px;
       font-weight: 700;
     }
@@ -163,20 +197,20 @@
 
     .bar-label {
       font-size: 12px;
-      color: #5b3f31;
+      color: var(--muted);
       margin-bottom: 4px;
     }
 
     .bar-track {
       height: 10px;
       border-radius: 999px;
-      background: #f3e0d3;
+      background: var(--bar-track);
       overflow: hidden;
     }
 
     .bar-fill {
       height: 100%;
-      background: linear-gradient(90deg, #c2410c, #e06000);
+      background: linear-gradient(90deg, var(--bar-grad-1), var(--bar-grad-2));
     }
 
     .error {
@@ -310,8 +344,8 @@
               datasets: [{
                 label: 'Ventas',
                 data: sales,
-                borderColor: '#e06000',
-                backgroundColor: 'rgba(224, 96, 0, 0.14)',
+                borderColor: getComputedStyle(document.documentElement).getPropertyValue('--line').trim(),
+                backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--line-soft').trim(),
                 fill: true,
                 tension: 0.35,
                 pointRadius: 3,
@@ -325,7 +359,7 @@
                 legend: { display: false }
               },
               scales: {
-                y: { beginAtZero: true, grid: { color: 'rgba(160, 120, 90, 0.22)' } },
+                y: { beginAtZero: true, grid: { color: getComputedStyle(document.documentElement).getPropertyValue('--grid').trim() } },
                 x: { grid: { display: false } }
               }
             }
@@ -339,6 +373,15 @@
         showError(`No se pudo cargar el reporte semanal (${String(error.message || error)}).`);
         document.getElementById('salesChart').style.display = 'none';
       });
+
+    (function applyThemeFromContext() {
+      const params = new URLSearchParams(window.location.search);
+      const fromUrl = params.get('theme');
+      const fromStorage = localStorage.getItem('barandrest-theme');
+      const theme = (fromUrl === 'premium' || fromStorage === 'premium') ? 'premium' : 'clasico';
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('barandrest-theme', theme);
+    })();
   </script>
 </body>
 </html>

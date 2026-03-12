@@ -7,17 +7,53 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700" rel="stylesheet" />
     <style>
-        :root {
-            --bg-1: #140b08;
-            --bg-2: #23130b;
-            --panel: #2a170e;
-            --panel-soft: #1c0f09;
-            --text: #e5e7eb;
-            --muted: #d3c7be;
-            --accent: #e06000;
-            --accent-soft: rgba(224, 96, 0, 0.22);
+        :root,
+        :root[data-theme="clasico"] {
+            --c1: #F2C230;
+            --c2: #F2911B;
+            --c3: #F24607;
+            --c4: #BF1304;
+            --c5: #730C02;
+            --bg-1: #2a1409;
+            --bg-2: #4b180a;
+            --panel: #5b1d0f;
+            --panel-soft: #3f140a;
+            --text: #fff4ea;
+            --muted: #ffd8c0;
+            --accent: var(--c2);
+            --accent-soft: rgba(242, 145, 27, 0.24);
             --ok: #10b981;
-            --border: rgba(255, 255, 255, 0.12);
+            --border: rgba(255, 255, 255, 0.16);
+            --link: #ffe8b7;
+            --badge-bg: rgba(16, 185, 129, 0.15);
+            --badge-border: rgba(16, 185, 129, 0.35);
+            --badge-text: #d1fae5;
+            --frame-bg: #2a1308;
+            --loading-bg: rgba(26, 8, 3, 0.84);
+        }
+
+        :root[data-theme="premium"] {
+            --c1: #F2C230;
+            --c2: #F2911B;
+            --c3: #F24607;
+            --c4: #BF1304;
+            --c5: #730C02;
+            --bg-1: #140a07;
+            --bg-2: #1b0d09;
+            --panel: #2a130e;
+            --panel-soft: #200f0a;
+            --text: #f8ecdb;
+            --muted: #d9c8b3;
+            --accent: var(--c1);
+            --accent-soft: rgba(242, 194, 48, 0.16);
+            --ok: #34d399;
+            --border: rgba(242, 194, 48, 0.22);
+            --link: #f7d984;
+            --badge-bg: rgba(242, 194, 48, 0.14);
+            --badge-border: rgba(242, 194, 48, 0.35);
+            --badge-text: #fef3c7;
+            --frame-bg: #160b08;
+            --loading-bg: rgba(20, 9, 5, 0.86);
         }
 
         * { box-sizing: border-box; }
@@ -28,8 +64,8 @@
             color: var(--text);
             min-height: 100vh;
             background:
-                radial-gradient(900px 500px at -10% -20%, rgba(224, 96, 0, 0.28), transparent 55%),
-                radial-gradient(900px 500px at 110% -20%, rgba(224, 160, 32, 0.22), transparent 55%),
+                radial-gradient(900px 500px at -10% -20%, color-mix(in srgb, var(--c3) 44%, transparent), transparent 55%),
+                radial-gradient(900px 500px at 110% -20%, color-mix(in srgb, var(--c1) 34%, transparent), transparent 55%),
                 linear-gradient(180deg, var(--bg-1), var(--bg-2));
         }
 
@@ -45,7 +81,7 @@
             border: 1px solid var(--border);
             border-radius: 18px;
             padding: 18px;
-            background: linear-gradient(145deg, rgba(31, 41, 55, 0.95), rgba(17, 24, 39, 0.95));
+            background: linear-gradient(145deg, color-mix(in srgb, var(--panel) 92%, #000 8%), color-mix(in srgb, var(--panel-soft) 92%, #000 8%));
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.28);
             display: flex;
             justify-content: space-between;
@@ -82,13 +118,29 @@
         }
 
         .badge {
-            border: 1px solid rgba(16, 185, 129, 0.35);
-            background: rgba(16, 185, 129, 0.15);
-            color: #d1fae5;
+            border: 1px solid var(--badge-border);
+            background: var(--badge-bg);
+            color: var(--badge-text);
             border-radius: 999px;
             padding: 7px 12px;
             font-size: 12px;
             font-weight: 600;
+        }
+
+        .hero-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .theme-select {
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+            border-radius: 10px;
+            padding: 6px 10px;
+            font: inherit;
+            font-size: 13px;
         }
 
         .layout {
@@ -153,7 +205,7 @@
         }
 
         .quick-links a {
-            color: #ffdca8;
+            color: var(--link);
             text-decoration: none;
             font-size: 13px;
         }
@@ -191,14 +243,14 @@
             border-radius: 14px;
             overflow: hidden;
             border: 1px solid var(--border);
-            background: #0b1220;
+            background: var(--frame-bg);
         }
 
         iframe {
             width: 100%;
             min-height: 76vh;
             border: 0;
-            background: #0b1220;
+            background: var(--frame-bg);
         }
 
         .loading {
@@ -206,8 +258,8 @@
             inset: 0;
             display: grid;
             place-items: center;
-            background: rgba(11, 18, 32, 0.88);
-            color: #fef3c7;
+            background: var(--loading-bg);
+            color: var(--link);
             font-size: 14px;
             letter-spacing: 0.2px;
             transition: opacity .2s ease;
@@ -236,7 +288,14 @@
                     </div>
                 </div>
             </div>
-            <div class="badge">Sistema listo</div>
+            <div class="hero-controls">
+                <label for="themeSelect" style="font-size:12px;color:var(--muted)">Tema</label>
+                <select id="themeSelect" class="theme-select" aria-label="Selector de tema">
+                    <option value="clasico">Clasico</option>
+                    <option value="premium">Premium</option>
+                </select>
+                <div class="badge">Sistema listo</div>
+            </div>
         </section>
 
         <section class="layout">
@@ -287,12 +346,30 @@
         const title = document.getElementById('viewerTitle');
         const openTab = document.getElementById('openTab');
         const loading = document.getElementById('frameLoading');
+        const themeSelect = document.getElementById('themeSelect');
+
+        function getTheme() {
+            const selected = themeSelect.value || localStorage.getItem('barandrest-theme') || 'clasico';
+            return selected === 'premium' ? 'premium' : 'clasico';
+        }
+
+        function applyTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('barandrest-theme', theme);
+        }
+
+        function withTheme(src) {
+            const url = new URL(src, window.location.origin);
+            url.searchParams.set('theme', getTheme());
+            return url.pathname + url.search;
+        }
 
         function loadView(src, text) {
             loading.classList.remove('hidden');
             title.textContent = text;
-            openTab.href = src;
-            frame.src = src;
+            const themed = withTheme(src);
+            openTab.href = themed;
+            frame.src = themed;
         }
 
         frame.addEventListener('load', () => {
@@ -303,6 +380,18 @@
             loading.classList.remove('hidden');
             frame.contentWindow.location.reload();
         });
+
+        themeSelect.addEventListener('change', () => {
+            applyTheme(getTheme());
+            const current = openTab.getAttribute('href') || '/dashboard';
+            const path = current.split('?')[0] || '/dashboard';
+            loadView(path, title.textContent || 'Dashboard Operativo');
+        });
+
+        const initialTheme = (localStorage.getItem('barandrest-theme') === 'premium') ? 'premium' : 'clasico';
+        themeSelect.value = initialTheme;
+        applyTheme(initialTheme);
+        loadView('/dashboard', 'Dashboard Operativo');
 
         document.getElementById('btnDashboard').addEventListener('click', () => loadView('/dashboard', 'Dashboard Operativo'));
         document.getElementById('btnProducts').addEventListener('click', () => loadView('/api/products', 'Productos (API)'));
