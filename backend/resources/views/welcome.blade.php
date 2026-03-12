@@ -170,6 +170,21 @@
             font-size: 17px;
         }
 
+        .menu-search {
+            width: 100%;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+            border-radius: 10px;
+            padding: 8px 10px;
+            font: inherit;
+            font-size: 13px;
+        }
+
+        .menu-search::placeholder {
+            color: var(--muted);
+        }
+
         .action-btn {
             border: 1px solid var(--border);
             background: rgba(255, 255, 255, 0.03);
@@ -230,6 +245,66 @@
         .menu-list {
             display: grid;
             gap: 8px;
+        }
+
+        .ops-box {
+            border-top: 1px dashed var(--border);
+            padding-top: 10px;
+            display: grid;
+            gap: 8px;
+        }
+
+        .ops-box h3 {
+            margin: 0;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--muted);
+        }
+
+        .ops-row {
+            display: grid;
+            gap: 6px;
+        }
+
+        .ops-input {
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+            border-radius: 10px;
+            padding: 8px 10px;
+            font: inherit;
+            font-size: 12px;
+        }
+
+        .ops-actions {
+            display: grid;
+            gap: 8px;
+        }
+
+        .ops-btn {
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text);
+            border-radius: 10px;
+            padding: 8px 10px;
+            font: inherit;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .ops-btn:hover {
+            border-color: color-mix(in srgb, var(--accent) 78%, #fff 22%);
+            background: var(--accent-soft);
+        }
+
+        .ops-result {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 8px 10px;
+            font-size: 12px;
+            color: var(--muted);
+            background: rgba(255, 255, 255, 0.02);
         }
 
         .quick-links a {
@@ -329,12 +404,25 @@
         <section class="layout">
             <aside class="panel sidebar">
                 <h2>Panel de Inicio</h2>
+                <input id="menuSearch" class="menu-search" type="search" placeholder="Buscar opcion..." aria-label="Buscar opcion del menu">
                 <button class="action-btn" id="btnReload">
                     <strong>Recargar Dashboard</strong>
                     <span>Actualiza la vista embebida</span>
                 </button>
 
                 <div id="fullMenu"></div>
+
+                <section class="ops-box">
+                    <h3>Acciones del Sistema</h3>
+                    <div class="ops-row">
+                        <input id="apiKeyInput" class="ops-input" type="password" placeholder="API Key dashboard (si aplica)">
+                    </div>
+                    <div class="ops-actions">
+                        <button id="btnQueueDaily" class="ops-btn" type="button">Encolar reporte diario</button>
+                        <button id="btnClearDashboardCache" class="ops-btn" type="button">Limpiar cache dashboard</button>
+                    </div>
+                    <div id="opsResult" class="ops-result">Listo para ejecutar acciones del sistema.</div>
+                </section>
 
                 <div class="quick-links">
                     <a href="/up" target="_blank" rel="noopener noreferrer">Estado de salud /up</a>
@@ -362,6 +450,9 @@
         const loading = document.getElementById('frameLoading');
         const themeSelect = document.getElementById('themeSelect');
         const fullMenu = document.getElementById('fullMenu');
+        const menuSearch = document.getElementById('menuSearch');
+        const apiKeyInput = document.getElementById('apiKeyInput');
+        const opsResult = document.getElementById('opsResult');
         let currentPath = '/dashboard';
 
         function getTheme() {
@@ -452,6 +543,52 @@
             highlightActiveMenu(currentPath);
         }
 
+        function filterMenu(term) {
+            const query = (term || '').trim().toLowerCase();
+            document.querySelectorAll('.menu-section').forEach((section) => {
+                let visibleCount = 0;
+                section.querySelectorAll('[data-menu-src]').forEach((btn) => {
+                    const text = (btn.textContent || '').toLowerCase();
+                    const visible = !query || text.includes(query);
+                    btn.style.display = visible ? '' : 'none';
+                    if (visible) visibleCount += 1;
+                });
+                section.style.display = visibleCount > 0 ? '' : 'none';
+            });
+        }
+
+        function setOpsResult(message, isError) {
+            opsResult.textContent = message;
+            opsResult.style.color = isError ? '#fecaca' : 'var(--muted)';
+            opsResult.style.borderColor = isError ? 'rgba(191, 19, 4, 0.55)' : 'var(--border)';
+            opsResult.style.background = isError ? 'rgba(191, 19, 4, 0.16)' : 'rgba(255, 255, 255, 0.02)';
+        }
+
+        async function runAction(url, method, requiresApiKey) {
+            try {
+                const headers = { 'Accept': 'application/json' };
+                if (requiresApiKey) {
+                    const key = apiKeyInput.value.trim();
+                    if (!key) {
+                        setOpsResult('Debes indicar la API Key para esta accion.', true);
+                        return;
+                    }
+                    headers['X-API-KEY'] = key;
+                }
+
+                setOpsResult('Ejecutando accion...', false);
+                const res = await fetch(url, { method, headers });
+                if (!res.ok) {
+                    setOpsResult(`Accion fallo: HTTP ${res.status}`, true);
+                    return;
+                }
+
+                setOpsResult('Accion ejecutada correctamente.', false);
+            } catch (error) {
+                setOpsResult(`Error: ${String(error.message || error)}`, true);
+            }
+        }
+
         frame.addEventListener('load', () => {
             loading.classList.add('hidden');
         });
@@ -459,6 +596,18 @@
         document.getElementById('btnReload').addEventListener('click', () => {
             loading.classList.remove('hidden');
             frame.contentWindow.location.reload();
+        });
+
+        menuSearch.addEventListener('input', () => {
+            filterMenu(menuSearch.value);
+        });
+
+        document.getElementById('btnQueueDaily').addEventListener('click', () => {
+            runAction('/api/reports/daily/queue', 'POST', false);
+        });
+
+        document.getElementById('btnClearDashboardCache').addEventListener('click', () => {
+            runAction('/api/dashboard/clear-cache', 'POST', true);
         });
 
         themeSelect.addEventListener('change', () => {
@@ -474,6 +623,7 @@
         loadView('/dashboard', 'Dashboard Operativo');
 
         renderMenu();
+        filterMenu('');
     </script>
 </body>
 </html>
