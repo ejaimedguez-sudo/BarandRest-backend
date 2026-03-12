@@ -15,6 +15,6 @@ class ExampleTest extends TestCase
         $response = $this->get('/');
 
         $response->assertStatus(200)
-            ->assertSee('Centro de Control BarandRest');
+            ->assertSee('BarandRest - Centro de Operaciones');
     }
 }

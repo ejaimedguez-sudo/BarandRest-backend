@@ -1,7 +1,7 @@
 Param(
     [string]$ProjectDir = (Split-Path -Parent $PSScriptRoot),
     [int]$Port = 8000,
-    [string]$AppPath = '/dashboard',
+    [string]$AppPath = '/',
     [string]$ShortcutName = 'BarandRest - Iniciar',
     [switch]$CreateStopShortcut,
     [switch]$CreateStartMenuShortcuts,
