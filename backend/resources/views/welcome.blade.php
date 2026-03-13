@@ -178,7 +178,7 @@
             display: grid;
             gap: 10px;
             align-content: start;
-            max-height: var(--sidebar-max-height, 78vh);
+            height: calc(100vh - 120px);
             overflow-y: auto;
             overflow-x: hidden;
             transition: padding .2s ease;
@@ -266,15 +266,14 @@
         .sidebar-content {
             display: grid;
             gap: 10px;
+            min-height: 0;
             overflow-y: auto;
             overflow-x: hidden;
-            max-height: var(--sidebar-content-max-height, 2000px);
             opacity: 1;
-            transition: max-height .25s ease, opacity .2s ease;
+            transition: opacity .2s ease;
         }
 
         .sidebar.collapsed .sidebar-content {
-            max-height: var(--sidebar-content-max-height, 2000px);
             opacity: 1;
             pointer-events: auto;
             overflow-x: visible;
@@ -946,6 +945,10 @@
 
         @media (max-width: 980px) {
             .layout { grid-template-columns: 1fr; }
+            .sidebar {
+                height: auto;
+                max-height: none;
+            }
             iframe {
                 min-height: 360px;
                 height: var(--viewer-frame-height, 68vh);
@@ -1031,9 +1034,8 @@
                     </section>
 
                     <input id="menuSearch" class="menu-search" type="search" placeholder="Buscar opcion..." aria-label="Buscar opcion del menu">
-                    <button class="action-btn" id="btnReload">
-                        <strong>Recargar Dashboard</strong>
-                        <span>Actualiza la vista embebida</span>
+                    <button class="helper-btn" id="btnReload" type="button">
+                        Recargar vista actual
                     </button>
 
                     <div id="fullMenu"></div>
@@ -1070,7 +1072,7 @@
                 </div>
                 <div class="frame-wrap">
                     <div id="frameLoading" class="loading">Cargando vista...</div>
-                    <iframe id="appFrame" src="/dashboard" title="Vista integrada"></iframe>
+                    <iframe id="appFrame" src="about:blank" title="Vista integrada"></iframe>
                 </div>
             </section>
         </section>
@@ -1455,17 +1457,9 @@
         }
 
         function syncLayoutHeights() {
-            const sidebarMax = Math.max(420, window.innerHeight - 110);
-            const sidebarContentMax = Math.max(260, window.innerHeight - 290);
             const viewerFrameHeight = Math.max(360, window.innerHeight - 220);
 
-            document.documentElement.style.setProperty('--sidebar-max-height', `${sidebarMax}px`);
-            document.documentElement.style.setProperty('--sidebar-content-max-height', `${sidebarContentMax}px`);
             document.documentElement.style.setProperty('--viewer-frame-height', `${viewerFrameHeight}px`);
-
-            if (!sidebar.classList.contains('collapsed') && sidebarContent) {
-                sidebarContent.scrollTop = sidebarContent.scrollTop;
-            }
         }
 
         function applyTheme(theme) {
