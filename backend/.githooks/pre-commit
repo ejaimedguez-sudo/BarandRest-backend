@@ -1,0 +1,13 @@
+#!/usr/bin/env sh
+set -e
+
+echo "[pre-commit] Validando sintaxis PHP..."
+php -l app/Http/Controllers/MeasureController.php >/dev/null
+php -l app/Http/Controllers/ProductController.php >/dev/null
+php -l app/Models/Measure.php >/dev/null
+php -l app/Models/Product.php >/dev/null
+
+echo "[pre-commit] Ejecutando pruebas de catalogos..."
+php artisan test --filter "MeasureCatalogAccessTest|ProductCatalogAccessTest"
+
+echo "[pre-commit] OK"

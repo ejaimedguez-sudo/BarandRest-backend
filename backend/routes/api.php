@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\MeasureController;
 use App\Http\Controllers\MenuItemController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\TableRestaurantController;
@@ -31,6 +32,8 @@ Route::middleware('auth:sanctum')->get('/user', AuthUserController::class);
 
 // API resource routes
 Route::apiResource('products', ProductController::class)
+    ->middleware(['role', 'capability:manage_catalog']);
+Route::apiResource('measures', MeasureController::class)
     ->middleware(['role', 'capability:manage_catalog']);
 Route::apiResource('menu-items', MenuItemController::class);
 Route::apiResource('orders', OrderController::class);

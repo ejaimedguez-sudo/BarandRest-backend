@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome');
 Route::view('/dashboard', 'dashboard')->name('dashboard');
+Route::view('/catalog/measures', 'catalog-measures')->name('catalog.measures');
 Route::view('/catalog/products', 'catalog-products')->name('catalog.products');
 
 Route::view('/install', 'install')->name('install');

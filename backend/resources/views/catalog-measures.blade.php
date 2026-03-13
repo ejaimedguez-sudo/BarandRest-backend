@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Catalogo de Productos - Ordena Facil</title>
+    <title>Catalogo de Medidas - Ordena Facil</title>
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700" rel="stylesheet" />
     <style>
@@ -13,7 +13,6 @@
             --c2: #F2911B;
             --c3: #F24607;
             --c4: #BF1304;
-            --c5: #730C02;
             --bg: #fdf2e8;
             --panel: #fffaf7;
             --panel-soft: #fff4ea;
@@ -33,7 +32,6 @@
             --c2: #F2911B;
             --c3: #F24607;
             --c4: #BF1304;
-            --c5: #730C02;
             --bg: #1b0f0b;
             --panel: #26140f;
             --panel-soft: #1f110d;
@@ -100,11 +98,6 @@
             background: rgba(255, 255, 255, 0.06);
         }
 
-        .grid {
-            display: grid;
-            gap: 12px;
-        }
-
         .panel {
             border: 1px solid var(--border);
             border-radius: 14px;
@@ -130,39 +123,76 @@
             padding: 12px;
         }
 
-        .form-grid {
-            display: grid;
-            gap: 10px;
+        .toolbar {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
         }
 
-        .field {
-            display: grid;
-            gap: 4px;
-        }
-
-        .field label {
-            font-size: 12px;
-            color: var(--muted);
-        }
-
-        .field input {
+        .toolbar input {
+            flex: 1;
+            min-width: 180px;
             border: 1px solid var(--border);
             border-radius: 10px;
             background: rgba(255, 255, 255, 0.07);
             color: var(--text);
-            padding: 9px 10px;
+            padding: 8px 10px;
             font: inherit;
-            min-height: 40px;
+            min-height: 38px;
         }
 
-        .field input:focus-visible {
-            outline: 2px solid color-mix(in srgb, var(--c1) 76%, #fff 24%);
-            outline-offset: 1px;
+        .table-wrap {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: scroll;
+            height: min(58vh, 540px);
+            background: rgba(0, 0, 0, 0.06);
         }
 
-        .form-actions {
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 760px;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+            font-size: 13px;
+            vertical-align: top;
+        }
+
+        th {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            background: color-mix(in srgb, var(--panel) 88%, #000 12%);
+            font-size: 12px;
+            color: var(--muted);
+            letter-spacing: .2px;
+        }
+
+        tbody tr {
+            cursor: pointer;
+            transition: background-color .16s ease;
+        }
+
+        tbody tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        tbody tr.selected {
+            background: rgba(242, 145, 27, 0.22);
+        }
+
+        .frame-footer {
+            margin-top: 10px;
             display: flex;
             gap: 8px;
+            justify-content: flex-end;
             flex-wrap: wrap;
         }
 
@@ -177,19 +207,8 @@
             background: rgba(255, 255, 255, 0.05);
         }
 
-        .btn.primary {
-            border-color: color-mix(in srgb, var(--c2) 72%, #fff 28%);
-            background: linear-gradient(120deg, rgba(242, 145, 27, 0.34), rgba(242, 70, 7, 0.24));
-        }
-
-        .btn:hover {
-            filter: brightness(1.06);
-        }
-
-        .btn:disabled {
-            opacity: .5;
-            cursor: not-allowed;
-        }
+        .btn:hover { filter: brightness(1.06); }
+        .btn:disabled { opacity: .5; cursor: not-allowed; }
 
         .btn-add {
             border-color: color-mix(in srgb, var(--c2) 72%, #fff 28%);
@@ -233,77 +252,10 @@
             color: var(--warn-text);
         }
 
-        .toolbar {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-bottom: 10px;
-        }
-
-        .toolbar input {
-            flex: 1;
-            min-width: 180px;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.07);
-            color: var(--text);
-            padding: 8px 10px;
-            font: inherit;
-            min-height: 38px;
-        }
-
-        .table-wrap {
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            overflow: scroll;
-            height: min(58vh, 540px);
-            background: rgba(0, 0, 0, 0.06);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 730px;
-        }
-
-        th,
-        td {
-            padding: 10px;
-            border-bottom: 1px solid var(--border);
-            text-align: left;
-            font-size: 13px;
-            vertical-align: middle;
-        }
-
-        th {
-            position: sticky;
-            top: 0;
-            z-index: 2;
-            background: color-mix(in srgb, var(--panel) 88%, #000 12%);
-            font-size: 12px;
+        .empty {
+            padding: 16px;
             color: var(--muted);
-            letter-spacing: .2px;
-        }
-
-        tbody tr {
-            cursor: pointer;
-            transition: background-color .16s ease;
-        }
-
-        tbody tr:hover {
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        tbody tr.selected {
-            background: rgba(242, 145, 27, 0.22);
-        }
-
-        .frame-footer {
-            margin-top: 10px;
-            display: flex;
-            gap: 8px;
-            justify-content: flex-end;
-            flex-wrap: wrap;
+            font-size: 13px;
         }
 
         .editor-overlay {
@@ -365,10 +317,34 @@
             padding-right: 2px;
         }
 
-        .empty {
-            padding: 16px;
+        .form-grid { display: grid; gap: 10px; }
+        .field { display: grid; gap: 4px; }
+
+        .field label {
+            font-size: 12px;
             color: var(--muted);
-            font-size: 13px;
+        }
+
+        .field input,
+        .field textarea {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.07);
+            color: var(--text);
+            padding: 9px 10px;
+            font: inherit;
+            min-height: 40px;
+        }
+
+        .field textarea {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
         @media (max-width: 980px) {
@@ -388,76 +364,59 @@
 <main class="wrap">
     <section class="hero">
         <div>
-            <h1>Catalogo de Productos</h1>
-            <p>Administra el alta, edicion y eliminacion de productos segun permisos del usuario activo.</p>
+            <h1>Catalogo de Medidas</h1>
+            <p>Administra unidades y medidas antes de registrar productos del inventario.</p>
         </div>
         <div class="badge" id="roleBadge">Rol: guest</div>
     </section>
 
-    <section class="grid">
-        <article class="panel">
-            <div class="head">
-                <h2>Productos registrados</h2>
-                <button id="btnRefresh" class="btn" type="button">Actualizar</button>
+    <section class="panel">
+        <div class="head">
+            <h2>Medidas registradas</h2>
+            <button id="btnRefresh" class="btn" type="button">Actualizar</button>
+        </div>
+        <div class="body">
+            <div class="toolbar">
+                <input id="tableFilter" type="search" placeholder="Buscar por nombre o abreviatura">
             </div>
-            <div class="body">
-                <div class="toolbar">
-                    <input id="tableFilter" type="search" placeholder="Buscar por nombre, SKU o unidad">
-                </div>
-                <div id="tableContainer" class="table-wrap"></div>
-                <div class="frame-footer">
-                    <button id="btnAdd" class="btn btn-add" type="button">Agregar</button>
-                    <button id="btnEdit" class="btn btn-edit" type="button">Editar</button>
-                    <button id="btnDelete" class="btn btn-delete" type="button">Eliminar</button>
-                </div>
-                <div id="status" class="status">Selecciona un producto y usa los botones de accion.</div>
+            <div id="tableContainer" class="table-wrap"></div>
+            <div class="frame-footer">
+                <button id="btnAdd" class="btn btn-add" type="button">Agregar</button>
+                <button id="btnEdit" class="btn btn-edit" type="button">Editar</button>
+                <button id="btnDelete" class="btn btn-delete" type="button">Eliminar</button>
             </div>
-        </article>
+            <div id="status" class="status">Selecciona una medida y usa los botones de accion.</div>
+        </div>
     </section>
 </main>
 
 <div id="editorOverlay" class="editor-overlay" aria-hidden="true"></div>
 <section id="editorFrame" class="editor-frame" aria-hidden="true">
     <div class="editor-head">
-        <h2 id="formTitle">Nuevo producto</h2>
+        <h2 id="formTitle">Nueva medida</h2>
         <button id="btnCloseEditor" class="btn" type="button">Cerrar</button>
     </div>
     <div class="editor-body">
-        <form id="productForm" class="form-grid">
-            <input id="productId" type="hidden">
-
-            <div class="field">
-                <label for="sku">SKU</label>
-                <input id="sku" name="sku" type="text" maxlength="120" placeholder="Opcional">
-            </div>
+        <form id="measureForm" class="form-grid">
+            <input id="measureId" type="hidden">
 
             <div class="field">
                 <label for="name">Nombre *</label>
-                <input id="name" name="name" type="text" maxlength="255" required>
+                <input id="name" name="name" type="text" maxlength="120" required>
             </div>
 
             <div class="field">
-                <label for="unit">Unidad *</label>
-                <input id="unit" name="unit" type="text" maxlength="50" placeholder="kg, lt, pieza" required>
+                <label for="abbreviation">Abreviatura</label>
+                <input id="abbreviation" name="abbreviation" type="text" maxlength="20" placeholder="kg, ml, pza">
             </div>
 
             <div class="field">
-                <label for="cost">Costo</label>
-                <input id="cost" name="cost" type="number" min="0" step="0.01" placeholder="0.00">
-            </div>
-
-            <div class="field">
-                <label for="stock">Stock</label>
-                <input id="stock" name="stock" type="number" step="0.001" placeholder="0">
-            </div>
-
-            <div class="field">
-                <label for="reorder_level">Nivel de reposicion</label>
-                <input id="reorder_level" name="reorder_level" type="number" min="0" step="1" placeholder="0">
+                <label for="description">Descripcion</label>
+                <textarea id="description" name="description" maxlength="500" placeholder="Uso o detalle de la medida"></textarea>
             </div>
 
             <div class="form-actions">
-                <button id="btnSubmit" class="btn btn-add" type="submit">Guardar producto</button>
+                <button id="btnSubmit" class="btn btn-add" type="submit">Guardar medida</button>
                 <button id="btnCancelEdit" class="btn" type="button">Cancelar</button>
             </div>
         </form>
@@ -470,7 +429,7 @@
     const theme = (params.get('theme') === 'premium' || localStorage.getItem('ordena-facil-theme') === 'premium') ? 'premium' : 'clasico';
 
     const roleBadge = document.getElementById('roleBadge');
-    const productForm = document.getElementById('productForm');
+    const measureForm = document.getElementById('measureForm');
     const formTitle = document.getElementById('formTitle');
     const statusBox = document.getElementById('status');
     const tableContainer = document.getElementById('tableContainer');
@@ -485,18 +444,15 @@
     const btnCloseEditor = document.getElementById('btnCloseEditor');
 
     const fields = {
-        id: document.getElementById('productId'),
-        sku: document.getElementById('sku'),
+        id: document.getElementById('measureId'),
         name: document.getElementById('name'),
-        unit: document.getElementById('unit'),
-        cost: document.getElementById('cost'),
-        stock: document.getElementById('stock'),
-        reorder_level: document.getElementById('reorder_level'),
+        abbreviation: document.getElementById('abbreviation'),
+        description: document.getElementById('description'),
     };
 
-    let products = [];
+    let measures = [];
     let canManageCatalog = false;
-    let selectedProductId = null;
+    let selectedMeasureId = null;
 
     document.documentElement.setAttribute('data-theme', theme);
     roleBadge.textContent = `Rol: ${role}`;
@@ -504,46 +460,24 @@
     function setStatus(message, type) {
         statusBox.textContent = message;
         statusBox.classList.remove('ok', 'error');
-        if (type) {
-            statusBox.classList.add(type);
-        }
-    }
-
-    function normalizeNumber(value) {
-        if (value === '' || value === null || value === undefined) return null;
-        const parsed = Number(value);
-        return Number.isFinite(parsed) ? parsed : null;
-    }
-
-    function collectPayload() {
-        return {
-            sku: fields.sku.value.trim() || null,
-            name: fields.name.value.trim(),
-            unit: fields.unit.value.trim(),
-            cost: normalizeNumber(fields.cost.value),
-            stock: normalizeNumber(fields.stock.value),
-            reorder_level: normalizeNumber(fields.reorder_level.value),
-        };
+        if (type) statusBox.classList.add(type);
     }
 
     function clearForm() {
         fields.id.value = '';
-        fields.sku.value = '';
         fields.name.value = '';
-        fields.unit.value = '';
-        fields.cost.value = '';
-        fields.stock.value = '';
-        fields.reorder_level.value = '';
-        formTitle.textContent = 'Nuevo producto';
-        btnSubmit.textContent = 'Guardar producto';
+        fields.abbreviation.value = '';
+        fields.description.value = '';
+        formTitle.textContent = 'Nueva medida';
+        btnSubmit.textContent = 'Guardar medida';
     }
 
-    function getSelectedProduct() {
-        return products.find((item) => Number(item.id) === Number(selectedProductId)) || null;
+    function getSelectedMeasure() {
+        return measures.find((item) => Number(item.id) === Number(selectedMeasureId)) || null;
     }
 
     function updateActionButtons() {
-        const hasSelection = !!getSelectedProduct();
+        const hasSelection = !!getSelectedMeasure();
         btnAdd.disabled = !canManageCatalog;
         btnEdit.disabled = !canManageCatalog || !hasSelection;
         btnDelete.disabled = !canManageCatalog || !hasSelection;
@@ -556,25 +490,22 @@
         }
 
         if (mode === 'edit') {
-            const product = getSelectedProduct();
-            if (!product) {
-                setStatus('Selecciona un producto para editar.', 'error');
+            const measure = getSelectedMeasure();
+            if (!measure) {
+                setStatus('Selecciona una medida para editar.', 'error');
                 return;
             }
 
-            fields.id.value = String(product.id);
-            fields.sku.value = product.sku || '';
-            fields.name.value = product.name || '';
-            fields.unit.value = product.unit || '';
-            fields.cost.value = product.cost ?? '';
-            fields.stock.value = product.stock ?? '';
-            fields.reorder_level.value = product.reorder_level ?? '';
-            formTitle.textContent = `Editar producto #${product.id}`;
+            fields.id.value = String(measure.id);
+            fields.name.value = measure.name || '';
+            fields.abbreviation.value = measure.abbreviation || '';
+            fields.description.value = measure.description || '';
+            formTitle.textContent = `Editar medida #${measure.id}`;
             btnSubmit.textContent = 'Guardar cambios';
         } else {
             clearForm();
-            formTitle.textContent = 'Agregar producto';
-            btnSubmit.textContent = 'Guardar producto';
+            formTitle.textContent = 'Agregar medida';
+            btnSubmit.textContent = 'Guardar medida';
         }
 
         editorOverlay.classList.add('active');
@@ -594,7 +525,7 @@
 
     function setFormEditable(enabled) {
         Object.values(fields).forEach((field) => {
-            if (field.id === 'productId') return;
+            if (field.id === 'measureId') return;
             field.disabled = !enabled;
         });
 
@@ -602,6 +533,14 @@
         btnCancelEdit.disabled = !enabled;
         btnCloseEditor.disabled = !enabled;
         updateActionButtons();
+    }
+
+    function collectPayload() {
+        return {
+            name: fields.name.value.trim(),
+            abbreviation: fields.abbreviation.value.trim() || null,
+            description: fields.description.value.trim() || null,
+        };
     }
 
     async function requestJson(url, options = {}) {
@@ -633,7 +572,7 @@
                 setStatus('Tu rol actual no tiene permisos para administrar el catalogo.', 'error');
             } else {
                 setFormEditable(true);
-                setStatus('Selecciona un producto y usa Agregar, Editar o Eliminar.', null);
+                setStatus('Selecciona una medida y usa Agregar, Editar o Eliminar.', null);
             }
         } catch (error) {
             canManageCatalog = false;
@@ -642,31 +581,22 @@
         }
     }
 
-    function formatNumber(value, decimals = 2) {
-        if (value === null || value === undefined || value === '') return '-';
-        const numeric = Number(value);
-        if (!Number.isFinite(numeric)) return String(value);
-        return numeric.toFixed(decimals);
-    }
-
     function renderTable(rows) {
         if (!rows.length) {
-            tableContainer.innerHTML = '<div class="empty">No hay productos registrados.</div>';
-            selectedProductId = null;
+            tableContainer.innerHTML = '<div class="empty">No hay medidas registradas.</div>';
+            selectedMeasureId = null;
             updateActionButtons();
             return;
         }
 
-        const body = rows.map((product) => {
-            const selected = Number(selectedProductId) === Number(product.id) ? ' class="selected"' : '';
+        const body = rows.map((measure) => {
+            const selected = Number(selectedMeasureId) === Number(measure.id) ? ' class="selected"' : '';
             return `
-                <tr data-product-id="${product.id}"${selected}>
-                    <td>${product.sku || '-'}</td>
-                    <td>${product.name || '-'}</td>
-                    <td>${product.unit || '-'}</td>
-                    <td>${formatNumber(product.cost, 2)}</td>
-                    <td>${formatNumber(product.stock, 3)}</td>
-                    <td>${product.reorder_level ?? '-'}</td>
+                <tr data-measure-id="${measure.id}"${selected}>
+                    <td>${measure.name || '-'}</td>
+                    <td>${measure.abbreviation || '-'}</td>
+                    <td>${measure.description || '-'}</td>
+                    <td>${measure.created_at ? new Date(measure.created_at).toLocaleDateString() : '-'}</td>
                 </tr>
             `;
         }).join('');
@@ -675,12 +605,10 @@
             <table>
                 <thead>
                     <tr>
-                        <th>SKU</th>
                         <th>Nombre</th>
-                        <th>Unidad</th>
-                        <th>Costo</th>
-                        <th>Stock</th>
-                        <th>Reposicion</th>
+                        <th>Abreviatura</th>
+                        <th>Descripcion</th>
+                        <th>Creacion</th>
                     </tr>
                 </thead>
                 <tbody>${body}</tbody>
@@ -693,62 +621,61 @@
     function applyFilter() {
         const term = (tableFilter.value || '').trim().toLowerCase();
         if (!term) {
-            renderTable(products);
+            renderTable(measures);
             return;
         }
 
-        const filtered = products.filter((product) => {
-            const line = `${product.sku || ''} ${product.name || ''} ${product.unit || ''}`.toLowerCase();
+        const filtered = measures.filter((measure) => {
+            const line = `${measure.name || ''} ${measure.abbreviation || ''} ${measure.description || ''}`.toLowerCase();
             return line.includes(term);
         });
 
         renderTable(filtered);
     }
 
-    async function loadProducts() {
+    async function loadMeasures() {
         try {
-            const data = await requestJson('/api/products');
-            products = Array.isArray(data) ? data : [];
+            const data = await requestJson('/api/measures');
+            measures = Array.isArray(data) ? data : [];
 
-            if (!getSelectedProduct()) {
-                selectedProductId = null;
+            if (!getSelectedMeasure()) {
+                selectedMeasureId = null;
             }
 
             applyFilter();
         } catch (error) {
-            tableContainer.innerHTML = '<div class="empty">No fue posible cargar productos.</div>';
-            setStatus(`Error cargando productos: ${String(error.message || error)}`, 'error');
+            tableContainer.innerHTML = '<div class="empty">No fue posible cargar medidas.</div>';
+            setStatus(`Error cargando medidas: ${String(error.message || error)}`, 'error');
         }
     }
 
-    async function removeSelectedProduct() {
+    async function removeSelectedMeasure() {
         if (!canManageCatalog) return;
 
-        const product = getSelectedProduct();
-        if (!product) {
-            setStatus('Selecciona un producto para eliminar.', 'error');
+        const measure = getSelectedMeasure();
+        if (!measure) {
+            setStatus('Selecciona una medida para eliminar.', 'error');
             return;
         }
 
-        const productId = Number(product.id);
-        const label = product?.name ? `"${product.name}"` : `#${productId}`;
-        if (!window.confirm(`¿Deseas eliminar el producto ${label}?`)) return;
+        const label = measure?.name ? `"${measure.name}"` : `#${measure.id}`;
+        if (!window.confirm(`¿Deseas eliminar la medida ${label}?`)) return;
 
         try {
-            await requestJson(`/api/products/${productId}`, { method: 'DELETE' });
-            setStatus('Producto eliminado correctamente.', 'ok');
-            selectedProductId = null;
-            await loadProducts();
+            await requestJson(`/api/measures/${measure.id}`, { method: 'DELETE' });
+            selectedMeasureId = null;
+            setStatus('Medida eliminada correctamente.', 'ok');
+            await loadMeasures();
         } catch (error) {
             setStatus(`No se pudo eliminar: ${String(error.message || error)}`, 'error');
         }
     }
 
-    productForm.addEventListener('submit', async (event) => {
+    measureForm.addEventListener('submit', async (event) => {
         event.preventDefault();
 
         if (!canManageCatalog) {
-            setStatus('No tienes permisos para crear o editar productos.', 'error');
+            setStatus('No tienes permisos para crear o editar medidas.', 'error');
             return;
         }
 
@@ -757,24 +684,24 @@
 
         try {
             if (editingId) {
-                await requestJson(`/api/products/${editingId}`, {
+                await requestJson(`/api/measures/${editingId}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload),
                 });
-                setStatus('Producto actualizado correctamente.', 'ok');
-                selectedProductId = editingId;
+                selectedMeasureId = editingId;
+                setStatus('Medida actualizada correctamente.', 'ok');
             } else {
-                await requestJson('/api/products', {
+                await requestJson('/api/measures', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload),
                 });
-                setStatus('Producto creado correctamente.', 'ok');
+                setStatus('Medida creada correctamente.', 'ok');
             }
 
             closeEditor();
-            await loadProducts();
+            await loadMeasures();
         } catch (error) {
             setStatus(`No se pudo guardar: ${String(error.message || error)}`, 'error');
         }
@@ -794,7 +721,7 @@
     });
 
     document.getElementById('btnRefresh').addEventListener('click', async () => {
-        await loadProducts();
+        await loadMeasures();
         setStatus('Listado actualizado.', null);
     });
 
@@ -807,27 +734,27 @@
     });
 
     btnDelete.addEventListener('click', async () => {
-        await removeSelectedProduct();
+        await removeSelectedMeasure();
     });
 
     tableFilter.addEventListener('input', applyFilter);
 
     tableContainer.addEventListener('click', (event) => {
-        const row = event.target.closest('tr[data-product-id]');
+        const row = event.target.closest('tr[data-measure-id]');
         if (!row) return;
 
-        selectedProductId = Number(row.dataset.productId);
+        selectedMeasureId = Number(row.dataset.measureId);
         applyFilter();
-        const selected = getSelectedProduct();
+        const selected = getSelectedMeasure();
         if (selected) {
-            setStatus(`Producto seleccionado: ${selected.name}`, null);
+            setStatus(`Medida seleccionada: ${selected.name}`, null);
         }
     });
 
     async function init() {
         clearForm();
         await loadCapabilities();
-        await loadProducts();
+        await loadMeasures();
         updateActionButtons();
     }
 

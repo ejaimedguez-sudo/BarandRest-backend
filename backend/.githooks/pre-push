@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+set -e
+
+echo "[pre-push] Limpiando cache de Laravel..."
+php artisan optimize:clear >/dev/null
+
+echo "[pre-push] Ejecutando suite completa..."
+php artisan test
+
+echo "[pre-push] OK"
