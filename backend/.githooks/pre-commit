@@ -1,13 +1,6 @@
-#!/usr/bin/env sh
+#!/bin/sh
 set -e
 
-echo "[pre-commit] Validando sintaxis PHP..."
-php -l app/Http/Controllers/MeasureController.php >/dev/null
-php -l app/Http/Controllers/ProductController.php >/dev/null
-php -l app/Models/Measure.php >/dev/null
-php -l app/Models/Product.php >/dev/null
+cd backend
 
-echo "[pre-commit] Ejecutando pruebas de catalogos..."
-php artisan test --filter "MeasureCatalogAccessTest|ProductCatalogAccessTest"
-
-echo "[pre-commit] OK"
+echo [pre-commit] Validando sintaxis PHP... && php -l app/Http/Controllers/MeasureController.php && php -l app/Http/Controllers/ProductController.php && php -l app/Models/Measure.php && php -l app/Models/Product.php && echo [pre-commit] Ejecutando pruebas de catalogos... && php artisan test --filter MeasureCatalogAccessTest && php artisan test --filter ProductCatalogAccessTest && echo [pre-commit] OK
