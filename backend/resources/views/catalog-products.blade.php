@@ -102,7 +102,6 @@
 
         .grid {
             display: grid;
-            grid-template-columns: 360px 1fr;
             gap: 12px;
         }
 
@@ -238,8 +237,8 @@
         .table-wrap {
             border: 1px solid var(--border);
             border-radius: 12px;
-            overflow: auto;
-            max-height: 58vh;
+            overflow: scroll;
+            height: min(58vh, 540px);
             background: rgba(0, 0, 0, 0.06);
         }
 
@@ -268,16 +267,84 @@
             letter-spacing: .2px;
         }
 
-        .row-actions {
+        tbody tr {
+            cursor: pointer;
+            transition: background-color .16s ease;
+        }
+
+        tbody tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        tbody tr.selected {
+            background: rgba(242, 145, 27, 0.22);
+        }
+
+        .frame-footer {
+            margin-top: 10px;
             display: flex;
-            gap: 6px;
+            gap: 8px;
+            justify-content: flex-end;
             flex-wrap: wrap;
         }
 
-        .row-actions .btn {
-            min-height: 30px;
-            padding: 5px 9px;
-            font-size: 12px;
+        .editor-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.48);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .18s ease;
+        }
+
+        .editor-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .editor-frame {
+            position: fixed;
+            z-index: 101;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%) scale(.98);
+            width: min(760px, calc(100vw - 32px));
+            max-height: calc(100vh - 32px);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: linear-gradient(160deg, var(--panel), var(--panel-soft));
+            box-shadow: 0 28px 50px rgba(0, 0, 0, 0.35);
+            padding: 14px;
+            display: grid;
+            gap: 10px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .18s ease, transform .18s ease;
+        }
+
+        .editor-frame.active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .editor-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .editor-head h2 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .editor-body {
+            overflow: auto;
+            max-height: calc(100vh - 170px);
+            padding-right: 2px;
         }
 
         .empty {
@@ -287,8 +354,15 @@
         }
 
         @media (max-width: 980px) {
-            .grid { grid-template-columns: 1fr; }
-            .table-wrap { max-height: 46vh; }
+            .table-wrap { height: min(46vh, 420px); }
+
+            .frame-footer {
+                justify-content: stretch;
+            }
+
+            .frame-footer .btn {
+                flex: 1;
+            }
         }
     </style>
 </head>
@@ -305,54 +379,6 @@
     <section class="grid">
         <article class="panel">
             <div class="head">
-                <h2 id="formTitle">Nuevo producto</h2>
-                <button id="btnReset" class="btn" type="button">Limpiar</button>
-            </div>
-            <div class="body">
-                <form id="productForm" class="form-grid">
-                    <input id="productId" type="hidden">
-
-                    <div class="field">
-                        <label for="sku">SKU</label>
-                        <input id="sku" name="sku" type="text" maxlength="120" placeholder="Opcional">
-                    </div>
-
-                    <div class="field">
-                        <label for="name">Nombre *</label>
-                        <input id="name" name="name" type="text" maxlength="255" required>
-                    </div>
-
-                    <div class="field">
-                        <label for="unit">Unidad *</label>
-                        <input id="unit" name="unit" type="text" maxlength="50" placeholder="kg, lt, pieza" required>
-                    </div>
-
-                    <div class="field">
-                        <label for="cost">Costo</label>
-                        <input id="cost" name="cost" type="number" min="0" step="0.01" placeholder="0.00">
-                    </div>
-
-                    <div class="field">
-                        <label for="stock">Stock</label>
-                        <input id="stock" name="stock" type="number" step="0.001" placeholder="0">
-                    </div>
-
-                    <div class="field">
-                        <label for="reorder_level">Nivel de reposicion</label>
-                        <input id="reorder_level" name="reorder_level" type="number" min="0" step="1" placeholder="0">
-                    </div>
-
-                    <div class="form-actions">
-                        <button id="btnSubmit" class="btn primary" type="submit">Guardar producto</button>
-                        <button id="btnCancelEdit" class="btn" type="button">Cancelar edicion</button>
-                    </div>
-                </form>
-                <div id="status" class="status">Listo para gestionar catalogo.</div>
-            </div>
-        </article>
-
-        <article class="panel">
-            <div class="head">
                 <h2>Productos registrados</h2>
                 <button id="btnRefresh" class="btn" type="button">Actualizar</button>
             </div>
@@ -361,10 +387,64 @@
                     <input id="tableFilter" type="search" placeholder="Buscar por nombre, SKU o unidad">
                 </div>
                 <div id="tableContainer" class="table-wrap"></div>
+                <div class="frame-footer">
+                    <button id="btnAdd" class="btn primary" type="button">Agregar</button>
+                    <button id="btnEdit" class="btn" type="button">Editar</button>
+                    <button id="btnDelete" class="btn" type="button">Eliminar</button>
+                </div>
+                <div id="status" class="status">Selecciona un producto y usa los botones de accion.</div>
             </div>
         </article>
     </section>
 </main>
+
+<div id="editorOverlay" class="editor-overlay" aria-hidden="true"></div>
+<section id="editorFrame" class="editor-frame" aria-hidden="true">
+    <div class="editor-head">
+        <h2 id="formTitle">Nuevo producto</h2>
+        <button id="btnCloseEditor" class="btn" type="button">Cerrar</button>
+    </div>
+    <div class="editor-body">
+        <form id="productForm" class="form-grid">
+            <input id="productId" type="hidden">
+
+            <div class="field">
+                <label for="sku">SKU</label>
+                <input id="sku" name="sku" type="text" maxlength="120" placeholder="Opcional">
+            </div>
+
+            <div class="field">
+                <label for="name">Nombre *</label>
+                <input id="name" name="name" type="text" maxlength="255" required>
+            </div>
+
+            <div class="field">
+                <label for="unit">Unidad *</label>
+                <input id="unit" name="unit" type="text" maxlength="50" placeholder="kg, lt, pieza" required>
+            </div>
+
+            <div class="field">
+                <label for="cost">Costo</label>
+                <input id="cost" name="cost" type="number" min="0" step="0.01" placeholder="0.00">
+            </div>
+
+            <div class="field">
+                <label for="stock">Stock</label>
+                <input id="stock" name="stock" type="number" step="0.001" placeholder="0">
+            </div>
+
+            <div class="field">
+                <label for="reorder_level">Nivel de reposicion</label>
+                <input id="reorder_level" name="reorder_level" type="number" min="0" step="1" placeholder="0">
+            </div>
+
+            <div class="form-actions">
+                <button id="btnSubmit" class="btn primary" type="submit">Guardar producto</button>
+                <button id="btnCancelEdit" class="btn" type="button">Cancelar</button>
+            </div>
+        </form>
+    </div>
+</section>
 
 <script>
     const role = localStorage.getItem('ordena-facil-role') || localStorage.getItem('barandrest-role') || 'guest';
@@ -377,8 +457,14 @@
     const statusBox = document.getElementById('status');
     const tableContainer = document.getElementById('tableContainer');
     const tableFilter = document.getElementById('tableFilter');
+    const editorFrame = document.getElementById('editorFrame');
+    const editorOverlay = document.getElementById('editorOverlay');
     const btnSubmit = document.getElementById('btnSubmit');
     const btnCancelEdit = document.getElementById('btnCancelEdit');
+    const btnAdd = document.getElementById('btnAdd');
+    const btnEdit = document.getElementById('btnEdit');
+    const btnDelete = document.getElementById('btnDelete');
+    const btnCloseEditor = document.getElementById('btnCloseEditor');
 
     const fields = {
         id: document.getElementById('productId'),
@@ -392,6 +478,7 @@
 
     let products = [];
     let canManageCatalog = false;
+    let selectedProductId = null;
 
     document.documentElement.setAttribute('data-theme', theme);
     roleBadge.textContent = `Rol: ${role}`;
@@ -433,6 +520,60 @@
         btnSubmit.textContent = 'Guardar producto';
     }
 
+    function getSelectedProduct() {
+        return products.find((item) => Number(item.id) === Number(selectedProductId)) || null;
+    }
+
+    function updateActionButtons() {
+        const hasSelection = !!getSelectedProduct();
+        btnAdd.disabled = !canManageCatalog;
+        btnEdit.disabled = !canManageCatalog || !hasSelection;
+        btnDelete.disabled = !canManageCatalog || !hasSelection;
+    }
+
+    function openEditor(mode) {
+        if (!canManageCatalog) {
+            setStatus('No tienes permisos para administrar el catalogo.', 'error');
+            return;
+        }
+
+        if (mode === 'edit') {
+            const product = getSelectedProduct();
+            if (!product) {
+                setStatus('Selecciona un producto para editar.', 'error');
+                return;
+            }
+
+            fields.id.value = String(product.id);
+            fields.sku.value = product.sku || '';
+            fields.name.value = product.name || '';
+            fields.unit.value = product.unit || '';
+            fields.cost.value = product.cost ?? '';
+            fields.stock.value = product.stock ?? '';
+            fields.reorder_level.value = product.reorder_level ?? '';
+            formTitle.textContent = `Editar producto #${product.id}`;
+            btnSubmit.textContent = 'Guardar cambios';
+        } else {
+            clearForm();
+            formTitle.textContent = 'Agregar producto';
+            btnSubmit.textContent = 'Guardar producto';
+        }
+
+        editorOverlay.classList.add('active');
+        editorFrame.classList.add('active');
+        editorOverlay.setAttribute('aria-hidden', 'false');
+        editorFrame.setAttribute('aria-hidden', 'false');
+        fields.name.focus();
+    }
+
+    function closeEditor() {
+        editorOverlay.classList.remove('active');
+        editorFrame.classList.remove('active');
+        editorOverlay.setAttribute('aria-hidden', 'true');
+        editorFrame.setAttribute('aria-hidden', 'true');
+        clearForm();
+    }
+
     function setFormEditable(enabled) {
         Object.values(fields).forEach((field) => {
             if (field.id === 'productId') return;
@@ -441,7 +582,8 @@
 
         btnSubmit.disabled = !enabled;
         btnCancelEdit.disabled = !enabled;
-        document.getElementById('btnReset').disabled = !enabled;
+        btnCloseEditor.disabled = !enabled;
+        updateActionButtons();
     }
 
     async function requestJson(url, options = {}) {
@@ -473,6 +615,7 @@
                 setStatus('Tu rol actual no tiene permisos para administrar el catalogo.', 'error');
             } else {
                 setFormEditable(true);
+                setStatus('Selecciona un producto y usa Agregar, Editar o Eliminar.', null);
             }
         } catch (error) {
             canManageCatalog = false;
@@ -491,24 +634,21 @@
     function renderTable(rows) {
         if (!rows.length) {
             tableContainer.innerHTML = '<div class="empty">No hay productos registrados.</div>';
+            selectedProductId = null;
+            updateActionButtons();
             return;
         }
 
         const body = rows.map((product) => {
+            const selected = Number(selectedProductId) === Number(product.id) ? ' class="selected"' : '';
             return `
-                <tr data-product-id="${product.id}">
+                <tr data-product-id="${product.id}"${selected}>
                     <td>${product.sku || '-'}</td>
                     <td>${product.name || '-'}</td>
                     <td>${product.unit || '-'}</td>
                     <td>${formatNumber(product.cost, 2)}</td>
                     <td>${formatNumber(product.stock, 3)}</td>
                     <td>${product.reorder_level ?? '-'}</td>
-                    <td>
-                        <div class="row-actions">
-                            <button class="btn" type="button" data-action="edit" data-id="${product.id}" ${canManageCatalog ? '' : 'disabled'}>Editar</button>
-                            <button class="btn" type="button" data-action="delete" data-id="${product.id}" ${canManageCatalog ? '' : 'disabled'}>Eliminar</button>
-                        </div>
-                    </td>
                 </tr>
             `;
         }).join('');
@@ -523,12 +663,13 @@
                         <th>Costo</th>
                         <th>Stock</th>
                         <th>Reposicion</th>
-                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>${body}</tbody>
             </table>
         `;
+
+        updateActionButtons();
     }
 
     function applyFilter() {
@@ -550,6 +691,11 @@
         try {
             const data = await requestJson('/api/products');
             products = Array.isArray(data) ? data : [];
+
+            if (!getSelectedProduct()) {
+                selectedProductId = null;
+            }
+
             applyFilter();
         } catch (error) {
             tableContainer.innerHTML = '<div class="empty">No fue posible cargar productos.</div>';
@@ -557,36 +703,24 @@
         }
     }
 
-    function beginEdit(productId) {
-        const product = products.find((item) => Number(item.id) === Number(productId));
-        if (!product) return;
-
-        fields.id.value = String(product.id);
-        fields.sku.value = product.sku || '';
-        fields.name.value = product.name || '';
-        fields.unit.value = product.unit || '';
-        fields.cost.value = product.cost ?? '';
-        fields.stock.value = product.stock ?? '';
-        fields.reorder_level.value = product.reorder_level ?? '';
-
-        formTitle.textContent = `Editar producto #${product.id}`;
-        btnSubmit.textContent = 'Guardar cambios';
-    }
-
-    async function removeProduct(productId) {
+    async function removeSelectedProduct() {
         if (!canManageCatalog) return;
 
-        const product = products.find((item) => Number(item.id) === Number(productId));
+        const product = getSelectedProduct();
+        if (!product) {
+            setStatus('Selecciona un producto para eliminar.', 'error');
+            return;
+        }
+
+        const productId = Number(product.id);
         const label = product?.name ? `"${product.name}"` : `#${productId}`;
         if (!window.confirm(`¿Deseas eliminar el producto ${label}?`)) return;
 
         try {
             await requestJson(`/api/products/${productId}`, { method: 'DELETE' });
             setStatus('Producto eliminado correctamente.', 'ok');
+            selectedProductId = null;
             await loadProducts();
-            if (Number(fields.id.value) === Number(productId)) {
-                clearForm();
-            }
         } catch (error) {
             setStatus(`No se pudo eliminar: ${String(error.message || error)}`, 'error');
         }
@@ -611,6 +745,7 @@
                     body: JSON.stringify(payload),
                 });
                 setStatus('Producto actualizado correctamente.', 'ok');
+                selectedProductId = editingId;
             } else {
                 await requestJson('/api/products', {
                     method: 'POST',
@@ -620,21 +755,24 @@
                 setStatus('Producto creado correctamente.', 'ok');
             }
 
-            clearForm();
+            closeEditor();
             await loadProducts();
         } catch (error) {
             setStatus(`No se pudo guardar: ${String(error.message || error)}`, 'error');
         }
     });
 
-    document.getElementById('btnReset').addEventListener('click', () => {
-        clearForm();
-        setStatus('Formulario limpio.', null);
+    btnCancelEdit.addEventListener('click', () => {
+        closeEditor();
+        setStatus('Edicion cancelada.', null);
     });
 
-    btnCancelEdit.addEventListener('click', () => {
-        clearForm();
-        setStatus('Edicion cancelada.', null);
+    btnCloseEditor.addEventListener('click', () => {
+        closeEditor();
+    });
+
+    editorOverlay.addEventListener('click', () => {
+        closeEditor();
     });
 
     document.getElementById('btnRefresh').addEventListener('click', async () => {
@@ -642,22 +780,29 @@
         setStatus('Listado actualizado.', null);
     });
 
+    btnAdd.addEventListener('click', () => {
+        openEditor('add');
+    });
+
+    btnEdit.addEventListener('click', () => {
+        openEditor('edit');
+    });
+
+    btnDelete.addEventListener('click', async () => {
+        await removeSelectedProduct();
+    });
+
     tableFilter.addEventListener('input', applyFilter);
 
-    tableContainer.addEventListener('click', async (event) => {
-        const target = event.target.closest('button[data-action][data-id]');
-        if (!target) return;
+    tableContainer.addEventListener('click', (event) => {
+        const row = event.target.closest('tr[data-product-id]');
+        if (!row) return;
 
-        const action = target.dataset.action;
-        const productId = Number(target.dataset.id);
-
-        if (action === 'edit') {
-            beginEdit(productId);
-            return;
-        }
-
-        if (action === 'delete') {
-            await removeProduct(productId);
+        selectedProductId = Number(row.dataset.productId);
+        applyFilter();
+        const selected = getSelectedProduct();
+        if (selected) {
+            setStatus(`Producto seleccionado: ${selected.name}`, null);
         }
     });
 
@@ -665,6 +810,7 @@
         clearForm();
         await loadCapabilities();
         await loadProducts();
+        updateActionButtons();
     }
 
     init();
