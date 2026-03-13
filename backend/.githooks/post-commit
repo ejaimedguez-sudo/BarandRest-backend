@@ -3,4 +3,4 @@ set -e
 
 cd backend
 
-echo [post-commit] Registrando cambio en changelog local... && git log -1 --date=format:"%Y-%m-%d %H:%M" --pretty=format:"%cd [%D] %h: %s" >> storage/logs/changelog_automatico.log && echo. >> storage/logs/changelog_automatico.log && echo [post-commit] changelog actualizado: backend/storage/logs/changelog_automatico.log
+echo [post-commit] Registrando cambio en changelog local... && git log -1 --date=format:"%Y-%m-%d %H:%M" --pretty=format:"%cd [%D] %h: %s" >> storage/logs/changelog_automatico.log && printf "\n" >> storage/logs/changelog_automatico.log && echo [post-commit] changelog actualizado: backend/storage/logs/changelog_automatico.log
