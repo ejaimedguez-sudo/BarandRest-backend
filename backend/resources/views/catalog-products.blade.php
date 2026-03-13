@@ -160,19 +160,6 @@
             outline-offset: 1px;
         }
 
-        .field-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .field-row .btn {
-            min-height: 30px;
-            padding: 4px 8px;
-            font-size: 11px;
-        }
-
         .measure-suggestion {
             min-height: 18px;
             font-size: 11px;
@@ -526,10 +513,7 @@
             </div>
 
             <div class="field">
-                <div class="field-row">
-                    <label for="unit">Unidad *</label>
-                    <button id="btnToggleMeasurePicker" class="btn" type="button" aria-expanded="false">Catalogo de medidas</button>
-                </div>
+                <label for="unit">Unidad *</label>
                 <input id="unit" name="unit" type="text" maxlength="50" placeholder="kg, lt, pieza" required>
                 <div id="unitSuggestion" class="measure-suggestion"></div>
                 <div id="measurePicker" class="measure-picker collapsed" aria-hidden="true">
@@ -577,7 +561,6 @@
     const editorOverlay = document.getElementById('editorOverlay');
     const btnSubmit = document.getElementById('btnSubmit');
     const btnCancelEdit = document.getElementById('btnCancelEdit');
-    const btnToggleMeasurePicker = document.getElementById('btnToggleMeasurePicker');
     const measurePicker = document.getElementById('measurePicker');
     const measureSearch = document.getElementById('measureSearch');
     const measureOptions = document.getElementById('measureOptions');
@@ -603,7 +586,6 @@
     let selectedProductId = null;
     const measurePickerApi = window.createMeasureUnitPicker({
         unitInput: fields.unit,
-        toggleButton: btnToggleMeasurePicker,
         pickerPanel: measurePicker,
         searchInput: measureSearch,
         optionsContainer: measureOptions,

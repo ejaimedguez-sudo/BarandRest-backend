@@ -78,14 +78,18 @@
         function open() {
             pickerPanel.classList.remove('collapsed');
             pickerPanel.setAttribute('aria-hidden', 'false');
-            toggleButton.setAttribute('aria-expanded', 'true');
+            if (toggleButton) {
+                toggleButton.setAttribute('aria-expanded', 'true');
+            }
             renderOptions(searchInput.value || unitInput.value || '');
         }
 
         function close() {
             pickerPanel.classList.add('collapsed');
             pickerPanel.setAttribute('aria-hidden', 'true');
-            toggleButton.setAttribute('aria-expanded', 'false');
+            if (toggleButton) {
+                toggleButton.setAttribute('aria-expanded', 'false');
+            }
         }
 
         function toggle() {
@@ -107,13 +111,23 @@
 
         function setEnabled(value) {
             enabled = !!value;
-            toggleButton.disabled = !enabled;
+            if (toggleButton) {
+                toggleButton.disabled = !enabled;
+            }
             searchInput.disabled = !enabled;
         }
 
-        toggleButton.addEventListener('click', () => {
+        if (toggleButton) {
+            toggleButton.addEventListener('click', () => {
+                if (!enabled) return;
+                toggle();
+            });
+        }
+
+        unitInput.addEventListener('focus', () => {
             if (!enabled) return;
-            toggle();
+            open();
+            showSuggestion();
         });
 
         searchInput.addEventListener('input', () => {
@@ -138,6 +152,17 @@
                 open();
             }
             showSuggestion();
+        });
+
+        document.addEventListener('click', (event) => {
+            const target = event.target;
+            const clickedInsidePicker = pickerPanel.contains(target);
+            const clickedUnit = unitInput.contains(target);
+            const clickedToggle = toggleButton ? toggleButton.contains(target) : false;
+
+            if (!clickedInsidePicker && !clickedUnit && !clickedToggle) {
+                close();
+            }
         });
 
         return {
