@@ -160,8 +160,9 @@
 
         .layout {
             display: grid;
-            grid-template-columns: var(--sidebar-width, 340px) 1fr;
+            grid-template-columns: var(--sidebar-current-width, var(--sidebar-width, 340px)) 1fr;
             gap: 16px;
+            transition: grid-template-columns .22s ease;
         }
 
 
@@ -177,8 +178,15 @@
             display: grid;
             gap: 10px;
             align-content: start;
-            max-height: 78vh;
-            overflow: auto;
+            max-height: var(--sidebar-max-height, 78vh);
+            overflow-y: auto;
+            overflow-x: hidden;
+            transition: padding .2s ease;
+        }
+
+        .sidebar.collapsed {
+            padding: 12px 8px;
+            overflow-x: visible;
         }
 
         .sidebar-user {
@@ -244,6 +252,12 @@
             min-height: 40px;
         }
 
+        .sidebar.collapsed .menu-toggle-btn {
+            width: 100%;
+            padding: 8px 6px;
+            font-size: 11px;
+        }
+
         .menu-toggle-btn:hover {
             border-color: color-mix(in srgb, var(--accent) 78%, #fff 22%);
             background: var(--accent-soft);
@@ -252,16 +266,92 @@
         .sidebar-content {
             display: grid;
             gap: 10px;
-            overflow: hidden;
-            max-height: 2000px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            max-height: var(--sidebar-content-max-height, 2000px);
             opacity: 1;
             transition: max-height .25s ease, opacity .2s ease;
         }
 
         .sidebar.collapsed .sidebar-content {
-            max-height: 0;
+            max-height: var(--sidebar-content-max-height, 2000px);
+            opacity: 1;
+            pointer-events: auto;
+            overflow-x: visible;
+        }
+
+        .sidebar.collapsed .sidebar-head h2,
+        .sidebar.collapsed .sidebar-user,
+        .sidebar.collapsed .help-box,
+        .sidebar.collapsed #menuSearch,
+        .sidebar.collapsed #btnToggleAdvanced,
+        .sidebar.collapsed #advancedTools {
+            display: none;
+        }
+
+        .sidebar.collapsed #fullMenu {
+            display: grid;
+            gap: 6px;
+        }
+
+        .sidebar.collapsed .menu-section {
+            border-top: 0;
+            padding-top: 0;
+            margin-top: 0;
+        }
+
+        .sidebar.collapsed .menu-section-toggle {
+            position: relative;
+            justify-content: center;
+            padding: 10px 8px;
+            border-radius: 12px;
+        }
+
+        .sidebar.collapsed .menu-section-toggle::after {
+            content: attr(data-section-title);
+            position: absolute;
+            left: calc(100% + 10px);
+            top: 50%;
+            transform: translateY(-50%) scale(.98);
             opacity: 0;
             pointer-events: none;
+            white-space: nowrap;
+            font-size: 12px;
+            letter-spacing: .2px;
+            color: var(--text);
+            background: linear-gradient(145deg, color-mix(in srgb, var(--panel) 88%, #000 12%), color-mix(in srgb, var(--panel-soft) 88%, #000 12%));
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            padding: 6px 9px;
+            box-shadow: 0 10px 22px rgba(0, 0, 0, 0.28);
+            transition: opacity .15s ease, transform .15s ease;
+            z-index: 30;
+        }
+
+        .sidebar.collapsed .menu-section-toggle:hover::after,
+        .sidebar.collapsed .menu-section-toggle:focus-visible::after {
+            opacity: 1;
+            transform: translateY(-50%) scale(1);
+        }
+
+        .sidebar.collapsed .menu-section-toggle .menu-section-label {
+            justify-content: center;
+            width: 100%;
+        }
+
+        .sidebar.collapsed .menu-section-toggle .menu-section-label > span:not(.menu-section-icon) {
+            display: none;
+        }
+
+        .sidebar.collapsed .menu-chevron,
+        .sidebar.collapsed .menu-list {
+            display: none;
+        }
+
+        .sidebar.collapsed .menu-section-icon {
+            width: 22px;
+            height: 22px;
+            font-size: 12px;
         }
 
         .menu-search {
@@ -381,6 +471,30 @@
             background: rgba(255, 255, 255, 0.09);
             border: 1px solid var(--border);
             color: var(--link);
+        }
+
+        .menu-section-icon.section-principal {
+            background: rgba(16, 185, 129, 0.18);
+            border-color: rgba(16, 185, 129, 0.45);
+            color: #d1fae5;
+        }
+
+        .menu-section-icon.section-inventario {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: rgba(59, 130, 246, 0.45);
+            color: #dbeafe;
+        }
+
+        .menu-section-icon.section-operacion {
+            background: rgba(249, 115, 22, 0.2);
+            border-color: rgba(249, 115, 22, 0.45);
+            color: #ffedd5;
+        }
+
+        .menu-section-icon.section-reportes {
+            background: rgba(168, 85, 247, 0.2);
+            border-color: rgba(168, 85, 247, 0.45);
+            color: #f3e8ff;
         }
 
         .menu-section-toggle:hover {
@@ -795,7 +909,8 @@
 
         iframe {
             width: 100%;
-            min-height: 76vh;
+            min-height: 420px;
+            height: var(--viewer-frame-height, 76vh);
             border: 0;
             background: var(--frame-bg);
         }
@@ -831,7 +946,10 @@
 
         @media (max-width: 980px) {
             .layout { grid-template-columns: 1fr; }
-            iframe { min-height: 68vh; }
+            iframe {
+                min-height: 360px;
+                height: var(--viewer-frame-height, 68vh);
+            }
 
             .about-grid {
                 grid-template-columns: 1fr;
@@ -1077,6 +1195,7 @@
         const aboutVersionInfo = document.getElementById('aboutVersionInfo');
         const aboutRuntimeInfo = document.getElementById('aboutRuntimeInfo');
         const systemMeta = document.getElementById('systemMeta');
+        const sidebarContent = document.getElementById('sidebarContent');
         let currentPath = '/dashboard';
         let capabilities = [];
         let sectionCollapseState = {};
@@ -1147,7 +1266,9 @@
         function setMenuCollapsed(collapsed) {
             localStorage.setItem('ordena-facil-menu-collapsed', collapsed ? '1' : '0');
             sidebar.classList.toggle('collapsed', collapsed);
-            btnToggleMenu.textContent = collapsed ? 'Expandir menu' : 'Plegar menu';
+            document.documentElement.style.setProperty('--sidebar-current-width', collapsed ? '86px' : '340px');
+            btnToggleMenu.textContent = collapsed ? 'Expandir' : 'Plegar menu';
+            btnToggleMenu.title = collapsed ? 'Expandir menu lateral' : 'Plegar menu lateral';
             btnToggleMenu.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
         }
 
@@ -1192,6 +1313,10 @@
                 if (!toggle) return;
 
                 toggle.addEventListener('click', () => {
+                    if (sidebar.classList.contains('collapsed')) {
+                        setMenuCollapsed(false);
+                    }
+
                     const collapsed = !section.classList.contains('collapsed');
 
                     // Exclusive accordion: only one section expanded at a time.
@@ -1329,6 +1454,20 @@
             return selected === 'premium' ? 'premium' : 'clasico';
         }
 
+        function syncLayoutHeights() {
+            const sidebarMax = Math.max(420, window.innerHeight - 110);
+            const sidebarContentMax = Math.max(260, window.innerHeight - 290);
+            const viewerFrameHeight = Math.max(360, window.innerHeight - 220);
+
+            document.documentElement.style.setProperty('--sidebar-max-height', `${sidebarMax}px`);
+            document.documentElement.style.setProperty('--sidebar-content-max-height', `${sidebarContentMax}px`);
+            document.documentElement.style.setProperty('--viewer-frame-height', `${viewerFrameHeight}px`);
+
+            if (!sidebar.classList.contains('collapsed') && sidebarContent) {
+                sidebarContent.scrollTop = sidebarContent.scrollTop;
+            }
+        }
+
         function applyTheme(theme) {
             document.documentElement.setAttribute('data-theme', theme);
             localStorage.setItem('ordena-facil-theme', theme);
@@ -1380,6 +1519,7 @@
                 {
                     title: 'Principal',
                     icon: '◉',
+                    color: 'principal',
                     items: [
                         { label: 'Dashboard', hint: 'Vista general del negocio', src: '/dashboard', capability: 'view_dashboard' },
                         { label: 'Salud del sistema', hint: 'Endpoint /up', src: '/up' }
@@ -1388,6 +1528,7 @@
                 {
                     title: 'Inventario y Catalogo',
                     icon: '◍',
+                    color: 'inventario',
                     items: [
                         { label: 'Productos', hint: 'Listado de productos', src: '/api/products', capability: 'manage_catalog' },
                         { label: 'Menu Items', hint: 'Listado del menu', src: '/api/menu-items', capability: 'manage_catalog' },
@@ -1397,6 +1538,7 @@
                 {
                     title: 'Operacion',
                     icon: '◎',
+                    color: 'operacion',
                     items: [
                         { label: 'Ordenes', hint: 'Flujo de ordenes', src: '/api/orders', capability: 'manage_orders' },
                         { label: 'Clientes', hint: 'Base de clientes', src: '/api/customers', capability: 'manage_customers' },
@@ -1407,6 +1549,7 @@
                 {
                     title: 'Reportes',
                     icon: '◈',
+                    color: 'reportes',
                     items: [
                         { label: 'Reporte Diario', hint: 'Resumen diario', src: '/api/reports/daily', capability: 'manage_reports' },
                         { label: 'Reporte Semanal', hint: 'Resumen semanal', src: '/api/reports/weekly', capability: 'manage_reports' },
@@ -1432,8 +1575,8 @@
                 }).join('');
                 return `
                     <section class="menu-section ${collapsed ? 'collapsed' : ''}" data-section-key="${key}">
-                        <button class="menu-section-toggle" type="button" aria-expanded="${collapsed ? 'false' : 'true'}">
-                            <span class="menu-section-label"><span class="menu-section-icon">${section.icon || '•'}</span><span>${section.title}</span></span>
+                        <button class="menu-section-toggle" type="button" aria-expanded="${collapsed ? 'false' : 'true'}" data-section-title="${section.title}" aria-label="${section.title}" title="${section.title}">
+                            <span class="menu-section-label"><span class="menu-section-icon section-${section.color || 'default'}">${section.icon || '•'}</span><span>${section.title}</span></span>
                             <span class="menu-chevron">▾</span>
                         </button>
                         <div class="menu-list">${buttons}</div>
@@ -1730,12 +1873,17 @@
             }
         });
 
+        window.addEventListener('resize', () => {
+            syncLayoutHeights();
+        });
+
         const initialTheme = ((localStorage.getItem('ordena-facil-theme') || localStorage.getItem('barandrest-theme')) === 'premium') ? 'premium' : 'clasico';
         const initialRole = getRole();
         themeSelect.value = initialTheme;
         roleSelect.value = initialRole;
         buildBadge.textContent = `Build: {{ env('APP_VERSION', 'v1.0.0') }}`;
         applyTheme(initialTheme);
+        syncLayoutHeights();
         setRole(initialRole);
         loadView('/dashboard', 'Dashboard Operativo');
         setMenuCollapsed(getMenuCollapsed());
