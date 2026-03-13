@@ -561,6 +561,7 @@
     </div>
 </section>
 
+<script src="/js/measure-unit-picker.js"></script>
 <script>
     const role = localStorage.getItem('ordena-facil-role') || localStorage.getItem('barandrest-role') || 'guest';
     const params = new URLSearchParams(window.location.search);
@@ -600,6 +601,14 @@
     let measuresCatalog = [];
     let canManageCatalog = false;
     let selectedProductId = null;
+    const measurePickerApi = window.createMeasureUnitPicker({
+        unitInput: fields.unit,
+        toggleButton: btnToggleMeasurePicker,
+        pickerPanel: measurePicker,
+        searchInput: measureSearch,
+        optionsContainer: measureOptions,
+        suggestionContainer: unitSuggestion,
+    });
 
     document.documentElement.setAttribute('data-theme', theme);
     roleBadge.textContent = `Rol: ${role}`;
@@ -639,96 +648,18 @@
         fields.reorder_level.value = '';
         formTitle.textContent = 'Nuevo producto';
         btnSubmit.textContent = 'Guardar producto';
-        measureSearch.value = '';
-        unitSuggestion.textContent = '';
-        renderMeasureOptions('');
-    }
-
-    function normalizeText(value) {
-        return String(value || '')
-            .toLowerCase()
-            .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '')
-            .trim();
-    }
-
-    function renderMeasureOptions(term) {
-        const query = normalizeText(term);
-        const filtered = measuresCatalog.filter((measure) => {
-            const combined = normalizeText(`${measure.name || ''} ${measure.abbreviation || ''} ${measure.description || ''}`);
-            return !query || combined.includes(query);
-        });
-
-        if (!filtered.length) {
-            measureOptions.innerHTML = '<div class="empty">Sin coincidencias en catalogo de medidas.</div>';
-            return;
-        }
-
-        measureOptions.innerHTML = filtered.map((measure) => {
-            const code = measure.abbreviation || measure.name;
-            return `<button type="button" class="measure-option" data-code="${code}" data-name="${measure.name || ''}"><code>${code}</code><span>${measure.name || ''}</span></button>`;
-        }).join('');
-    }
-
-    function openMeasurePicker() {
-        measurePicker.classList.remove('collapsed');
-        measurePicker.setAttribute('aria-hidden', 'false');
-        btnToggleMeasurePicker.setAttribute('aria-expanded', 'true');
-        renderMeasureOptions(measureSearch.value || fields.unit.value || '');
-    }
-
-    function closeMeasurePicker() {
-        measurePicker.classList.add('collapsed');
-        measurePicker.setAttribute('aria-hidden', 'true');
-        btnToggleMeasurePicker.setAttribute('aria-expanded', 'false');
-    }
-
-    function syncUnitSuggestion() {
-        const typed = normalizeText(fields.unit.value);
-
-        if (!typed) {
-            unitSuggestion.textContent = '';
-            renderMeasureOptions(measureSearch.value || '');
-            return;
-        }
-
-        const exact = measuresCatalog.find((measure) => {
-            const code = normalizeText(measure.abbreviation || '');
-            const name = normalizeText(measure.name || '');
-            return code === typed || name === typed;
-        });
-
-        if (exact) {
-            const code = exact.abbreviation || exact.name;
-            unitSuggestion.innerHTML = `Codigo detectado: <strong>${code}</strong> (${exact.name})`;
-            renderMeasureOptions(fields.unit.value);
-            return;
-        }
-
-        const suggested = measuresCatalog.find((measure) => {
-            const code = normalizeText(measure.abbreviation || '');
-            const name = normalizeText(measure.name || '');
-            return code.includes(typed) || name.includes(typed);
-        });
-
-        if (suggested) {
-            const code = suggested.abbreviation || suggested.name;
-            unitSuggestion.innerHTML = `Sugerencia: <strong>${code}</strong> (${suggested.name})`;
-        } else {
-            unitSuggestion.textContent = 'No hay coincidencias en catalogo para esta captura.';
-        }
-
-        renderMeasureOptions(fields.unit.value);
+        measurePickerApi.reset();
     }
 
     async function loadMeasuresCatalog() {
         try {
             const data = await requestJson('/api/measures');
             measuresCatalog = Array.isArray(data) ? data : [];
-            renderMeasureOptions('');
+            measurePickerApi.setMeasures(measuresCatalog);
         } catch (_error) {
             measuresCatalog = [];
-            measureOptions.innerHTML = '<div class="empty">No fue posible cargar medidas.</div>';
+            measurePickerApi.setMeasures([]);
+            measurePickerApi.setErrorMessage('No fue posible cargar medidas.');
         }
     }
 
@@ -765,7 +696,7 @@
             fields.reorder_level.value = product.reorder_level ?? '';
             formTitle.textContent = `Editar producto #${product.id}`;
             btnSubmit.textContent = 'Guardar cambios';
-            syncUnitSuggestion();
+            measurePickerApi.showSuggestion();
         } else {
             clearForm();
             formTitle.textContent = 'Agregar producto';
@@ -796,8 +727,7 @@
         btnSubmit.disabled = !enabled;
         btnCancelEdit.disabled = !enabled;
         btnCloseEditor.disabled = !enabled;
-        btnToggleMeasurePicker.disabled = !enabled;
-        measureSearch.disabled = !enabled;
+        measurePickerApi.setEnabled(enabled);
         updateActionButtons();
     }
 
@@ -979,49 +909,18 @@
 
     btnCancelEdit.addEventListener('click', () => {
         closeEditor();
-        closeMeasurePicker();
+        measurePickerApi.close();
         setStatus('Edicion cancelada.', null);
     });
 
     btnCloseEditor.addEventListener('click', () => {
         closeEditor();
-        closeMeasurePicker();
+        measurePickerApi.close();
     });
 
     editorOverlay.addEventListener('click', () => {
         closeEditor();
-        closeMeasurePicker();
-    });
-
-    btnToggleMeasurePicker.addEventListener('click', () => {
-        if (measurePicker.classList.contains('collapsed')) {
-            openMeasurePicker();
-            measureSearch.focus();
-            measureSearch.select();
-            return;
-        }
-        closeMeasurePicker();
-    });
-
-    measureSearch.addEventListener('input', () => {
-        renderMeasureOptions(measureSearch.value);
-    });
-
-    measureOptions.addEventListener('click', (event) => {
-        const option = event.target.closest('.measure-option');
-        if (!option) return;
-
-        const code = option.dataset.code || '';
-        fields.unit.value = code;
-        syncUnitSuggestion();
-        closeMeasurePicker();
-    });
-
-    fields.unit.addEventListener('input', () => {
-        if (measurePicker.classList.contains('collapsed')) {
-            openMeasurePicker();
-        }
-        syncUnitSuggestion();
+        measurePickerApi.close();
     });
 
     document.getElementById('btnRefresh').addEventListener('click', async () => {
