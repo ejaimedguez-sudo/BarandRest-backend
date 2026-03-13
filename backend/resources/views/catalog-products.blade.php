@@ -160,6 +160,95 @@
             outline-offset: 1px;
         }
 
+        .field-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .field-row .btn {
+            min-height: 30px;
+            padding: 4px 8px;
+            font-size: 11px;
+        }
+
+        .measure-suggestion {
+            min-height: 18px;
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .measure-suggestion strong {
+            color: var(--c1);
+            letter-spacing: .2px;
+        }
+
+        .measure-picker {
+            display: grid;
+            gap: 8px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .measure-picker.collapsed {
+            display: none;
+        }
+
+        .measure-picker input {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.07);
+            color: var(--text);
+            padding: 7px 9px;
+            font: inherit;
+            min-height: 34px;
+        }
+
+        .measure-options {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: auto;
+            max-height: 160px;
+            display: grid;
+            align-content: start;
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .measure-option {
+            border: 0;
+            border-bottom: 1px solid var(--border);
+            background: transparent;
+            color: var(--text);
+            text-align: left;
+            padding: 8px;
+            font: inherit;
+            cursor: pointer;
+            display: grid;
+            gap: 2px;
+        }
+
+        .measure-option:last-child {
+            border-bottom: 0;
+        }
+
+        .measure-option:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .measure-option code {
+            font-size: 11px;
+            color: var(--c1);
+            font-weight: 700;
+        }
+
+        .measure-option span {
+            font-size: 11px;
+            color: var(--muted);
+        }
+
         .form-actions {
             display: flex;
             gap: 8px;
@@ -437,8 +526,16 @@
             </div>
 
             <div class="field">
-                <label for="unit">Unidad *</label>
+                <div class="field-row">
+                    <label for="unit">Unidad *</label>
+                    <button id="btnToggleMeasurePicker" class="btn" type="button" aria-expanded="false">Catalogo de medidas</button>
+                </div>
                 <input id="unit" name="unit" type="text" maxlength="50" placeholder="kg, lt, pieza" required>
+                <div id="unitSuggestion" class="measure-suggestion"></div>
+                <div id="measurePicker" class="measure-picker collapsed" aria-hidden="true">
+                    <input id="measureSearch" type="search" placeholder="Buscar medida por nombre o codigo...">
+                    <div id="measureOptions" class="measure-options"></div>
+                </div>
             </div>
 
             <div class="field">
@@ -479,6 +576,11 @@
     const editorOverlay = document.getElementById('editorOverlay');
     const btnSubmit = document.getElementById('btnSubmit');
     const btnCancelEdit = document.getElementById('btnCancelEdit');
+    const btnToggleMeasurePicker = document.getElementById('btnToggleMeasurePicker');
+    const measurePicker = document.getElementById('measurePicker');
+    const measureSearch = document.getElementById('measureSearch');
+    const measureOptions = document.getElementById('measureOptions');
+    const unitSuggestion = document.getElementById('unitSuggestion');
     const btnAdd = document.getElementById('btnAdd');
     const btnEdit = document.getElementById('btnEdit');
     const btnDelete = document.getElementById('btnDelete');
@@ -495,6 +597,7 @@
     };
 
     let products = [];
+    let measuresCatalog = [];
     let canManageCatalog = false;
     let selectedProductId = null;
 
@@ -536,6 +639,97 @@
         fields.reorder_level.value = '';
         formTitle.textContent = 'Nuevo producto';
         btnSubmit.textContent = 'Guardar producto';
+        measureSearch.value = '';
+        unitSuggestion.textContent = '';
+        renderMeasureOptions('');
+    }
+
+    function normalizeText(value) {
+        return String(value || '')
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .trim();
+    }
+
+    function renderMeasureOptions(term) {
+        const query = normalizeText(term);
+        const filtered = measuresCatalog.filter((measure) => {
+            const combined = normalizeText(`${measure.name || ''} ${measure.abbreviation || ''} ${measure.description || ''}`);
+            return !query || combined.includes(query);
+        });
+
+        if (!filtered.length) {
+            measureOptions.innerHTML = '<div class="empty">Sin coincidencias en catalogo de medidas.</div>';
+            return;
+        }
+
+        measureOptions.innerHTML = filtered.map((measure) => {
+            const code = measure.abbreviation || measure.name;
+            return `<button type="button" class="measure-option" data-code="${code}" data-name="${measure.name || ''}"><code>${code}</code><span>${measure.name || ''}</span></button>`;
+        }).join('');
+    }
+
+    function openMeasurePicker() {
+        measurePicker.classList.remove('collapsed');
+        measurePicker.setAttribute('aria-hidden', 'false');
+        btnToggleMeasurePicker.setAttribute('aria-expanded', 'true');
+        renderMeasureOptions(measureSearch.value || fields.unit.value || '');
+    }
+
+    function closeMeasurePicker() {
+        measurePicker.classList.add('collapsed');
+        measurePicker.setAttribute('aria-hidden', 'true');
+        btnToggleMeasurePicker.setAttribute('aria-expanded', 'false');
+    }
+
+    function syncUnitSuggestion() {
+        const typed = normalizeText(fields.unit.value);
+
+        if (!typed) {
+            unitSuggestion.textContent = '';
+            renderMeasureOptions(measureSearch.value || '');
+            return;
+        }
+
+        const exact = measuresCatalog.find((measure) => {
+            const code = normalizeText(measure.abbreviation || '');
+            const name = normalizeText(measure.name || '');
+            return code === typed || name === typed;
+        });
+
+        if (exact) {
+            const code = exact.abbreviation || exact.name;
+            unitSuggestion.innerHTML = `Codigo detectado: <strong>${code}</strong> (${exact.name})`;
+            renderMeasureOptions(fields.unit.value);
+            return;
+        }
+
+        const suggested = measuresCatalog.find((measure) => {
+            const code = normalizeText(measure.abbreviation || '');
+            const name = normalizeText(measure.name || '');
+            return code.includes(typed) || name.includes(typed);
+        });
+
+        if (suggested) {
+            const code = suggested.abbreviation || suggested.name;
+            unitSuggestion.innerHTML = `Sugerencia: <strong>${code}</strong> (${suggested.name})`;
+        } else {
+            unitSuggestion.textContent = 'No hay coincidencias en catalogo para esta captura.';
+        }
+
+        renderMeasureOptions(fields.unit.value);
+    }
+
+    async function loadMeasuresCatalog() {
+        try {
+            const data = await requestJson('/api/measures');
+            measuresCatalog = Array.isArray(data) ? data : [];
+            renderMeasureOptions('');
+        } catch (_error) {
+            measuresCatalog = [];
+            measureOptions.innerHTML = '<div class="empty">No fue posible cargar medidas.</div>';
+        }
     }
 
     function getSelectedProduct() {
@@ -571,6 +765,7 @@
             fields.reorder_level.value = product.reorder_level ?? '';
             formTitle.textContent = `Editar producto #${product.id}`;
             btnSubmit.textContent = 'Guardar cambios';
+            syncUnitSuggestion();
         } else {
             clearForm();
             formTitle.textContent = 'Agregar producto';
@@ -601,6 +796,8 @@
         btnSubmit.disabled = !enabled;
         btnCancelEdit.disabled = !enabled;
         btnCloseEditor.disabled = !enabled;
+        btnToggleMeasurePicker.disabled = !enabled;
+        measureSearch.disabled = !enabled;
         updateActionButtons();
     }
 
@@ -782,15 +979,49 @@
 
     btnCancelEdit.addEventListener('click', () => {
         closeEditor();
+        closeMeasurePicker();
         setStatus('Edicion cancelada.', null);
     });
 
     btnCloseEditor.addEventListener('click', () => {
         closeEditor();
+        closeMeasurePicker();
     });
 
     editorOverlay.addEventListener('click', () => {
         closeEditor();
+        closeMeasurePicker();
+    });
+
+    btnToggleMeasurePicker.addEventListener('click', () => {
+        if (measurePicker.classList.contains('collapsed')) {
+            openMeasurePicker();
+            measureSearch.focus();
+            measureSearch.select();
+            return;
+        }
+        closeMeasurePicker();
+    });
+
+    measureSearch.addEventListener('input', () => {
+        renderMeasureOptions(measureSearch.value);
+    });
+
+    measureOptions.addEventListener('click', (event) => {
+        const option = event.target.closest('.measure-option');
+        if (!option) return;
+
+        const code = option.dataset.code || '';
+        fields.unit.value = code;
+        syncUnitSuggestion();
+        closeMeasurePicker();
+    });
+
+    fields.unit.addEventListener('input', () => {
+        if (measurePicker.classList.contains('collapsed')) {
+            openMeasurePicker();
+        }
+        syncUnitSuggestion();
     });
 
     document.getElementById('btnRefresh').addEventListener('click', async () => {
@@ -827,6 +1058,7 @@
     async function init() {
         clearForm();
         await loadCapabilities();
+        await loadMeasuresCatalog();
         await loadProducts();
         updateActionButtons();
     }
