@@ -12,7 +12,11 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return response()->json(Product::all());
+        return response()->json(
+            Product::query()
+                ->orderBy('name')
+                ->get()
+        );
     }
 
     /**
@@ -30,10 +34,11 @@ class ProductController extends Controller
     {
         $data = $request->validate([
             'sku' => 'nullable|string|unique:products,sku',
-            'name' => 'required|string',
-            'unit' => 'required|string',
-            'cost' => 'numeric',
-            'stock' => 'numeric',
+            'name' => 'required|string|max:255',
+            'unit' => 'required|string|max:50',
+            'cost' => 'nullable|numeric|min:0',
+            'stock' => 'nullable|numeric',
+            'reorder_level' => 'nullable|integer|min:0',
         ]);
         $product = Product::create($data);
         return response()->json($product, 201);
@@ -62,10 +67,11 @@ class ProductController extends Controller
     {
         $data = $request->validate([
             'sku' => 'nullable|string|unique:products,sku,' . $product->id,
-            'name' => 'sometimes|required|string',
-            'unit' => 'sometimes|required|string',
-            'cost' => 'numeric',
-            'stock' => 'numeric',
+            'name' => 'sometimes|required|string|max:255',
+            'unit' => 'sometimes|required|string|max:50',
+            'cost' => 'nullable|numeric|min:0',
+            'stock' => 'nullable|numeric',
+            'reorder_level' => 'nullable|integer|min:0',
         ]);
         $product->update($data);
         return response()->json($product);

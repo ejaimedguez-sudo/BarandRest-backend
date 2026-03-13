@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    protected $fillable = ['sku','name','unit','cost','stock','reorder_point'];
+    protected $fillable = ['sku', 'name', 'unit', 'cost', 'stock', 'reorder_level'];
 
     public function menuItemIngredients()
     {

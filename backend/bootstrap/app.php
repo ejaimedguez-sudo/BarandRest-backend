@@ -5,6 +5,7 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Support\Facades\Artisan;
+use App\Http\Middleware\EnsureCapability;
 use App\Http\Middleware\EnsureRole;
 use App\Http\Middleware\SecurityHeaders;
 
@@ -19,6 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->append(SecurityHeaders::class);
 
         $middleware->alias([
+            'capability' => EnsureCapability::class,
             'role' => EnsureRole::class,
         ]);
     })

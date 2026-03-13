@@ -1524,7 +1524,7 @@
                     icon: '◍',
                     color: 'inventario',
                     items: [
-                        { label: 'Productos', hint: 'Listado de productos', src: '/api/products', capability: 'manage_catalog' },
+                        { label: 'Productos', hint: 'Gestion de catalogo de productos', src: '/catalog/products', capability: 'manage_catalog' },
                         { label: 'Menu Items', hint: 'Listado del menu', src: '/api/menu-items', capability: 'manage_catalog' },
                         { label: 'Mesas', hint: 'Listado de mesas', src: '/api/tables', capability: 'manage_tables' }
                     ]

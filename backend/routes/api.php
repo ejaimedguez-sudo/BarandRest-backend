@@ -30,7 +30,8 @@ use App\Http\Controllers\API\SystemCapabilitiesController;
 Route::middleware('auth:sanctum')->get('/user', AuthUserController::class);
 
 // API resource routes
-Route::apiResource('products', ProductController::class);
+Route::apiResource('products', ProductController::class)
+    ->middleware(['role', 'capability:manage_catalog']);
 Route::apiResource('menu-items', MenuItemController::class);
 Route::apiResource('orders', OrderController::class);
 Route::apiResource('tables', TableRestaurantController::class);
