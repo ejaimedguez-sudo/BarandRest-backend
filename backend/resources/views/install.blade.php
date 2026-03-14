@@ -8,6 +8,8 @@
     <link rel="manifest" href="/manifest.json">
     <link rel="icon" href="/assets/branding/comanda-deg.png" type="image/png">
     <link rel="apple-touch-icon" href="/assets/branding/comanda-deg.png">
+    <link rel="stylesheet" href="/assets/ui-action-buttons.css?v={{ $assetVersion }}">
+    <link rel="stylesheet" href="/assets/ui-frames-pro.css?v={{ $assetVersion }}">
     <style>
         :root {
             --c1: #F2C230;
@@ -79,19 +81,6 @@
         h1 { margin: 0; font-size: clamp(22px, 3vw, 32px); }
         p { margin: 6px 0 0; color: var(--muted); }
 
-        .btn {
-            border: 1px solid var(--border);
-            background: rgba(255,255,255,0.08);
-            color: var(--text);
-            border-radius: 10px;
-            padding: 10px 14px;
-            text-decoration: none;
-            font-size: 14px;
-            cursor: pointer;
-        }
-
-        .btn:hover { background: rgba(242,145,27,0.22); }
-
         .grid {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -125,8 +114,8 @@
                 </div>
             </div>
             <div style="display:flex;gap:8px;flex-wrap:wrap;">
-                <button id="btnInstall" class="btn" type="button" style="display:none;">Instalar app</button>
-                <a class="btn" href="/">Volver al sistema</a>
+                <button id="btnInstall" class="btn btn-default" type="button" style="display:none;">Instalar app</button>
+                <a class="btn btn-default" href="/">Volver al sistema</a>
             </div>
         </section>
 
@@ -175,7 +164,7 @@
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js').catch(() => {});
+                navigator.serviceWorker.register('/service-worker.js?v={{ $assetVersion }}', { updateViaCache: 'none' }).catch(() => {});
             });
         }
 

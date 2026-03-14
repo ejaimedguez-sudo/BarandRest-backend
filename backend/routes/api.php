@@ -3,8 +3,13 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CatalogMediaUploadController;
 use App\Http\Controllers\MeasureController;
+use App\Http\Controllers\ProductTypeController;
+use App\Http\Controllers\MenuCategoryController;
 use App\Http\Controllers\MenuItemController;
+use App\Http\Controllers\MenuItemIngredientController;
+use App\Http\Controllers\MenuItemCostHistoryController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\TableRestaurantController;
 use App\Http\Controllers\CustomerController;
@@ -35,7 +40,18 @@ Route::apiResource('products', ProductController::class)
     ->middleware(['role', 'capability:manage_catalog']);
 Route::apiResource('measures', MeasureController::class)
     ->middleware(['role', 'capability:manage_catalog']);
-Route::apiResource('menu-items', MenuItemController::class);
+Route::apiResource('product-types', ProductTypeController::class)
+    ->middleware(['role', 'capability:manage_catalog']);
+Route::apiResource('menu-categories', MenuCategoryController::class)
+    ->middleware(['role', 'capability:manage_catalog']);
+Route::apiResource('menu-items', MenuItemController::class)
+    ->middleware(['role', 'capability:manage_catalog']);
+Route::apiResource('menu-item-ingredients', MenuItemIngredientController::class)
+    ->middleware(['role', 'capability:manage_catalog']);
+Route::get('menu-item-cost-histories', [MenuItemCostHistoryController::class, 'index'])
+    ->middleware(['role', 'capability:manage_catalog']);
+Route::post('catalog/media/upload', [CatalogMediaUploadController::class, 'store'])
+    ->middleware(['role', 'capability:manage_catalog']);
 Route::apiResource('orders', OrderController::class);
 Route::apiResource('tables', TableRestaurantController::class);
 Route::apiResource('customers', CustomerController::class);

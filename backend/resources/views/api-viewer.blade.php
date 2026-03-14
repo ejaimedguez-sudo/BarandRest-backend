@@ -4,6 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Vista de Datos - Ordena Facil</title>
+    <link rel="stylesheet" href="/assets/ui-action-buttons.css?v={{ $assetVersion }}">
+    <link rel="stylesheet" href="/assets/ui-frames-pro.css?v={{ $assetVersion }}">
     <style>
         :root,
         :root[data-theme="clasico"] {
@@ -68,16 +70,6 @@
             word-break: break-all;
         }
 
-        .btn {
-            border: 1px solid var(--border);
-            background: transparent;
-            color: var(--text);
-            border-radius: 8px;
-            padding: 8px 10px;
-            text-decoration: none;
-            font-size: 13px;
-        }
-
         .card {
             border: 1px solid var(--border);
             border-radius: 12px;
@@ -112,6 +104,17 @@
             grid-template-columns: minmax(0, 1fr) auto;
             gap: 8px;
             align-items: center;
+        }
+
+        @media (max-width: 760px) {
+            .tools {
+                grid-template-columns: 1fr;
+                align-items: stretch;
+            }
+
+            .count {
+                justify-self: start;
+            }
         }
 
         .filter-input {
@@ -172,7 +175,7 @@
                 <h1 id="title">Vista de datos</h1>
                 <small id="endpointLabel"></small>
             </div>
-            <a id="openRaw" class="btn" target="_blank" rel="noopener noreferrer">Abrir JSON</a>
+            <a id="openRaw" class="btn btn-default" target="_blank" rel="noopener noreferrer">Abrir JSON</a>
         </section>
 
         <section class="card">

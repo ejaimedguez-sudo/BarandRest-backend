@@ -1,4 +1,6 @@
-const CACHE_NAME = 'ordena-facil-runtime';
+const swUrl = new URL(self.location.href);
+const swVersion = swUrl.searchParams.get('v') || 'dev';
+const CACHE_NAME = `ordena-facil-runtime-${swVersion}`;
 const URLS = [
   '/',
   '/dashboard',

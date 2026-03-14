@@ -12,17 +12,69 @@ use Throwable;
 
 class MeasureController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         if ($error = $this->ensureMeasuresTableReady()) {
             return $error;
         }
 
-        return response()->json(
-            Measure::query()
-                ->orderBy('name')
-                ->get()
-        );
+        $query = Measure::query()->orderBy('name');
+
+        $term = trim((string) $request->query('q', ''));
+        if ($term !== '') {
+            $query->where(function ($builder) use ($term) {
+                $builder
+                    ->where('name', 'like', "%{$term}%")
+                    ->orWhere('abbreviation', 'like', "%{$term}%")
+                    ->orWhere('description', 'like', "%{$term}%");
+            });
+        }
+
+        if ($request->boolean('paginate')) {
+            $perPage = max(1, min((int) $request->query('per_page', 50), 200));
+            $payload = $query->paginate($perPage)->appends($request->query());
+            $fingerprint = implode('|', [
+                'measures',
+                'paged',
+                (string) $payload->currentPage(),
+                (string) $payload->perPage(),
+                (string) $payload->total(),
+                (string) optional($payload->getCollection()->max('updated_at'))->timestamp,
+                (string) $term,
+            ]);
+
+            return $this->catalogJsonResponse($request, $payload, $fingerprint, 'public, max-age=300, stale-while-revalidate=600');
+        }
+
+        $rows = $query->get();
+        $fingerprint = implode('|', [
+            'measures',
+            'full',
+            (string) $rows->count(),
+            (string) optional($rows->max('updated_at'))->timestamp,
+            (string) $term,
+        ]);
+
+        return $this->catalogJsonResponse($request, $rows, $fingerprint, 'public, max-age=300, stale-while-revalidate=600');
+    }
+
+    private function catalogJsonResponse(Request $request, mixed $payload, string $fingerprint, string $cacheControl): JsonResponse
+    {
+        $etag = 'W/"' . sha1($fingerprint) . '"';
+        $ifNoneMatch = trim((string) $request->header('If-None-Match', ''));
+
+        if ($ifNoneMatch !== '' && $ifNoneMatch === $etag) {
+            return response()
+                ->json(null, 304)
+                ->header('Cache-Control', $cacheControl)
+                ->header('ETag', $etag);
+        }
+
+        $response = response()->json($payload);
+        $response->headers->set('Cache-Control', $cacheControl);
+        $response->headers->set('ETag', $etag);
+
+        return $response;
     }
 
     public function store(Request $request)
