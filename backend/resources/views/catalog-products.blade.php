@@ -916,9 +916,11 @@
     let mainFieldsLayoutRafId = 0;
     let lastMainFieldsLayoutViewportWidth = null;
     let lastMainFieldsLayoutFrameWidth = null;
+    let lastMenuCollapsedState = null;
     let tableFilterDebounceId = 0;
     const defaultFieldsThreeColumnsMinWidth = 940;
     const defaultFieldsLayoutHysteresisPx = 30;
+    const menuCollapsedStorageKey = 'ordena-facil-menu-collapsed';
     const catalogCachePrefix = `barandrest:catalog-cache:${role}:`;
     const catalogCacheTtlMs = 5 * 60 * 1000;
     const maxUploadSizeBytes = 5 * 1024 * 1024;
@@ -1285,16 +1287,22 @@
         return Number.isFinite(parsed) ? parsed : fallback;
     }
 
+    function isMenuCollapsed() {
+        return localStorage.getItem(menuCollapsedStorageKey) === '1';
+    }
+
     function syncMainFieldsLayout(force = false) {
         if (!formMainFields || !editorFrame) return;
 
         const frameWidth = Math.round(editorFrame.getBoundingClientRect().width || 0);
         const viewportWidth = Math.round(window.innerWidth || 0);
+        const menuCollapsed = isMenuCollapsed();
         if (!force && frameWidth === lastMainFieldsLayoutFrameWidth && viewportWidth === lastMainFieldsLayoutViewportWidth) {
             return;
         }
         lastMainFieldsLayoutFrameWidth = frameWidth;
         lastMainFieldsLayoutViewportWidth = viewportWidth;
+        lastMenuCollapsedState = menuCollapsed;
         const threeColumnsMinWidth = readCssNumberVar('--fields-layout-3col-min-width', defaultFieldsThreeColumnsMinWidth);
         const layoutHysteresisPx = readCssNumberVar('--fields-layout-hysteresis', defaultFieldsLayoutHysteresisPx);
 
@@ -1312,7 +1320,16 @@
             formMainFields.classList.remove('cols-3');
             formMainFields.classList.add('cols-2');
             return;
-        } else if (fieldsLayoutIsThreeColumns === null) {
+        }
+
+        if (!menuCollapsed) {
+            fieldsLayoutIsThreeColumns = false;
+            formMainFields.classList.remove('cols-3');
+            formMainFields.classList.add('cols-2');
+            return;
+        }
+
+        if (fieldsLayoutIsThreeColumns === null) {
             fieldsLayoutIsThreeColumns = frameWidth >= threeColumnsMinWidth;
         } else if (fieldsLayoutIsThreeColumns && frameWidth <= (threeColumnsMinWidth - layoutHysteresisPx)) {
             fieldsLayoutIsThreeColumns = false;
@@ -1396,7 +1413,10 @@
             fields.stock_min.value = product.stock_min ?? '';
             fields.stock_max.value = product.stock_max ?? '';
             fields.reorder_point.value = product.reorder_point ?? product.reorder_level ?? '';
-            formTitle.textContent = `Editar producto #${product.id}`;
+            const productName = String(product.name || '').trim();
+            formTitle.textContent = productName
+                ? `Editar producto: ${productName}`
+                : `Editar producto #${product.id}`;
             btnSubmit.textContent = 'Guardar cambios';
             renderUnitOptions(fields.unit.value);
             updateImagePreview(fields.image_url.value);
@@ -1866,6 +1886,18 @@
         bindFastFormKeyboardFlow();
         observeMainFieldsLayout();
         window.addEventListener('resize', scheduleMainFieldsLayoutSync);
+        window.addEventListener('storage', (event) => {
+            if (event.key !== menuCollapsedStorageKey) return;
+            if (event.newValue === event.oldValue) return;
+            fieldsLayoutIsThreeColumns = null;
+            scheduleMainFieldsLayoutSync(true);
+        });
+        window.addEventListener('focus', () => {
+            const menuCollapsed = isMenuCollapsed();
+            if (menuCollapsed === lastMenuCollapsedState) return;
+            fieldsLayoutIsThreeColumns = null;
+            scheduleMainFieldsLayoutSync(true);
+        });
         scheduleMainFieldsLayoutSync(true);
         clearForm();
         await loadCapabilities();
