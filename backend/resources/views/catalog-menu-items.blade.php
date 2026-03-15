@@ -2763,7 +2763,10 @@
                 ? storedMargin
                 : calculateMarginFromCostAndRetail(itemCost ?? 0, itemPrice ?? 0);
             profitMarginPercent.value = itemMargin !== null ? itemMargin.toFixed(2) : '';
-            formTitle.textContent = `Editar item de menu #${item.id}`;
+            const itemName = String(item.name || '').trim();
+            formTitle.textContent = itemName
+                ? `Editar item de menu: ${itemName}`
+                : `Editar item de menu #${item.id}`;
             btnSubmit.textContent = 'Guardar cambios';
             updateItemImagePreview(fields.image_url.value);
             committedItemImageUrl = imageUrlFromValue(fields.image_url.value);

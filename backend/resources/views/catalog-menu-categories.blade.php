@@ -547,7 +547,10 @@
             fields.name.value = category.name || '';
             fields.sort_order.value = category.sort_order ?? '';
             fields.description.value = category.description || '';
-            formTitle.textContent = `Editar categoria de menu #${category.id}`;
+            const categoryName = String(category.name || '').trim();
+            formTitle.textContent = categoryName
+                ? `Editar categoria de menu: ${categoryName}`
+                : `Editar categoria de menu #${category.id}`;
             btnSubmit.textContent = 'Guardar cambios';
         } else {
             formTitle.textContent = 'Nueva categoria de menu';

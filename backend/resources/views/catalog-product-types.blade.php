@@ -532,7 +532,10 @@
             fields.code.value = type.code || '';
             fields.name.value = type.name || '';
             fields.description.value = type.description || '';
-            formTitle.textContent = `Editar tipo de producto #${type.id}`;
+            const typeName = String(type.name || '').trim();
+            formTitle.textContent = typeName
+                ? `Editar tipo de producto: ${typeName}`
+                : `Editar tipo de producto #${type.id}`;
             btnSubmit.textContent = 'Guardar cambios';
         } else {
             formTitle.textContent = 'Nuevo tipo de producto';

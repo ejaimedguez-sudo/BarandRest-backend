@@ -559,7 +559,10 @@
             fields.name.value = measure.name || '';
             fields.abbreviation.value = measure.abbreviation || '';
             fields.description.value = measure.description || '';
-            formTitle.textContent = `Editar medida #${measure.id}`;
+            const measureName = String(measure.name || '').trim();
+            formTitle.textContent = measureName
+                ? `Editar medida: ${measureName}`
+                : `Editar medida #${measure.id}`;
             btnSubmit.textContent = 'Guardar cambios';
         } else {
             clearForm();
