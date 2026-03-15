@@ -1,4 +1,5 @@
 <?php
+
 // Safe fingerprint calculator
 // Usage:
 // 1) Set PUBLIC_SSH_KEY env var to the public key string (ssh-ed25519 AAAA...)
@@ -6,7 +7,7 @@
 // 2) Or pass path to a public key file: php calc_fingerprint_from_env.php /path/to/id_ed25519.pub
 
 $input = getenv('PUBLIC_SSH_KEY') ?: ($argv[1] ?? null);
-if (!$input) {
+if (! $input) {
     fwrite(STDERR, "Usage: set PUBLIC_SSH_KEY env or pass path to public key file\n");
     exit(2);
 }
@@ -27,7 +28,7 @@ if (count($parts) < 2) {
     fwrite(STDERR, "Invalid public key format\n");
     exit(4);
 }
-list($type, $b) = $parts;
+[$type, $b] = $parts;
 
 $raw = base64_decode($b, true);
 if ($raw === false) {
@@ -37,5 +38,5 @@ if ($raw === false) {
 
 $fp = base64_encode(hash('sha256', $raw, true));
 $fp = rtrim($fp, '=');
-echo 'SHA256:' . $fp . PHP_EOL;
+echo 'SHA256:'.$fp.PHP_EOL;
 exit(0);

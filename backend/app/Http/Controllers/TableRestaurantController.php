@@ -34,6 +34,7 @@ class TableRestaurantController extends Controller
             'location' => 'nullable|string',
         ]);
         $t = \App\Models\TableRestaurant::create($data);
+
         return response()->json($t, 201);
     }
 
@@ -64,6 +65,7 @@ class TableRestaurantController extends Controller
             'location' => 'nullable|string',
         ]);
         $tableRestaurant->update($data);
+
         return response()->json($tableRestaurant);
     }
 
@@ -73,6 +75,7 @@ class TableRestaurantController extends Controller
     public function destroy(TableRestaurant $tableRestaurant)
     {
         $tableRestaurant->delete();
+
         return response()->json(null, 204);
     }
 }

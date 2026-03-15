@@ -10,19 +10,19 @@ return new class extends Migration
     {
         if (Schema::hasTable('orders')) {
             Schema::table('orders', function (Blueprint $table) {
-                if (!Schema::hasColumn('orders', 'table_id')) {
+                if (! Schema::hasColumn('orders', 'table_id')) {
                     $table->unsignedBigInteger('table_id')->nullable()->after('id');
                 }
-                if (!Schema::hasColumn('orders', 'user_id')) {
+                if (! Schema::hasColumn('orders', 'user_id')) {
                     $table->unsignedBigInteger('user_id')->nullable()->after('table_id');
                 }
-                if (!Schema::hasColumn('orders', 'total')) {
+                if (! Schema::hasColumn('orders', 'total')) {
                     $table->decimal('total', 10, 2)->default(0)->after('user_id');
                 }
-                if (!Schema::hasColumn('orders', 'cost')) {
+                if (! Schema::hasColumn('orders', 'cost')) {
                     $table->decimal('cost', 10, 2)->default(0)->after('total');
                 }
-                if (!Schema::hasColumn('orders', 'status')) {
+                if (! Schema::hasColumn('orders', 'status')) {
                     $table->enum('status', ['open', 'closed', 'cancelled'])->default('open')->after('cost');
                 }
             });

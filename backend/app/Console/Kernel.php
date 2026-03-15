@@ -2,9 +2,9 @@
 
 namespace App\Console;
 
+use App\Console\Commands\ComputeCommissions;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use App\Console\Commands\ComputeCommissions;
 use Illuminate\Support\Facades\Artisan;
 
 class Kernel extends ConsoleKernel
@@ -46,7 +46,7 @@ class Kernel extends ConsoleKernel
     protected function commands(): void
     {
         // Load additional command files if present
-        if (is_file(__DIR__ . '/Commands/ComputeCommissions.php')) {
+        if (is_file(__DIR__.'/Commands/ComputeCommissions.php')) {
             $this->load(__DIR__.'/Commands');
         }
         $this->load(__DIR__.'/Commands');

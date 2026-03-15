@@ -4,8 +4,8 @@ namespace Tests\Feature;
 
 use App\Models\MenuItem;
 use App\Models\Product;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Filesystem\FilesystemAdapter;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -34,7 +34,7 @@ class CatalogImageCleanupCommandTest extends TestCase
             'sku' => 'PRD-REF-1',
             'name' => 'Producto Referencia',
             'unit' => 'pieza',
-            'image_url' => '/storage/' . $referencedByProduct,
+            'image_url' => '/storage/'.$referencedByProduct,
         ]);
 
         MenuItem::query()->create([
@@ -44,7 +44,7 @@ class CatalogImageCleanupCommandTest extends TestCase
             'cost' => 50,
             'profit_margin_percent' => 50,
             'is_recipe' => false,
-            'image_url' => 'https://example.com/storage/' . $referencedByMenuItem,
+            'image_url' => 'https://example.com/storage/'.$referencedByMenuItem,
         ]);
 
         $this->artisan('catalog:cleanup-orphan-images', ['--older-than-minutes' => 0])

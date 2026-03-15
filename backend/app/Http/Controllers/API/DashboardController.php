@@ -4,8 +4,8 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -59,6 +59,7 @@ class DashboardController extends Controller
     public function clearCache()
     {
         Cache::forget('dashboard_metrics_v1');
+
         return response()->json(['ok' => true]);
     }
 }

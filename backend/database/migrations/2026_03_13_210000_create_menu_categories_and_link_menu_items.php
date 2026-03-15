@@ -10,7 +10,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (!Schema::hasTable('menu_categories')) {
+        if (! Schema::hasTable('menu_categories')) {
             Schema::create('menu_categories', function (Blueprint $table) {
                 $table->id();
                 $table->string('code', 80)->nullable()->unique();
@@ -21,13 +21,13 @@ return new class extends Migration
             });
         }
 
-        if (Schema::hasTable('menu_items') && !Schema::hasColumn('menu_items', 'menu_category_id')) {
+        if (Schema::hasTable('menu_items') && ! Schema::hasColumn('menu_items', 'menu_category_id')) {
             Schema::table('menu_items', function (Blueprint $table) {
                 $table->unsignedBigInteger('menu_category_id')->nullable()->index()->after('product_type_id');
             });
         }
 
-        if (!Schema::hasTable('menu_items') || !Schema::hasColumn('menu_items', 'category') || !Schema::hasColumn('menu_items', 'menu_category_id')) {
+        if (! Schema::hasTable('menu_items') || ! Schema::hasColumn('menu_items', 'category') || ! Schema::hasColumn('menu_items', 'menu_category_id')) {
             return;
         }
 
@@ -46,7 +46,7 @@ return new class extends Migration
                 continue;
             }
 
-            if (!isset($cache[$name])) {
+            if (! isset($cache[$name])) {
                 $existing = DB::table('menu_categories')->where('name', $name)->first();
 
                 if ($existing) {
@@ -59,7 +59,7 @@ return new class extends Migration
 
                     while (DB::table('menu_categories')->where('code', $candidate)->exists()) {
                         $seq += 1;
-                        $candidate = $baseCode . '-' . $seq;
+                        $candidate = $baseCode.'-'.$seq;
                     }
 
                     $id = DB::table('menu_categories')->insertGetId([

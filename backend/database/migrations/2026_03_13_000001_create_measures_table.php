@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (!Schema::hasTable('measures')) {
+        if (! Schema::hasTable('measures')) {
             Schema::create('measures', function (Blueprint $table) {
                 $table->id();
                 $table->string('name', 120)->unique();

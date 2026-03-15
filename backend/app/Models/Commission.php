@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Commission extends Model
 {
     public $timestamps = false;
-    protected $fillable = ['user_id','order_id','amount','percent'];
+
+    protected $fillable = ['user_id', 'order_id', 'amount', 'percent'];
 
     public function user()
     {

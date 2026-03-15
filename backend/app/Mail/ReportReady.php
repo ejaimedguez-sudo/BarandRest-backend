@@ -11,6 +11,7 @@ class ReportReady extends Mailable
     use Queueable, SerializesModels;
 
     public $filepath;
+
     public $filename;
 
     public function __construct(string $filepath)

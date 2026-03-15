@@ -8,17 +8,17 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (!Schema::hasTable('orders')) {
+        if (! Schema::hasTable('orders')) {
             return;
         }
 
         Schema::table('orders', function (Blueprint $table) {
-            if (!Schema::hasColumn('orders', 'customer_id')) {
+            if (! Schema::hasColumn('orders', 'customer_id')) {
                 $table->unsignedBigInteger('customer_id')->nullable()->after('table_id');
                 $table->index('customer_id');
             }
 
-            if (!Schema::hasColumn('orders', 'waiter_id')) {
+            if (! Schema::hasColumn('orders', 'waiter_id')) {
                 $table->unsignedBigInteger('waiter_id')->nullable()->after('customer_id');
                 $table->index('waiter_id');
             }
@@ -27,7 +27,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        if (!Schema::hasTable('orders')) {
+        if (! Schema::hasTable('orders')) {
             return;
         }
 

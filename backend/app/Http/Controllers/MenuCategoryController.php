@@ -54,7 +54,7 @@ class MenuCategoryController extends Controller
 
     private function catalogJsonResponse(Request $request, mixed $payload, string $fingerprint, string $cacheControl): JsonResponse
     {
-        $etag = 'W/"' . sha1($fingerprint) . '"';
+        $etag = 'W/"'.sha1($fingerprint).'"';
         $ifNoneMatch = trim((string) $request->header('If-None-Match', ''));
 
         if ($ifNoneMatch !== '' && $ifNoneMatch === $etag) {
@@ -90,6 +90,7 @@ class MenuCategoryController extends Controller
         ]);
 
         $category = MenuCategory::create($data);
+
         return response()->json($category, 201);
     }
 
@@ -106,8 +107,8 @@ class MenuCategoryController extends Controller
     public function update(Request $request, MenuCategory $menuCategory)
     {
         $data = $request->validate([
-            'code' => ['nullable', 'string', 'max:80', 'regex:/^[A-Za-z0-9\-_.]+$/', 'unique:menu_categories,code,' . $menuCategory->id],
-            'name' => 'sometimes|required|string|max:120|unique:menu_categories,name,' . $menuCategory->id,
+            'code' => ['nullable', 'string', 'max:80', 'regex:/^[A-Za-z0-9\-_.]+$/', 'unique:menu_categories,code,'.$menuCategory->id],
+            'name' => 'sometimes|required|string|max:120|unique:menu_categories,name,'.$menuCategory->id,
             'description' => 'nullable|string|max:1000',
             'sort_order' => 'nullable|integer|min:0|max:1000000',
         ], [
@@ -117,12 +118,14 @@ class MenuCategoryController extends Controller
         ]);
 
         $menuCategory->update($data);
+
         return response()->json($menuCategory);
     }
 
     public function destroy(MenuCategory $menuCategory)
     {
         $menuCategory->delete();
+
         return response()->json(null, 204);
     }
 }

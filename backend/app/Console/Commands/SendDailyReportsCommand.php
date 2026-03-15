@@ -2,13 +2,13 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Log;
 use App\Jobs\GenerateAndEmailDailyReport;
+use Illuminate\Console\Command;
 
 class SendDailyReportsCommand extends Command
 {
     protected $signature = 'reports:daily {date?} {email?} {group_by?}';
+
     protected $description = 'Generate and email daily reports for a date (defaults to yesterday)';
 
     public function handle()
@@ -28,6 +28,7 @@ class SendDailyReportsCommand extends Command
             $job->handle();
             $this->info("Report generated synchronously for $date");
         }
+
         return 0;
     }
 }

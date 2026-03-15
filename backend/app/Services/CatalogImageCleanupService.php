@@ -48,16 +48,18 @@ class CatalogImageCleanupService
 
             if (isset($referencedPaths[$normalizedPath])) {
                 $keptReferenced[] = $normalizedPath;
+
                 continue;
             }
 
             $lastModified = $this->safeLastModified($disk, $normalizedPath);
             if ($lastModified !== null && $lastModified > $cutoffTimestamp) {
                 $keptRecent[] = $normalizedPath;
+
                 continue;
             }
 
-            if (!$dryRun) {
+            if (! $dryRun) {
                 $disk->delete($normalizedPath);
             }
 
@@ -121,7 +123,7 @@ class CatalogImageCleanupService
         }
 
         $path = parse_url($normalizedUrl, PHP_URL_PATH);
-        if (!is_string($path) || $path === '') {
+        if (! is_string($path) || $path === '') {
             return null;
         }
 
@@ -134,7 +136,7 @@ class CatalogImageCleanupService
             $normalizedPath = ltrim($normalizedPath, '/');
         }
 
-        if (!str_starts_with($normalizedPath, 'catalog-images/')) {
+        if (! str_starts_with($normalizedPath, 'catalog-images/')) {
             $index = strpos($normalizedPath, 'catalog-images/');
             if ($index === false) {
                 return null;

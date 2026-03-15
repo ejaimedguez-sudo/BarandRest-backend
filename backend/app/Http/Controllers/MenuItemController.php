@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\MenuItem;
 use App\Models\MenuCategory;
+use App\Models\MenuItem;
 use App\Services\CatalogImageCleanupService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -14,17 +14,17 @@ class MenuItemController extends Controller
     private function getRequiredMarginForCategory(?int $menuCategoryId): float
     {
         $default = (float) config('profitability.menu_item_min_margin_default', 0);
-        if (!$menuCategoryId) {
+        if (! $menuCategoryId) {
             return $default;
         }
 
         $category = MenuCategory::query()->select(['id', 'code'])->find($menuCategoryId);
-        if (!$category || empty($category->code)) {
+        if (! $category || empty($category->code)) {
             return $default;
         }
 
         $byCategory = (array) config('profitability.menu_item_min_margin_by_category', []);
-        if (!array_key_exists($category->code, $byCategory)) {
+        if (! array_key_exists($category->code, $byCategory)) {
             return $default;
         }
 
@@ -77,17 +77,18 @@ class MenuItemController extends Controller
         $isRecipe = array_key_exists('is_recipe', $data) ? (bool) $data['is_recipe'] : null;
 
         // For non-recipe items, mirror manual cost into operational cost if explicit cost was not sent.
-        if ($manualCost !== null && $manualCost >= 0 && ($isRecipe === false || $isRecipe === null) && !array_key_exists('cost', $data)) {
+        if ($manualCost !== null && $manualCost >= 0 && ($isRecipe === false || $isRecipe === null) && ! array_key_exists('cost', $data)) {
             $data['cost'] = round($manualCost, 2);
             $cost = $data['cost'];
         }
 
         if (array_key_exists('profit_margin_percent', $data) && $data['profit_margin_percent'] !== null) {
             $data['profit_margin_percent'] = round((float) $data['profit_margin_percent'], 2);
+
             return $data;
         }
 
-        if ($price !== null && $price > 0 && $cost !== null && !array_key_exists('profit_margin_percent', $data)) {
+        if ($price !== null && $price > 0 && $cost !== null && ! array_key_exists('profit_margin_percent', $data)) {
             $margin = (($price - $cost) / $price) * 100;
             $data['profit_margin_percent'] = round($margin, 2);
         }
@@ -147,7 +148,7 @@ class MenuItemController extends Controller
 
     private function catalogJsonResponse(Request $request, mixed $payload, string $fingerprint, string $cacheControl): JsonResponse
     {
-        $etag = 'W/"' . sha1($fingerprint) . '"';
+        $etag = 'W/"'.sha1($fingerprint).'"';
         $ifNoneMatch = trim((string) $request->header('If-None-Match', ''));
 
         if ($ifNoneMatch !== '' && $ifNoneMatch === $etag) {
@@ -204,7 +205,7 @@ class MenuItemController extends Controller
             'profit_margin_percent.max' => 'El margen no puede ser mayor a 99.99%.',
         ]);
 
-        if (!empty($data['menu_category_id']) && !array_key_exists('category', $data)) {
+        if (! empty($data['menu_category_id']) && ! array_key_exists('category', $data)) {
             $category = MenuCategory::query()->find($data['menu_category_id']);
             if ($category) {
                 $data['category'] = $category->name;
@@ -215,6 +216,7 @@ class MenuItemController extends Controller
         $this->enforceMinimumMargin($request, $data);
 
         $item = \App\Models\MenuItem::create($data);
+
         return response()->json($item, 201);
     }
 
@@ -242,7 +244,7 @@ class MenuItemController extends Controller
         $previousImageUrl = $menuItem->image_url;
 
         $data = $request->validate([
-            'code' => ['nullable', 'string', 'max:100', 'regex:/^[A-Za-z0-9\-_.]+$/', 'unique:menu_items,code,' . $menuItem->id],
+            'code' => ['nullable', 'string', 'max:100', 'regex:/^[A-Za-z0-9\-_.]+$/', 'unique:menu_items,code,'.$menuItem->id],
             'name' => 'sometimes|required|string|max:255',
             'product_type_id' => 'nullable|integer|exists:product_types,id',
             'menu_category_id' => 'nullable|integer|exists:menu_categories,id',
@@ -268,7 +270,7 @@ class MenuItemController extends Controller
             'profit_margin_percent.max' => 'El margen no puede ser mayor a 99.99%.',
         ]);
 
-        if (!empty($data['menu_category_id']) && !array_key_exists('category', $data)) {
+        if (! empty($data['menu_category_id']) && ! array_key_exists('category', $data)) {
             $category = MenuCategory::query()->find($data['menu_category_id']);
             if ($category) {
                 $data['category'] = $category->name;

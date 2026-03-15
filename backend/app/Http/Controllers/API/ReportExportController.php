@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use App\Exports\ReportExport;
+use App\Http\Controllers\Controller;
 use Dompdf\Dompdf;
 use Dompdf\Options;
+use Illuminate\Http\Request;
 
 class ReportExportController extends Controller
 {
@@ -29,13 +28,13 @@ class ReportExportController extends Controller
         }
 
         $export = new ReportExport($rows);
-        $filename = 'report_' . now()->format('Ymd_His') . '.xlsx';
-        $path = storage_path('app/reports/' . $filename);
+        $filename = 'report_'.now()->format('Ymd_His').'.xlsx';
+        $path = storage_path('app/reports/'.$filename);
 
         try {
             $export->save($path);
         } catch (\Throwable $e) {
-            return response()->json(['error' => 'No se pudo generar Excel: ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'No se pudo generar Excel: '.$e->getMessage()], 500);
         }
 
         return response()->download($path, $filename);
@@ -59,11 +58,14 @@ class ReportExportController extends Controller
 
         // compute totals if rows contain numeric keys
         $rowsArray = [];
-        if (is_array($rows)) $rowsArray = $rows;
-        elseif ($rows instanceof \Illuminate\Support\Collection) $rowsArray = $rows->map(fn($r)=> (array)$r)->toArray();
+        if (is_array($rows)) {
+            $rowsArray = $rows;
+        } elseif ($rows instanceof \Illuminate\Support\Collection) {
+            $rowsArray = $rows->map(fn ($r) => (array) $r)->toArray();
+        }
 
         $totals = [];
-        if (!empty($rowsArray) && is_array($rowsArray[0])) {
+        if (! empty($rowsArray) && is_array($rowsArray[0])) {
             foreach ($rowsArray as $r) {
                 foreach ($r as $k => $v) {
                     if (is_numeric($v)) {
@@ -75,7 +77,7 @@ class ReportExportController extends Controller
 
         $html = view('reports.pdf', ['rows' => $rowsArray, 'totals' => $totals])->render();
 
-        $options = new Options();
+        $options = new Options;
         $options->set('isRemoteEnabled', true);
         $dompdf = new Dompdf($options);
         $dompdf->loadHtml($html);
@@ -83,8 +85,8 @@ class ReportExportController extends Controller
         $dompdf->render();
 
         $output = $dompdf->output();
-        $filename = 'report_' . now()->format('Ymd_His') . '.pdf';
-        $path = storage_path('app/reports/' . $filename);
+        $filename = 'report_'.now()->format('Ymd_His').'.pdf';
+        $path = storage_path('app/reports/'.$filename);
         file_put_contents($path, $output);
 
         return response()->download($path, $filename);

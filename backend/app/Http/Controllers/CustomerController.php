@@ -34,6 +34,7 @@ class CustomerController extends Controller
             'notes' => 'nullable|string',
         ]);
         $c = \App\Models\Customer::create($data);
+
         return response()->json($c, 201);
     }
 
@@ -64,6 +65,7 @@ class CustomerController extends Controller
             'notes' => 'nullable|string',
         ]);
         $customer->update($data);
+
         return response()->json($customer);
     }
 
@@ -73,6 +75,7 @@ class CustomerController extends Controller
     public function destroy(Customer $customer)
     {
         $customer->delete();
+
         return response()->json(null, 204);
     }
 }

@@ -12,7 +12,7 @@ class DashboardApiKeyAuth
         $header = $request->header('X-API-KEY') ?: $request->query('api_key');
         $key = (string) config('dashboard.api_key', 'change_me_to_a_secure_value');
 
-        if (!$key || !$header || !hash_equals($key, $header)) {
+        if (! $key || ! $header || ! hash_equals($key, $header)) {
             return response()->json(['message' => 'Unauthorized.'], 401);
         }
 

@@ -9,12 +9,12 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (!Schema::hasTable('menu_items')) {
+        if (! Schema::hasTable('menu_items')) {
             return;
         }
 
         Schema::table('menu_items', function (Blueprint $table) {
-            if (!Schema::hasColumn('menu_items', 'profit_margin_percent')) {
+            if (! Schema::hasColumn('menu_items', 'profit_margin_percent')) {
                 $table->decimal('profit_margin_percent', 6, 2)->nullable()->after('cost');
             }
         });
@@ -32,7 +32,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        if (!Schema::hasTable('menu_items')) {
+        if (! Schema::hasTable('menu_items')) {
             return;
         }
 

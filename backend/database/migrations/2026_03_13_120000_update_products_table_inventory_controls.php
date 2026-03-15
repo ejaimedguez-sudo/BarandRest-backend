@@ -9,21 +9,21 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (!Schema::hasTable('products')) {
+        if (! Schema::hasTable('products')) {
             return;
         }
 
         Schema::table('products', function (Blueprint $table) {
-            if (!Schema::hasColumn('products', 'initial_stock')) {
+            if (! Schema::hasColumn('products', 'initial_stock')) {
                 $table->decimal('initial_stock', 10, 3)->nullable()->after('stock');
             }
-            if (!Schema::hasColumn('products', 'stock_min')) {
+            if (! Schema::hasColumn('products', 'stock_min')) {
                 $table->decimal('stock_min', 10, 3)->nullable()->after('initial_stock');
             }
-            if (!Schema::hasColumn('products', 'stock_max')) {
+            if (! Schema::hasColumn('products', 'stock_max')) {
                 $table->decimal('stock_max', 10, 3)->nullable()->after('stock_min');
             }
-            if (!Schema::hasColumn('products', 'reorder_point')) {
+            if (! Schema::hasColumn('products', 'reorder_point')) {
                 $table->decimal('reorder_point', 10, 3)->nullable()->after('stock_max');
             }
         });
@@ -38,7 +38,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        if (!Schema::hasTable('products')) {
+        if (! Schema::hasTable('products')) {
             return;
         }
 

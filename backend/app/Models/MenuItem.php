@@ -63,12 +63,14 @@ class MenuItem extends Model
             if (is_numeric($ing->consumption_ml ?? null) && (float) $ing->consumption_ml > 0) {
                 $consumptionMl = (float) $ing->consumption_ml;
                 $total += ($cost / 1000.0) * $consumptionMl;
+
                 continue;
             }
 
             $qty = is_numeric($ing->quantity ?? null) ? (float) $ing->quantity : 0.0;
             $total += $qty * $cost;
         }
+
         return round($total, 4);
     }
 
@@ -82,8 +84,11 @@ class MenuItem extends Model
             return null;
         }
         $margin = max(0.0, min(99.0, $marginPercent)) / 100.0;
-        if ($margin >= 1.0) return null;
+        if ($margin >= 1.0) {
+            return null;
+        }
         $price = $cost / (1 - $margin);
+
         return round($price, 2);
     }
 }

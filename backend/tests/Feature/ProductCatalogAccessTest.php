@@ -4,8 +4,8 @@ namespace Tests\Feature;
 
 use App\Models\Product;
 use App\Models\ProductType;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Filesystem\FilesystemAdapter;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -121,7 +121,7 @@ class ProductCatalogAccessTest extends TestCase
         $product = Product::query()->create([
             'sku' => 'PRD-CLEAN-1',
             'name' => 'Producto con Imagen',
-            'image_url' => '/storage/' . $oldPath,
+            'image_url' => '/storage/'.$oldPath,
             'unit' => 'pieza',
         ]);
 
@@ -143,7 +143,7 @@ class ProductCatalogAccessTest extends TestCase
         $productToDelete = Product::query()->create([
             'sku' => 'PRD-CLEAN-2',
             'name' => 'Producto para Borrar',
-            'image_url' => '/storage/' . $destroyPath,
+            'image_url' => '/storage/'.$destroyPath,
             'unit' => 'pieza',
         ]);
 

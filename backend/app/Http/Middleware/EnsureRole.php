@@ -14,15 +14,15 @@ class EnsureRole
         $knownRoles = config('roles.known_roles', ['guest']);
 
         $resolvedRole = strtolower((string) ($request->user()->role ?? $request->header('X-USER-ROLE', 'guest')));
-        if (!in_array($resolvedRole, $knownRoles, true)) {
+        if (! in_array($resolvedRole, $knownRoles, true)) {
             $resolvedRole = 'guest';
         }
 
         $request->attributes->set('resolved_role', $resolvedRole);
 
-        if (!empty($allowedRoles)) {
+        if (! empty($allowedRoles)) {
             $normalizedAllowed = array_map(static fn (string $role): string => strtolower($role), $allowedRoles);
-            if (!in_array($resolvedRole, $normalizedAllowed, true)) {
+            if (! in_array($resolvedRole, $normalizedAllowed, true)) {
                 return new JsonResponse([
                     'message' => 'No autorizado para este rol.',
                     'required_roles' => $normalizedAllowed,

@@ -35,6 +35,7 @@ class CommissionController extends Controller
             'percent' => 'numeric',
         ]);
         $c = \App\Models\Commission::create($data);
+
         return response()->json($c, 201);
     }
 
@@ -64,6 +65,7 @@ class CommissionController extends Controller
             'percent' => 'numeric',
         ]);
         $commission->update($data);
+
         return response()->json($commission);
     }
 
@@ -73,6 +75,7 @@ class CommissionController extends Controller
     public function destroy(Commission $commission)
     {
         $commission->delete();
+
         return response()->json(null, 204);
     }
 }

@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Models\Commission;
 use App\Models\Order;
+use Illuminate\Http\Request;
 
 class CommissionController extends Controller
 {
@@ -25,7 +24,9 @@ class CommissionController extends Controller
         $orders = Order::whereBetween('created_at', [$data['from'], $data['to']])->get();
         $created = 0;
         foreach ($orders as $order) {
-            if (!$order->waiter_id) continue;
+            if (! $order->waiter_id) {
+                continue;
+            }
             $amount = ($order->total ?? 0) * ($data['percent'] / 100.0);
             Commission::create([
                 'user_id' => $order->waiter_id,

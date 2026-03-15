@@ -22,14 +22,14 @@ class CleanupCatalogOrphanImagesCommand extends Command
 
         $modeLabel = $dryRun ? 'DRY RUN' : 'EJECUCION';
         $this->info("[{$modeLabel}] Escaneadas: {$result['scanned']}");
-        $this->info("[{$modeLabel}] Eliminadas: " . count($result['deleted']));
-        $this->line("[{$modeLabel}] Conservadas (referenciadas): " . count($result['kept_referenced']));
-        $this->line("[{$modeLabel}] Conservadas (recientes): " . count($result['kept_recent']));
+        $this->info("[{$modeLabel}] Eliminadas: ".count($result['deleted']));
+        $this->line("[{$modeLabel}] Conservadas (referenciadas): ".count($result['kept_referenced']));
+        $this->line("[{$modeLabel}] Conservadas (recientes): ".count($result['kept_recent']));
 
         if ($dryRun && count($result['deleted']) > 0) {
             $this->line('[DRY RUN] Archivos candidatos:');
             foreach ($result['deleted'] as $path) {
-                $this->line('- ' . $path);
+                $this->line('- '.$path);
             }
         }
 

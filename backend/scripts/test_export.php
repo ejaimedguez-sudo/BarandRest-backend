@@ -1,8 +1,9 @@
 <?php
-require __DIR__ . '/../vendor/autoload.php';
+
+require __DIR__.'/../vendor/autoload.php';
 // Bootstrap minimal app container for helpers
-if (file_exists(__DIR__ . '/../bootstrap/app.php')) {
-    $app = require __DIR__ . '/../bootstrap/app.php';
+if (file_exists(__DIR__.'/../bootstrap/app.php')) {
+    $app = require __DIR__.'/../bootstrap/app.php';
 }
 
 use App\Exports\ReportExport;
@@ -14,13 +15,13 @@ $rows = [
 ];
 
 $export = new ReportExport($rows);
-$xlsxPath = __DIR__ . '/../storage/app/reports/test_report.xlsx';
+$xlsxPath = __DIR__.'/../storage/app/reports/test_report.xlsx';
 @mkdir(dirname($xlsxPath), 0777, true);
 try {
     $export->save($xlsxPath);
     echo "XLSX generado: $xlsxPath\n";
 } catch (\Throwable $e) {
-    echo "Error generando XLSX: " . $e->getMessage() . "\n";
+    echo 'Error generando XLSX: '.$e->getMessage()."\n";
 }
 
 echo "Prueba completada.\n";

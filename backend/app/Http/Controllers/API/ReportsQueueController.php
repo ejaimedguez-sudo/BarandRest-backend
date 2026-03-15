@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Jobs\QueueGenerateAndEmailDailyReport;
+use Illuminate\Http\Request;
 
 class ReportsQueueController extends Controller
 {

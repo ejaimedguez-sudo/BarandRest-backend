@@ -52,7 +52,7 @@ class ProductTypeController extends Controller
 
     private function catalogJsonResponse(Request $request, mixed $payload, string $fingerprint, string $cacheControl): JsonResponse
     {
-        $etag = 'W/"' . sha1($fingerprint) . '"';
+        $etag = 'W/"'.sha1($fingerprint).'"';
         $ifNoneMatch = trim((string) $request->header('If-None-Match', ''));
 
         if ($ifNoneMatch !== '' && $ifNoneMatch === $etag) {
@@ -87,6 +87,7 @@ class ProductTypeController extends Controller
         ]);
 
         $type = ProductType::create($data);
+
         return response()->json($type, 201);
     }
 
@@ -103,8 +104,8 @@ class ProductTypeController extends Controller
     public function update(Request $request, ProductType $productType)
     {
         $data = $request->validate([
-            'code' => ['nullable', 'string', 'max:80', 'regex:/^[A-Za-z0-9\-_.]+$/', 'unique:product_types,code,' . $productType->id],
-            'name' => 'sometimes|required|string|max:120|unique:product_types,name,' . $productType->id,
+            'code' => ['nullable', 'string', 'max:80', 'regex:/^[A-Za-z0-9\-_.]+$/', 'unique:product_types,code,'.$productType->id],
+            'name' => 'sometimes|required|string|max:120|unique:product_types,name,'.$productType->id,
             'description' => 'nullable|string|max:1000',
         ], [
             'code.regex' => 'El codigo solo puede contener letras, numeros, guion (-), guion bajo (_) y punto (.)',
@@ -113,12 +114,14 @@ class ProductTypeController extends Controller
         ]);
 
         $productType->update($data);
+
         return response()->json($productType);
     }
 
     public function destroy(ProductType $productType)
     {
         $productType->delete();
+
         return response()->json(null, 204);
     }
 }

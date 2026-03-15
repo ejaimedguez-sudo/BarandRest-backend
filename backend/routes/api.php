@@ -1,26 +1,23 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-
-use App\Http\Controllers\ProductController;
+use App\Http\Controllers\API\AuthUserController;
+use App\Http\Controllers\API\PrintController;
+use App\Http\Controllers\API\ReportExportController;
+use App\Http\Controllers\API\SystemCapabilitiesController;
 use App\Http\Controllers\CatalogMediaUploadController;
+use App\Http\Controllers\CommissionController;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\MeasureController;
-use App\Http\Controllers\ProductTypeController;
 use App\Http\Controllers\MenuCategoryController;
 use App\Http\Controllers\MenuItemController;
-use App\Http\Controllers\MenuItemIngredientController;
 use App\Http\Controllers\MenuItemCostHistoryController;
+use App\Http\Controllers\MenuItemIngredientController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductTypeController;
 use App\Http\Controllers\TableRestaurantController;
-use App\Http\Controllers\CustomerController;
-use App\Http\Controllers\CommissionController;
-use App\Http\Controllers\ExpenseController;
-use App\Http\Controllers\API\ReportController;
-use App\Http\Controllers\API\ReportsQueueController;
-use App\Http\Controllers\API\ReportExportController;
-use App\Http\Controllers\API\PrintController;
-use App\Http\Controllers\API\AuthUserController;
-use App\Http\Controllers\API\SystemCapabilitiesController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -75,6 +72,7 @@ Route::post('print/ticket', [PrintController::class, 'ticket'])->middleware('rol
 
 // Dashboard
 use App\Http\Controllers\API\DashboardController;
+
 Route::get('dashboard/metrics', [DashboardController::class, 'metrics'])->middleware(\App\Http\Middleware\DashboardApiKeyAuth::class);
 Route::post('dashboard/clear-cache', [DashboardController::class, 'clearCache'])
     ->middleware([\App\Http\Middleware\DashboardApiKeyAuth::class, 'role:admin,gerente']);

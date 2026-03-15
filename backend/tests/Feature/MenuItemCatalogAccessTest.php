@@ -2,11 +2,11 @@
 
 namespace Tests\Feature;
 
-use App\Models\MenuItem;
 use App\Models\MenuCategory;
+use App\Models\MenuItem;
 use App\Models\ProductType;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Filesystem\FilesystemAdapter;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -256,7 +256,7 @@ class MenuItemCatalogAccessTest extends TestCase
             'name' => 'Item con Imagen',
             'product_type_id' => $type->id,
             'menu_category_id' => $menuCategory->id,
-            'image_url' => '/storage/' . $oldPath,
+            'image_url' => '/storage/'.$oldPath,
             'price' => 100,
             'cost' => 50,
             'profit_margin_percent' => 50,
@@ -287,7 +287,7 @@ class MenuItemCatalogAccessTest extends TestCase
             'name' => 'Item para Borrar',
             'product_type_id' => $type->id,
             'menu_category_id' => $menuCategory->id,
-            'image_url' => '/storage/' . $destroyPath,
+            'image_url' => '/storage/'.$destroyPath,
             'price' => 100,
             'cost' => 50,
             'profit_margin_percent' => 50,
