@@ -1186,9 +1186,6 @@
 <body class="catalog-standard">
 <main class="wrap">
     <section class="panel">
-        <div class="head">
-            <span class="badge">Vista operativa</span>
-        </div>
         <div class="body">
             <div class="toolbar">
                 <input id="tableFilter" type="search" placeholder="Buscar por ID, codigo, nombre o descripcion...">
