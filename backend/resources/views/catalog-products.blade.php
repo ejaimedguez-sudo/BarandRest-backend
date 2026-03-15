@@ -742,9 +742,6 @@
 <main class="wrap">
     <section class="grid">
         <article class="panel">
-            <div class="head">
-                <span class="badge">Vista operativa</span>
-            </div>
             <div class="body">
                 <div class="toolbar">
                     <input id="tableFilter" type="search" placeholder="Buscar por nombre, SKU o unidad...">
