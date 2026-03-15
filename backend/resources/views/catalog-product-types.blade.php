@@ -315,7 +315,6 @@
 <main class="wrap">
     <section class="panel">
         <div class="head">
-            <h2>Panel de Tipos de Producto</h2>
             <span class="badge">Vista operativa</span>
         </div>
         <div class="body">

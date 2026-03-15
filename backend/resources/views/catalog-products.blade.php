@@ -743,7 +743,6 @@
     <section class="grid">
         <article class="panel">
             <div class="head">
-                <h2>Panel de Productos</h2>
                 <span class="badge">Vista operativa</span>
             </div>
             <div class="body">

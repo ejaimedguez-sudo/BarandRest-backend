@@ -1187,7 +1187,6 @@
 <main class="wrap">
     <section class="panel">
         <div class="head">
-            <h2>Panel de Menu Items</h2>
             <span class="badge">Vista operativa</span>
         </div>
         <div class="body">
