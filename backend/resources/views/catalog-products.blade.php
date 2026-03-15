@@ -970,14 +970,18 @@
         return Number.isFinite(parsed) ? parsed : null;
     }
 
-    function collectPayload() {
+    function collectPayload(existingImageUrl = '') {
+        const persistedImageUrl = imageUrlFromValue(fields.image_url.value)
+            || imageUrlFromValue(committedImageUrl)
+            || imageUrlFromValue(existingImageUrl);
+
         return {
             sku: fields.sku.value.trim() || null,
             name: fields.name.value.trim(),
             product_type_id: normalizeNumber(fields.product_type_id.value),
             unit: fields.unit.value.trim(),
             presentation: fields.presentation.value.trim() || null,
-            image_url: fields.image_url.value.trim() || null,
+            image_url: persistedImageUrl || null,
             cost: normalizeNumber(fields.cost.value),
             stock: normalizeNumber(fields.stock.value),
             daily_consumption: normalizeNumber(fields.daily_consumption.value),
@@ -1704,8 +1708,9 @@
             return;
         }
 
-        const payload = collectPayload();
         const editingId = fields.id.value ? Number(fields.id.value) : null;
+        const selectedProduct = editingId ? getSelectedProduct() : null;
+        const payload = collectPayload(selectedProduct?.image_url || '');
 
         try {
             if (editingId) {
