@@ -292,19 +292,6 @@
 </head>
 <body>
   <main class="wrap">
-    <section class="head">
-      <div>
-        <div class="brand-mini">
-          <img src="/assets/branding/comanda-deg.png" alt="Logo Ordena Facil">
-          <div>
-            <h1>Dashboard</h1>
-            <p>Rendimiento semanal y resumen rapido de ventas.</p>
-          </div>
-        </div>
-      </div>
-      <div class="tag">Actualizado en vivo</div>
-    </section>
-
     <section class="grid">
       <article class="card">
         <h3>Total Semana</h3>
