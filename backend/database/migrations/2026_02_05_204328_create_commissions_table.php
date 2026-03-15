@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasTable('commissions')) {
+        if (! Schema::hasTable('commissions')) {
             Schema::create('commissions', function (Blueprint $table) {
                 $table->id();
                 $table->timestamps();

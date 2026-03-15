@@ -60,7 +60,7 @@ class MeasureController extends Controller
 
     private function catalogJsonResponse(Request $request, mixed $payload, string $fingerprint, string $cacheControl): JsonResponse
     {
-        $etag = 'W/"' . sha1($fingerprint) . '"';
+        $etag = 'W/"'.sha1($fingerprint).'"';
         $ifNoneMatch = trim((string) $request->header('If-None-Match', ''));
 
         if ($ifNoneMatch !== '' && $ifNoneMatch === $etag) {
@@ -112,8 +112,8 @@ class MeasureController extends Controller
         $measureModel = Measure::query()->findOrFail($measure);
 
         $data = $request->validate([
-            'name' => 'sometimes|required|string|max:120|unique:measures,name,' . $measureModel->id,
-            'abbreviation' => 'nullable|string|max:20|unique:measures,abbreviation,' . $measureModel->id,
+            'name' => 'sometimes|required|string|max:120|unique:measures,name,'.$measureModel->id,
+            'abbreviation' => 'nullable|string|max:20|unique:measures,abbreviation,'.$measureModel->id,
             'description' => 'nullable|string|max:500',
         ]);
 
@@ -152,7 +152,7 @@ class MeasureController extends Controller
             ], 503);
         }
 
-        if (!Schema::hasTable('measures')) {
+        if (! Schema::hasTable('measures')) {
             return response()->json([
                 'message' => 'El catalogo de medidas no esta disponible aun. Ejecuta php artisan migrate --force.',
             ], 503);

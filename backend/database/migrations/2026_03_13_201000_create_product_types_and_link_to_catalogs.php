@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (!Schema::hasTable('product_types')) {
+        if (! Schema::hasTable('product_types')) {
             Schema::create('product_types', function (Blueprint $table) {
                 $table->id();
                 $table->string('code', 80)->nullable()->unique();
@@ -18,13 +18,13 @@ return new class extends Migration
             });
         }
 
-        if (Schema::hasTable('products') && !Schema::hasColumn('products', 'product_type_id')) {
+        if (Schema::hasTable('products') && ! Schema::hasColumn('products', 'product_type_id')) {
             Schema::table('products', function (Blueprint $table) {
                 $table->unsignedBigInteger('product_type_id')->nullable()->index()->after('name');
             });
         }
 
-        if (Schema::hasTable('menu_items') && !Schema::hasColumn('menu_items', 'product_type_id')) {
+        if (Schema::hasTable('menu_items') && ! Schema::hasColumn('menu_items', 'product_type_id')) {
             Schema::table('menu_items', function (Blueprint $table) {
                 $table->unsignedBigInteger('product_type_id')->nullable()->index()->after('name');
             });

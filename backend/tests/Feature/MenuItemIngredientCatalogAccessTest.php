@@ -60,14 +60,14 @@ class MenuItemIngredientCatalogAccessTest extends TestCase
 
         $ingredientId = (int) $create->json('id');
 
-        $this->getJson('/api/menu-item-ingredients?menu_item_id=' . $menuItem->id, ['X-USER-ROLE' => 'gerente'])
+        $this->getJson('/api/menu-item-ingredients?menu_item_id='.$menuItem->id, ['X-USER-ROLE' => 'gerente'])
             ->assertOk()
             ->assertJsonFragment([
                 'id' => $ingredientId,
                 'product_id' => $product->id,
             ]);
 
-        $this->putJson('/api/menu-item-ingredients/' . $ingredientId, [
+        $this->putJson('/api/menu-item-ingredients/'.$ingredientId, [
             'menu_item_id' => $menuItem->id,
             'product_id' => $product->id,
             'quantity' => 55.25,
@@ -80,7 +80,7 @@ class MenuItemIngredientCatalogAccessTest extends TestCase
             'unit' => 'ml',
         ]);
 
-        $this->deleteJson('/api/menu-item-ingredients/' . $ingredientId, [], ['X-USER-ROLE' => 'gerente'])
+        $this->deleteJson('/api/menu-item-ingredients/'.$ingredientId, [], ['X-USER-ROLE' => 'gerente'])
             ->assertNoContent();
 
         $this->assertDatabaseMissing('menu_item_ingredients', ['id' => $ingredientId]);
@@ -190,7 +190,7 @@ class MenuItemIngredientCatalogAccessTest extends TestCase
             'new_cost' => 30.00,
         ]);
 
-        $this->putJson('/api/menu-item-ingredients/' . $ingredientId, [
+        $this->putJson('/api/menu-item-ingredients/'.$ingredientId, [
             'consumption_ml' => 200,
             'unit' => 'ml',
         ], [
@@ -206,7 +206,7 @@ class MenuItemIngredientCatalogAccessTest extends TestCase
             'difference' => 30.00,
         ]);
 
-        $this->getJson('/api/menu-item-cost-histories?menu_item_id=' . $menuItem->id, [
+        $this->getJson('/api/menu-item-cost-histories?menu_item_id='.$menuItem->id, [
             'X-USER-ROLE' => 'gerente',
         ])->assertOk()
             ->assertJsonFragment([

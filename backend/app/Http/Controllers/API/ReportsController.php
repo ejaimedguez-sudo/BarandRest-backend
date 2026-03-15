@@ -34,20 +34,22 @@ class ReportsController extends Controller
         // support CSV export (synchronous for small datasets)
         $format = $request->query('format');
         if ($format === 'csv') {
-            $filename = 'daily-' . $date . ($groupBy ? "-{$groupBy}" : '') . '.csv';
-            $path = storage_path('app/reports/' . $filename);
+            $filename = 'daily-'.$date.($groupBy ? "-{$groupBy}" : '').'.csv';
+            $path = storage_path('app/reports/'.$filename);
             @mkdir(dirname($path), 0755, true);
             $fp = fopen($path, 'w');
             if ($fp) {
                 // headers
-                $headers = array_keys((array)($rows->first() ?? ['sales'=>0,'cost'=>0,'qty'=>0,'orders'=>0]));
+                $headers = array_keys((array) ($rows->first() ?? ['sales' => 0, 'cost' => 0, 'qty' => 0, 'orders' => 0]));
                 fputcsv($fp, $headers);
                 foreach ($rows as $r) {
-                    fputcsv($fp, array_values((array)$r));
+                    fputcsv($fp, array_values((array) $r));
                 }
                 fclose($fp);
-                return response()->json(['csv' => url('/api/reports/download/' . $filename)]);
+
+                return response()->json(['csv' => url('/api/reports/download/'.$filename)]);
             }
+
             return response()->json(['error' => 'Could not generate CSV'], 500);
         }
 
@@ -59,8 +61,13 @@ class ReportsController extends Controller
         $from = $request->query('from');
         $to = $request->query('to');
         $q = DB::table('orders')->selectRaw('SUM(total) as sales, COUNT(*) as orders');
-        if ($from) $q->whereDate('created_at', '>=', $from);
-        if ($to) $q->whereDate('created_at', '<=', $to);
+        if ($from) {
+            $q->whereDate('created_at', '>=', $from);
+        }
+        if ($to) {
+            $q->whereDate('created_at', '<=', $to);
+        }
+
         return response()->json($q->first());
     }
 
@@ -72,8 +79,13 @@ class ReportsController extends Controller
             ->selectRaw('DATE(created_at) as day, SUM(total) as sales, COUNT(*) as orders')
             ->groupByRaw('DATE(created_at)')
             ->orderBy('day');
-        if ($start) $q->whereDate('created_at', '>=', $start);
-        if ($end) $q->whereDate('created_at', '<=', $end);
+        if ($start) {
+            $q->whereDate('created_at', '>=', $start);
+        }
+        if ($end) {
+            $q->whereDate('created_at', '<=', $end);
+        }
+
         return response()->json($q->get());
     }
 
@@ -109,6 +121,7 @@ class ReportsController extends Controller
             ->whereYear('created_at', $year)
             ->groupByRaw('MONTH(created_at)')
             ->orderBy('month');
+
         return response()->json($q->get());
     }
 
@@ -140,6 +153,7 @@ class ReportsController extends Controller
             ->selectRaw('YEAR(created_at) as year, SUM(total) as sales, COUNT(*) as orders')
             ->groupByRaw('YEAR(created_at)')
             ->orderBy('year');
+
         return response()->json($q->get());
     }
 }

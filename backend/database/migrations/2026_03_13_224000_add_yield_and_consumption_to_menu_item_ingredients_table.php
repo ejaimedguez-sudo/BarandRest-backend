@@ -8,16 +8,16 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (!Schema::hasTable('menu_item_ingredients')) {
+        if (! Schema::hasTable('menu_item_ingredients')) {
             return;
         }
 
         Schema::table('menu_item_ingredients', function (Blueprint $table) {
-            if (!Schema::hasColumn('menu_item_ingredients', 'cocktail_yield')) {
+            if (! Schema::hasColumn('menu_item_ingredients', 'cocktail_yield')) {
                 $table->decimal('cocktail_yield', 10, 3)->nullable()->after('quantity');
             }
 
-            if (!Schema::hasColumn('menu_item_ingredients', 'consumption_ml')) {
+            if (! Schema::hasColumn('menu_item_ingredients', 'consumption_ml')) {
                 $table->decimal('consumption_ml', 10, 3)->nullable()->after('cocktail_yield');
             }
         });
@@ -25,7 +25,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        if (!Schema::hasTable('menu_item_ingredients')) {
+        if (! Schema::hasTable('menu_item_ingredients')) {
             return;
         }
 

@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Filesystem\FilesystemAdapter;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Throwable;
 
@@ -192,7 +192,7 @@ class CatalogMediaUploadController extends Controller
         $rawFromPathname = file_get_contents($file->getPathname());
         $fallbackBinary = $rawFromPathname !== false ? $rawFromPathname : '';
 
-        if (!$inputPath || !function_exists('imagecreatefromstring')) {
+        if (! $inputPath || ! function_exists('imagecreatefromstring')) {
             return [
                 $fallbackBinary,
                 $originalExtension ?: 'jpg',
@@ -210,7 +210,7 @@ class CatalogMediaUploadController extends Controller
         }
 
         $source = @imagecreatefromstring($raw);
-        if (!$source) {
+        if (! $source) {
             return [$raw, $originalExtension ?: 'jpg', $originalMime ?: 'image/jpeg'];
         }
 
@@ -278,12 +278,12 @@ class CatalogMediaUploadController extends Controller
 
     private function dimensionsFromBinary(string $binary): array
     {
-        if ($binary === '' || !function_exists('getimagesizefromstring')) {
+        if ($binary === '' || ! function_exists('getimagesizefromstring')) {
             return [null, null];
         }
 
         $info = @getimagesizefromstring($binary);
-        if (!is_array($info)) {
+        if (! is_array($info)) {
             return [null, null];
         }
 

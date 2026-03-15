@@ -21,6 +21,7 @@ class PrintController extends Controller
         $data = $request->all();
         // Placeholder: here you would format and send to ESC/POS printer
         Log::info('Print ticket request', $data);
+
         return response()->json(['status' => 'queued']);
     }
 

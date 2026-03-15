@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\MenuItemIngredient;
 use App\Models\MenuItem;
 use App\Models\MenuItemCostHistory;
+use App\Models\MenuItemIngredient;
+use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Http\Request;
 
 class MenuItemIngredientController extends Controller
 {
@@ -25,18 +25,20 @@ class MenuItemIngredientController extends Controller
             $data['cocktail_yield'] = round($yield, 3);
             $data['consumption_ml'] = $computedConsumption;
             $data['quantity'] = $computedConsumption;
-            if (!array_key_exists('unit', $data) || empty($data['unit'])) {
+            if (! array_key_exists('unit', $data) || empty($data['unit'])) {
                 $data['unit'] = 'ml';
             }
+
             return $data;
         }
 
         if ($consumption !== null && $consumption > 0) {
             $data['consumption_ml'] = round($consumption, 3);
             $data['quantity'] = round($consumption, 3);
-            if (!array_key_exists('unit', $data) || empty($data['unit'])) {
+            if (! array_key_exists('unit', $data) || empty($data['unit'])) {
                 $data['unit'] = 'ml';
             }
+
             return $data;
         }
 
@@ -45,13 +47,13 @@ class MenuItemIngredientController extends Controller
             $data['consumption_ml'] = null;
         }
 
-        if (!$hasQuantity && !$hasYield && !$hasConsumption && !$existing) {
+        if (! $hasQuantity && ! $hasYield && ! $hasConsumption && ! $existing) {
             throw ValidationException::withMessages([
                 'quantity' => ['Debes indicar consumo manual o rendimiento por botella.'],
             ]);
         }
 
-        if ($hasQuantity && (!is_numeric($data['quantity']) || (float) $data['quantity'] <= 0)) {
+        if ($hasQuantity && (! is_numeric($data['quantity']) || (float) $data['quantity'] <= 0)) {
             throw ValidationException::withMessages([
                 'quantity' => ['La cantidad debe ser mayor a 0.'],
             ]);
@@ -63,7 +65,7 @@ class MenuItemIngredientController extends Controller
     private function syncMenuItemCost(int $menuItemId, string $action, ?string $actorRole = null, array $context = []): void
     {
         $menuItem = MenuItem::query()->with('ingredients.product')->find($menuItemId);
-        if (!$menuItem) {
+        if (! $menuItem) {
             return;
         }
 
@@ -152,6 +154,7 @@ class MenuItemIngredientController extends Controller
     public function show(MenuItemIngredient $menuItemIngredient)
     {
         $menuItemIngredient->load('product:id,name,unit,cost,stock');
+
         return response()->json($menuItemIngredient);
     }
 
@@ -192,6 +195,7 @@ class MenuItemIngredientController extends Controller
             ['ingredient_id' => $menuItemIngredient->id, 'product_id' => $menuItemIngredient->product_id]
         );
         $menuItemIngredient->load('product:id,name,unit,cost,stock');
+
         return response()->json($menuItemIngredient);
     }
 
@@ -207,6 +211,7 @@ class MenuItemIngredientController extends Controller
             request()->header('X-USER-ROLE'),
             ['ingredient_id' => $ingredientId, 'product_id' => $productId]
         );
+
         return response()->json(null, 204);
     }
 }

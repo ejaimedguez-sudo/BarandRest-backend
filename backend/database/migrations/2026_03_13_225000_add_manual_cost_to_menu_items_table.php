@@ -8,12 +8,12 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (!Schema::hasTable('menu_items')) {
+        if (! Schema::hasTable('menu_items')) {
             return;
         }
 
         Schema::table('menu_items', function (Blueprint $table) {
-            if (!Schema::hasColumn('menu_items', 'manual_cost')) {
+            if (! Schema::hasColumn('menu_items', 'manual_cost')) {
                 $table->decimal('manual_cost', 10, 2)->nullable()->after('cost');
             }
         });
@@ -21,7 +21,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        if (!Schema::hasTable('menu_items')) {
+        if (! Schema::hasTable('menu_items')) {
             return;
         }
 

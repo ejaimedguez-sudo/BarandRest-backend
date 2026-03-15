@@ -22,20 +22,22 @@ class ProductController extends Controller
 
         if ($dailyConsumption !== null && $dailyConsumption > 0 && $stock !== null && $stock >= 0) {
             $data['coverage_days'] = round($stock / $dailyConsumption, 2);
+
             return $data;
         }
 
         $data['coverage_days'] = null;
+
         return $data;
     }
 
     private function normalizeAndValidateInventory(array $data): array
     {
-        if (array_key_exists('reorder_level', $data) && !array_key_exists('reorder_point', $data)) {
+        if (array_key_exists('reorder_level', $data) && ! array_key_exists('reorder_point', $data)) {
             $data['reorder_point'] = $data['reorder_level'];
         }
 
-        if (array_key_exists('reorder_point', $data) && !array_key_exists('reorder_level', $data)) {
+        if (array_key_exists('reorder_point', $data) && ! array_key_exists('reorder_level', $data)) {
             $data['reorder_level'] = $data['reorder_point'];
         }
 
@@ -115,7 +117,7 @@ class ProductController extends Controller
 
     private function catalogJsonResponse(Request $request, mixed $payload, string $fingerprint, string $cacheControl): JsonResponse
     {
-        $etag = 'W/"' . sha1($fingerprint) . '"';
+        $etag = 'W/"'.sha1($fingerprint).'"';
         $ifNoneMatch = trim((string) $request->header('If-None-Match', ''));
 
         if ($ifNoneMatch !== '' && $ifNoneMatch === $etag) {
@@ -164,6 +166,7 @@ class ProductController extends Controller
         $data = $this->normalizeAndValidateInventory($data);
         $data = $this->applyCoverageFromConsumption($data);
         $product = Product::create($data);
+
         return response()->json($product, 201);
     }
 
@@ -191,7 +194,7 @@ class ProductController extends Controller
         $previousImageUrl = $product->image_url;
 
         $data = $request->validate([
-            'sku' => 'nullable|string|unique:products,sku,' . $product->id,
+            'sku' => 'nullable|string|unique:products,sku,'.$product->id,
             'product_type_id' => 'nullable|integer|exists:product_types,id',
             'name' => 'sometimes|required|string|max:255',
             'presentation' => 'nullable|string|max:120',

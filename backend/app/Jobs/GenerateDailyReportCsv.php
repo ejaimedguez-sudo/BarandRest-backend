@@ -14,6 +14,7 @@ class GenerateDailyReportCsv implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $date;
+
     public $groupBy;
 
     public function __construct(string $date, ?string $groupBy = null)
@@ -45,18 +46,19 @@ class GenerateDailyReportCsv implements ShouldQueue
             $rows = $base->get();
         }
 
-        $filename = 'daily-' . $date . ($groupBy ? "-{$groupBy}" : '') . '.csv';
-        $path = storage_path('app/reports/' . $filename);
+        $filename = 'daily-'.$date.($groupBy ? "-{$groupBy}" : '').'.csv';
+        $path = storage_path('app/reports/'.$filename);
         @mkdir(dirname($path), 0755, true);
         $fp = fopen($path, 'w');
         if ($fp) {
-            $headers = array_keys((array)($rows->first() ?? ['sales'=>0,'cost'=>0,'qty'=>0,'orders'=>0]));
+            $headers = array_keys((array) ($rows->first() ?? ['sales' => 0, 'cost' => 0, 'qty' => 0, 'orders' => 0]));
             fputcsv($fp, $headers);
             foreach ($rows as $r) {
-                fputcsv($fp, array_values((array)$r));
+                fputcsv($fp, array_values((array) $r));
             }
             fclose($fp);
         }
+
         return $filename;
     }
 }

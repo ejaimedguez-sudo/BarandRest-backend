@@ -8,18 +8,18 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (!Schema::hasTable('customers')) {
+        if (! Schema::hasTable('customers')) {
             return;
         }
 
         Schema::table('customers', function (Blueprint $table) {
-            if (!Schema::hasColumn('customers', 'name')) {
+            if (! Schema::hasColumn('customers', 'name')) {
                 $table->string('name')->nullable()->after('id');
             }
-            if (!Schema::hasColumn('customers', 'phone')) {
+            if (! Schema::hasColumn('customers', 'phone')) {
                 $table->string('phone')->nullable()->after('name');
             }
-            if (!Schema::hasColumn('customers', 'notes')) {
+            if (! Schema::hasColumn('customers', 'notes')) {
                 $table->text('notes')->nullable()->after('phone');
             }
         });
@@ -27,7 +27,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        if (!Schema::hasTable('customers')) {
+        if (! Schema::hasTable('customers')) {
             return;
         }
 

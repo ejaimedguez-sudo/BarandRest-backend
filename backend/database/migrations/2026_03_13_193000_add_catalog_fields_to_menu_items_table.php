@@ -8,20 +8,20 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (!Schema::hasTable('menu_items')) {
+        if (! Schema::hasTable('menu_items')) {
             return;
         }
 
         Schema::table('menu_items', function (Blueprint $table) {
-            if (!Schema::hasColumn('menu_items', 'code')) {
+            if (! Schema::hasColumn('menu_items', 'code')) {
                 $table->string('code', 100)->nullable();
             }
 
-            if (!Schema::hasColumn('menu_items', 'category')) {
+            if (! Schema::hasColumn('menu_items', 'category')) {
                 $table->string('category', 120)->nullable();
             }
 
-            if (!Schema::hasColumn('menu_items', 'is_recipe')) {
+            if (! Schema::hasColumn('menu_items', 'is_recipe')) {
                 $table->boolean('is_recipe')->default(false);
             }
         });
@@ -29,7 +29,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        if (!Schema::hasTable('menu_items')) {
+        if (! Schema::hasTable('menu_items')) {
             return;
         }
 

@@ -10,7 +10,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('orders')) {
             Schema::table('orders', function (Blueprint $table) {
-                if (!Schema::hasColumn('orders', 'created_at')) {
+                if (! Schema::hasColumn('orders', 'created_at')) {
                     $table->timestamps();
                 }
             });
@@ -18,7 +18,7 @@ return new class extends Migration
 
         if (Schema::hasTable('order_items')) {
             Schema::table('order_items', function (Blueprint $table) {
-                if (!Schema::hasColumn('order_items', 'created_at')) {
+                if (! Schema::hasColumn('order_items', 'created_at')) {
                     $table->timestamps();
                 }
             });

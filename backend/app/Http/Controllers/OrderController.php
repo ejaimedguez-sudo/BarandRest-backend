@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MenuItem;
 use App\Models\Order;
 use App\Models\OrderItem;
-use App\Models\MenuItem;
-use App\Models\Product;
 use App\Models\StockMovement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -60,13 +59,15 @@ class OrderController extends Controller
             $total = 0.0;
             foreach ($data['order_items'] as $item) {
                 $menuItem = MenuItem::find($item['menu_item_id']);
-                if (!$menuItem) continue;
-                $qty = is_numeric($item['quantity']) ? (float)$item['quantity'] : 0.0;
+                if (! $menuItem) {
+                    continue;
+                }
+                $qty = is_numeric($item['quantity']) ? (float) $item['quantity'] : 0.0;
 
                 $unitCost = $menuItem->calculateCostFromIngredients();
                 $unitPrice = isset($item['unit_price'])
-                    ? (float)$item['unit_price']
-                    : (isset($item['price']) ? (float)$item['price'] : ($menuItem->price ?? $menuItem->suggestPrice(30) ?? 0.0));
+                    ? (float) $item['unit_price']
+                    : (isset($item['price']) ? (float) $item['price'] : ($menuItem->price ?? $menuItem->suggestPrice(30) ?? 0.0));
 
                 $lineTotal = $unitPrice * $qty;
                 $total += $lineTotal;
@@ -83,8 +84,10 @@ class OrderController extends Controller
                 $menuItem->loadMissing('ingredients.product');
                 foreach ($menuItem->ingredients as $ing) {
                     $product = $ing->product;
-                    if (!$product) continue;
-                    $used = (is_numeric($ing->quantity) ? (float)$ing->quantity : 0.0) * $qty;
+                    if (! $product) {
+                        continue;
+                    }
+                    $used = (is_numeric($ing->quantity) ? (float) $ing->quantity : 0.0) * $qty;
                     $product->stock = max(0, ($product->stock ?? 0) - $used);
                     $product->save();
 
@@ -93,7 +96,7 @@ class OrderController extends Controller
                         'product_id' => $product->id,
                         'quantity' => -1 * $used,
                         'type' => 'out',
-                        'notes' => 'order#' . $order->id,
+                        'notes' => 'order#'.$order->id,
                         'created_by' => $order->waiter_id ?? null,
                     ]);
                 }
@@ -104,9 +107,11 @@ class OrderController extends Controller
 
             DB::commit();
             $order->load('orderItems');
+
             return response()->json($order, 201);
         } catch (\Exception $e) {
             DB::rollBack();
+
             return response()->json(['error' => 'Could not create order', 'message' => $e->getMessage()], 500);
         }
     }
@@ -117,6 +122,7 @@ class OrderController extends Controller
     public function show(Order $order)
     {
         $order->load('orderItems');
+
         return response()->json($order);
     }
 
@@ -138,6 +144,7 @@ class OrderController extends Controller
             'total' => 'numeric',
         ]);
         $order->update($data);
+
         return response()->json($order);
     }
 
@@ -147,6 +154,7 @@ class OrderController extends Controller
     public function destroy(Order $order)
     {
         $order->delete();
+
         return response()->json(null, 204);
     }
 }

@@ -23,9 +23,9 @@ class EnsureCapability
             $requiredCapabilities
         )));
 
-        $hasAllCapabilities = !array_diff($normalizedRequired, array_map('strtolower', $roleCapabilities));
+        $hasAllCapabilities = ! array_diff($normalizedRequired, array_map('strtolower', $roleCapabilities));
 
-        if (!$hasAllCapabilities) {
+        if (! $hasAllCapabilities) {
             return new JsonResponse([
                 'message' => 'No autorizado para esta capacidad.',
                 'required_capabilities' => $normalizedRequired,

@@ -35,6 +35,7 @@ class ExpenseController extends Controller
             'occurred_at' => 'nullable|date',
         ]);
         $e = \App\Models\Expense::create($data);
+
         return response()->json($e, 201);
     }
 
@@ -66,6 +67,7 @@ class ExpenseController extends Controller
             'occurred_at' => 'nullable|date',
         ]);
         $expense->update($data);
+
         return response()->json($expense);
     }
 
@@ -75,6 +77,7 @@ class ExpenseController extends Controller
     public function destroy(Expense $expense)
     {
         $expense->delete();
+
         return response()->json(null, 204);
     }
 }

@@ -2,10 +2,9 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Support\Facades\Artisan;
+use App\Mail\ReportReady;
 use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
-use App\Mail\ReportReady;
 
 class ReportEmailTest extends TestCase
 {
@@ -21,7 +20,8 @@ class ReportEmailTest extends TestCase
 
         // Bind a stub ReportsController to avoid DB dependency during test
         $this->app->bind(\App\Http\Controllers\API\ReportsController::class, function () {
-            return new class {
+            return new class
+            {
                 public function daily($request)
                 {
                     return [
