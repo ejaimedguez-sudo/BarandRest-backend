@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Catalogo de Medidas - Ordena Facil</title>
+    <title>Catalogo de Tipos de Producto - Ordena Facil</title>
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700" rel="stylesheet" />
     <link rel="stylesheet" href="/assets/ui-action-buttons.css?v={{ $assetVersion }}">
@@ -14,7 +14,6 @@
             --c1: #F2C230;
             --c2: #F2911B;
             --c3: #F24607;
-            --c4: #BF1304;
             --bg: #fdf2e8;
             --panel: #fffaf7;
             --panel-soft: #fff4ea;
@@ -37,7 +36,6 @@
             --c1: #F2C230;
             --c2: #F2911B;
             --c3: #F24607;
-            --c4: #BF1304;
             --bg: #1b0f0b;
             --panel: #26140f;
             --panel-soft: #1f110d;
@@ -88,19 +86,8 @@
             flex-wrap: wrap;
         }
 
-        .hero h1 {
-            margin: 0;
-            font-size: clamp(19px, 2.1vw, 26px);
-            line-height: 1.14;
-            letter-spacing: .22px;
-        }
-
-        .hero p {
-            margin: 5px 0 0;
-            color: var(--muted);
-            font-size: 12px;
-            line-height: 1.45;
-        }
+        .hero h1 { margin: 0; font-size: clamp(19px, 2.1vw, 26px); line-height: 1.14; letter-spacing: .22px; }
+        .hero p { margin: 5px 0 0; color: var(--muted); font-size: 12px; line-height: 1.45; }
 
         .badge {
             border-radius: 999px;
@@ -127,15 +114,8 @@
             padding: 10px 10px 0;
         }
 
-        .panel .head h2 {
-            margin: 0;
-            font-size: 15px;
-            letter-spacing: .2px;
-        }
-
-        .panel .body {
-            padding: 10px;
-        }
+        .panel .head h2 { margin: 0; font-size: 15px; letter-spacing: .2px; }
+        .panel .body { padding: 10px; }
 
         .toolbar {
             display: flex;
@@ -146,7 +126,7 @@
 
         .toolbar input {
             flex: 1;
-            min-width: 180px;
+            min-width: 220px;
             border: 1px solid var(--border);
             border-radius: 8px;
             background: rgba(255, 255, 255, 0.07);
@@ -161,18 +141,13 @@
             border: 1px solid var(--border);
             border-radius: 12px;
             overflow: scroll;
-            height: min(58vh, 540px);
+            height: min(58vh, 520px);
             background: rgba(0, 0, 0, 0.06);
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 760px;
-        }
+        table { width: 100%; border-collapse: collapse; min-width: 760px; }
 
-        th,
-        td {
+        th, td {
             padding: 8px;
             border-bottom: 1px solid var(--border);
             text-align: left;
@@ -190,18 +165,9 @@
             letter-spacing: .2px;
         }
 
-        tbody tr {
-            cursor: pointer;
-            transition: background-color .16s ease;
-        }
-
-        tbody tr:hover {
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        tbody tr.selected {
-            background: rgba(242, 145, 27, 0.22);
-        }
+        tbody tr { cursor: pointer; transition: background-color .16s ease; }
+        tbody tr:hover { background: rgba(255, 255, 255, 0.05); }
+        tbody tr.selected { background: rgba(242, 145, 27, 0.22); }
 
         .frame-footer {
             margin-top: 8px;
@@ -235,42 +201,23 @@
             line-height: 1.4;
         }
 
-        .status.ok {
-            background: var(--ok-bg);
-            border-color: var(--ok-border);
-            color: var(--ok-text);
-        }
+        .status.ok { background: var(--ok-bg); border-color: var(--ok-border); color: var(--ok-text); }
+        .status.error { background: var(--warn-bg); border-color: var(--warn-border); color: var(--warn-text); }
 
-        .status.error {
-            background: var(--warn-bg);
-            border-color: var(--warn-border);
-            color: var(--warn-text);
-        }
-
-        .empty {
-            padding: 14px;
-            color: var(--muted);
-            font-size: 12px;
-        }
+        .empty { padding: 14px; text-align: center; color: var(--muted); font-size: 12px; }
 
         .editor-overlay {
             position: fixed;
             inset: 0;
-            z-index: 100;
-            background: rgba(0, 0, 0, 0.48);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity .18s ease;
+            background: rgba(0, 0, 0, 0.58);
+            z-index: 3090;
+            display: none;
         }
 
-        .editor-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
+        .editor-overlay.active { display: block; }
 
         .editor-frame {
             position: fixed;
-            z-index: 101;
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%) scale(.98);
@@ -278,40 +225,26 @@
             max-height: calc(100vh - 32px);
             border: 1px solid var(--border);
             border-radius: 14px;
-            background: linear-gradient(160deg, var(--panel), var(--panel-soft));
+            background: linear-gradient(155deg, var(--panel), var(--panel-soft));
             box-shadow: 0 28px 50px rgba(0, 0, 0, 0.35);
+            z-index: 3100;
             padding: 12px;
-            display: grid;
-            gap: 8px;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity .18s ease, transform .18s ease;
+            display: none;
+            overflow: auto;
         }
 
-        .editor-frame.active {
-            opacity: 1;
-            pointer-events: auto;
-            transform: translate(-50%, -50%) scale(1);
-        }
+        .editor-frame.active { display: grid; gap: 8px; }
 
         .editor-head {
             display: flex;
             justify-content: space-between;
             align-items: center;
             gap: 8px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 6px;
         }
 
-        .editor-head h2 {
-            margin: 0;
-            font-size: 16px;
-            letter-spacing: .2px;
-        }
-
-        .editor-body {
-            overflow: auto;
-            max-height: calc(100vh - 170px);
-            padding-right: 2px;
-        }
+        .editor-head h2 { margin: 0; font-size: 16px; letter-spacing: .2px; }
 
         .form-grid {
             display: grid;
@@ -320,28 +253,14 @@
             align-items: start;
         }
 
-        .form-grid.cols-1 {
-            grid-template-columns: 1fr;
-        }
+        .form-grid.cols-1 { grid-template-columns: 1fr; }
+        .form-grid.cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .form-grid.cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 
-        .form-grid.cols-2 {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-
-        .form-grid.cols-3 {
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-        }
-
-        .form-grid > * {
-            min-width: 0;
-        }
-
-        .field-wide,
-        .form-actions {
-            grid-column: 1 / -1;
-        }
+        .form-grid > * { min-width: 0; }
 
         .field { display: grid; gap: 4px; min-width: 0; }
+        .field-wide, .form-actions { grid-column: 1 / -1; }
 
         .field label {
             font-size: 11.5px;
@@ -372,17 +291,13 @@
             min-height: var(--form-input-min-height);
         }
 
-        .field textarea {
-            min-height: 92px;
-            resize: vertical;
-        }
+        .field textarea { min-height: 92px; resize: vertical; }
 
         .form-actions {
             display: flex;
             gap: 6px;
             flex-wrap: wrap;
             justify-content: flex-end;
-            margin-top: 2px;
         }
 
         @media (max-width: 1200px) {
@@ -390,24 +305,9 @@
         }
 
         @media (max-width: 760px) {
-            .table-wrap { height: min(46vh, 420px); }
-
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .field-wide,
-            .form-actions {
-                grid-column: auto;
-            }
-
-            .frame-footer {
-                justify-content: stretch;
-            }
-
-            .frame-footer .btn {
-                flex: 0 1 auto;
-            }
+            .form-grid { grid-template-columns: 1fr; }
+            .field-wide, .form-actions { grid-column: auto; }
+            .frame-footer { justify-content: stretch; }
         }
     </style>
 </head>
@@ -415,12 +315,12 @@
 <main class="wrap">
     <section class="panel">
         <div class="head">
-            <h2>Panel de Medidas</h2>
+            <h2>Panel de Tipos de Producto</h2>
             <span class="badge">Vista operativa</span>
         </div>
         <div class="body">
             <div class="toolbar">
-                <input id="tableFilter" type="search" placeholder="Buscar por nombre o abreviatura...">
+                <input id="tableFilter" type="search" placeholder="Buscar por codigo, nombre o descripcion...">
                 <button id="btnRefresh" class="btn btn-compact" type="button">Actualizar</button>
             </div>
             <div id="tableContainer" class="table-wrap"></div>
@@ -437,26 +337,26 @@
 <div id="editorOverlay" class="editor-overlay" aria-hidden="true"></div>
 <section id="editorFrame" class="editor-frame" aria-hidden="true">
     <div class="editor-head">
-        <h2 id="formTitle">Nueva medida</h2>
+        <h2 id="formTitle">Nuevo tipo de producto</h2>
         <button id="btnCloseEditor" class="btn btn-compact" type="button">Cerrar</button>
     </div>
     <div class="editor-body">
-        <form id="measureForm" class="form-grid cols-2">
-            <input id="measureId" type="hidden">
+        <form id="typeForm" class="form-grid cols-2">
+            <input id="typeId" type="hidden">
 
             <div class="field">
-                <label for="name" class="required">Nombre</label>
-                <input id="name" name="name" type="text" maxlength="120" required>
+                <label for="code">Codigo</label>
+                <input id="code" name="code" type="text" maxlength="80" pattern="[A-Za-z0-9\-_.]+" title="Solo letras, numeros, guion, guion bajo y punto" placeholder="TIPO-BAR">
             </div>
 
             <div class="field">
-                <label for="abbreviation">Abreviatura</label>
-                <input id="abbreviation" name="abbreviation" type="text" maxlength="20" placeholder="kg, ml, pza">
+                <label for="name" class="required">Nombre</label>
+                <input id="name" name="name" type="text" maxlength="120" required placeholder="Bar, Cocina, Materia Prima...">
             </div>
 
             <div class="field field-wide">
                 <label for="description">Descripcion</label>
-                <textarea id="description" name="description" maxlength="500" placeholder="Uso o detalle de la medida"></textarea>
+                <textarea id="description" name="description" maxlength="1000" placeholder="Uso o alcance del tipo"></textarea>
             </div>
 
             <div class="form-actions">
@@ -472,8 +372,10 @@
     const params = new URLSearchParams(window.location.search);
     const theme = (params.get('theme') === 'premium' || localStorage.getItem('ordena-facil-theme') === 'premium') ? 'premium' : 'clasico';
 
+    document.documentElement.setAttribute('data-theme', theme);
+
     const roleBadge = document.getElementById('roleBadge');
-    const measureForm = document.getElementById('measureForm');
+    const typeForm = document.getElementById('typeForm');
     const formTitle = document.getElementById('formTitle');
     const statusBox = document.getElementById('status');
     const tableContainer = document.getElementById('tableContainer');
@@ -488,15 +390,15 @@
     const btnCloseEditor = document.getElementById('btnCloseEditor');
 
     const fields = {
-        id: document.getElementById('measureId'),
+        id: document.getElementById('typeId'),
+        code: document.getElementById('code'),
         name: document.getElementById('name'),
-        abbreviation: document.getElementById('abbreviation'),
         description: document.getElementById('description'),
     };
 
-    let measures = [];
+    let types = [];
     let canManageCatalog = false;
-    let selectedMeasureId = null;
+    let selectedTypeId = null;
     const UI_TEXT = {
         noManagePermission: 'No tienes permisos para administrar el catalogo.',
         noManageRole: 'Tu rol actual no tiene permisos para administrar el catalogo.',
@@ -511,7 +413,6 @@
         refreshed: 'Listado actualizado.',
     };
 
-    document.documentElement.setAttribute('data-theme', theme);
     if (roleBadge) {
         roleBadge.textContent = `Rol: ${role}`;
     }
@@ -522,56 +423,86 @@
         if (type) statusBox.classList.add(type);
     }
 
-    function clearForm() {
-        fields.id.value = '';
-        fields.name.value = '';
-        fields.abbreviation.value = '';
-        fields.description.value = '';
-        formTitle.textContent = 'Nueva medida';
-        btnSubmit.textContent = 'Guardar';
+    function requestJson(url, options = {}) {
+        const headers = {
+            Accept: 'application/json',
+            'X-USER-ROLE': role,
+            ...options.headers,
+        };
+
+        return fetch(url, { ...options, headers }).then(async (response) => {
+            if (!response.ok) {
+                let message = `HTTP ${response.status}`;
+
+                try {
+                    const payload = await response.json();
+                    const errors = payload?.errors && typeof payload.errors === 'object' ? payload.errors : null;
+                    if (errors) {
+                        const first = Object.values(errors).flat().find(Boolean);
+                        if (first) message = String(first);
+                    } else if (payload?.message) {
+                        message = String(payload.message);
+                    }
+                } catch (_error) {
+                    const text = await response.text();
+                    if (text) message = `${message} - ${text}`;
+                }
+
+                throw new Error(message);
+            }
+
+            if (response.status === 204) return null;
+            return response.json();
+        });
     }
 
-    function getSelectedMeasure() {
-        return measures.find((item) => Number(item.id) === Number(selectedMeasureId)) || null;
+    function escapeHtml(value) {
+        return String(value || '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    function getSelectedType() {
+        return types.find((item) => Number(item.id) === Number(selectedTypeId)) || null;
     }
 
     function updateActionButtons() {
-        const hasSelection = !!getSelectedMeasure();
+        const hasSelection = !!getSelectedType();
         btnAdd.disabled = !canManageCatalog;
         btnEdit.disabled = !canManageCatalog || !hasSelection;
         btnDelete.disabled = !canManageCatalog || !hasSelection;
     }
 
-    function openEditor(mode) {
-        if (!canManageCatalog) {
-            setStatus(UI_TEXT.noManagePermission, 'error');
-            return;
-        }
+    function setFormEditable(enabled) {
+        Object.values(fields).forEach((field) => {
+            if (field.id === 'typeId') return;
+            field.disabled = !enabled;
+        });
 
-        if (mode === 'edit') {
-            const measure = getSelectedMeasure();
-            if (!measure) {
-                setStatus(UI_TEXT.noEditSelection, 'error');
-                return;
-            }
+        btnSubmit.disabled = !enabled;
+        btnCancelEdit.disabled = !enabled;
+        btnCloseEditor.disabled = !enabled;
+        updateActionButtons();
+    }
 
-            fields.id.value = String(measure.id);
-            fields.name.value = measure.name || '';
-            fields.abbreviation.value = measure.abbreviation || '';
-            fields.description.value = measure.description || '';
-            formTitle.textContent = `Editar medida #${measure.id}`;
-            btnSubmit.textContent = 'Guardar cambios';
-        } else {
-            clearForm();
-            formTitle.textContent = 'Nueva medida';
-            btnSubmit.textContent = 'Guardar';
-        }
+    function clearForm() {
+        fields.id.value = '';
+        fields.code.value = '';
+        fields.name.value = '';
+        fields.description.value = '';
+        formTitle.textContent = 'Nuevo tipo de producto';
+        btnSubmit.textContent = 'Guardar';
+    }
 
-        editorOverlay.classList.add('active');
-        editorFrame.classList.add('active');
-        editorOverlay.setAttribute('aria-hidden', 'false');
-        editorFrame.setAttribute('aria-hidden', 'false');
-        fields.name.focus();
+    function collectPayload() {
+        return {
+            code: fields.code.value.trim().toUpperCase() || null,
+            name: fields.name.value.trim(),
+            description: fields.description.value.trim() || null,
+        };
     }
 
     function closeEditor() {
@@ -582,42 +513,105 @@
         clearForm();
     }
 
-    function setFormEditable(enabled) {
-        Object.values(fields).forEach((field) => {
-            if (field.id === 'measureId') return;
-            field.disabled = !enabled;
-        });
+    function openEditor(mode) {
+        if (!canManageCatalog) {
+            setStatus(UI_TEXT.noManagePermission, 'error');
+            return;
+        }
 
-        btnSubmit.disabled = !enabled;
-        btnCancelEdit.disabled = !enabled;
-        btnCloseEditor.disabled = !enabled;
+        clearForm();
+
+        if (mode === 'edit') {
+            const type = getSelectedType();
+            if (!type) {
+                setStatus(UI_TEXT.noEditSelection, 'error');
+                return;
+            }
+
+            fields.id.value = String(type.id);
+            fields.code.value = type.code || '';
+            fields.name.value = type.name || '';
+            fields.description.value = type.description || '';
+            formTitle.textContent = `Editar tipo de producto #${type.id}`;
+            btnSubmit.textContent = 'Guardar cambios';
+        } else {
+            formTitle.textContent = 'Nuevo tipo de producto';
+            btnSubmit.textContent = 'Guardar';
+        }
+
+        editorOverlay.classList.add('active');
+        editorFrame.classList.add('active');
+        editorOverlay.setAttribute('aria-hidden', 'false');
+        editorFrame.setAttribute('aria-hidden', 'false');
+        fields.name.focus();
+    }
+
+    function renderTable(rows) {
+        if (!rows.length) {
+            tableContainer.innerHTML = '<div class="empty">No hay tipos de producto registrados.</div>';
+            selectedTypeId = null;
+            updateActionButtons();
+            return;
+        }
+
+        const body = rows.map((type) => {
+            const selected = Number(selectedTypeId) === Number(type.id) ? ' class="selected"' : '';
+            return `
+                <tr data-type-id="${type.id}"${selected}>
+                    <td>${escapeHtml(type.code || '-')}</td>
+                    <td>${escapeHtml(type.name || '-')}</td>
+                    <td>${escapeHtml(type.description || '-')}</td>
+                    <td>${type.created_at ? new Date(type.created_at).toLocaleDateString() : '-'}</td>
+                </tr>
+            `;
+        }).join('');
+
+        tableContainer.innerHTML = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>Codigo</th>
+                        <th>Nombre</th>
+                        <th>Descripcion</th>
+                        <th>Creacion</th>
+                    </tr>
+                </thead>
+                <tbody>${body}</tbody>
+            </table>
+        `;
+
         updateActionButtons();
     }
 
-    function collectPayload() {
-        return {
-            name: fields.name.value.trim(),
-            abbreviation: fields.abbreviation.value.trim() || null,
-            description: fields.description.value.trim() || null,
-        };
-    }
-
-    async function requestJson(url, options = {}) {
-        const headers = {
-            'Accept': 'application/json',
-            'X-USER-ROLE': role,
-            ...options.headers,
-        };
-
-        const response = await fetch(url, { ...options, headers });
-
-        if (!response.ok) {
-            const text = await response.text();
-            throw new Error(`HTTP ${response.status} - ${text}`);
+    function applyFilter() {
+        const term = (tableFilter.value || '').trim().toLowerCase();
+        if (!term) {
+            renderTable(types);
+            return;
         }
 
-        if (response.status === 204) return null;
-        return response.json();
+        const filtered = types.filter((type) => {
+            const line = `${type.code || ''} ${type.name || ''} ${type.description || ''}`.toLowerCase();
+            return line.includes(term);
+        });
+
+        renderTable(filtered);
+    }
+
+    async function loadTypes() {
+        try {
+            const data = await requestJson('/api/product-types');
+            types = Array.isArray(data) ? data : [];
+
+            if (!getSelectedType()) {
+                selectedTypeId = null;
+            }
+
+            applyFilter();
+        } catch (error) {
+            tableContainer.innerHTML = '<div class="empty">No fue posible cargar tipos de producto.</div>';
+            setStatus(`Error cargando tipos: ${String(error.message || error)}`, 'error');
+        }
     }
 
     async function loadCapabilities() {
@@ -640,97 +634,29 @@
         }
     }
 
-    function renderTable(rows) {
-        if (!rows.length) {
-            tableContainer.innerHTML = '<div class="empty">No hay medidas registradas.</div>';
-            selectedMeasureId = null;
-            updateActionButtons();
-            return;
-        }
-
-        const body = rows.map((measure) => {
-            const selected = Number(selectedMeasureId) === Number(measure.id) ? ' class="selected"' : '';
-            return `
-                <tr data-measure-id="${measure.id}"${selected}>
-                    <td>${measure.name || '-'}</td>
-                    <td>${measure.abbreviation || '-'}</td>
-                    <td>${measure.description || '-'}</td>
-                    <td>${measure.created_at ? new Date(measure.created_at).toLocaleDateString() : '-'}</td>
-                </tr>
-            `;
-        }).join('');
-
-        tableContainer.innerHTML = `
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Abreviatura</th>
-                        <th>Descripcion</th>
-                        <th>Creacion</th>
-                    </tr>
-                </thead>
-                <tbody>${body}</tbody>
-            </table>
-        `;
-
-        updateActionButtons();
-    }
-
-    function applyFilter() {
-        const term = (tableFilter.value || '').trim().toLowerCase();
-        if (!term) {
-            renderTable(measures);
-            return;
-        }
-
-        const filtered = measures.filter((measure) => {
-            const line = `${measure.name || ''} ${measure.abbreviation || ''} ${measure.description || ''}`.toLowerCase();
-            return line.includes(term);
-        });
-
-        renderTable(filtered);
-    }
-
-    async function loadMeasures() {
-        try {
-            const data = await requestJson('/api/measures');
-            measures = Array.isArray(data) ? data : [];
-
-            if (!getSelectedMeasure()) {
-                selectedMeasureId = null;
-            }
-
-            applyFilter();
-        } catch (error) {
-            tableContainer.innerHTML = '<div class="empty">No fue posible cargar medidas.</div>';
-            setStatus(`Error cargando medidas: ${String(error.message || error)}`, 'error');
-        }
-    }
-
-    async function removeSelectedMeasure() {
+    async function removeSelectedType() {
         if (!canManageCatalog) return;
 
-        const measure = getSelectedMeasure();
-        if (!measure) {
+        const type = getSelectedType();
+        if (!type) {
             setStatus(UI_TEXT.noDeleteSelection, 'error');
             return;
         }
 
-        const label = measure?.name ? `"${measure.name}"` : `#${measure.id}`;
-        if (!window.confirm(`¿Deseas eliminar la medida ${label}? Esta accion no se puede deshacer.`)) return;
+        const label = type?.name ? `"${type.name}"` : `#${type.id}`;
+        if (!window.confirm(`¿Deseas eliminar el tipo de producto ${label}? Esta accion no se puede deshacer.`)) return;
 
         try {
-            await requestJson(`/api/measures/${measure.id}`, { method: 'DELETE' });
-            selectedMeasureId = null;
+            await requestJson(`/api/product-types/${type.id}`, { method: 'DELETE' });
+            selectedTypeId = null;
             setStatus(UI_TEXT.deleted, 'ok');
-            await loadMeasures();
+            await loadTypes();
         } catch (error) {
             setStatus(`No se pudo eliminar: ${String(error.message || error)}`, 'error');
         }
     }
 
-    measureForm.addEventListener('submit', async (event) => {
+    typeForm.addEventListener('submit', async (event) => {
         event.preventDefault();
 
         if (!canManageCatalog) {
@@ -743,15 +669,15 @@
 
         try {
             if (editingId) {
-                await requestJson(`/api/measures/${editingId}`, {
+                await requestJson(`/api/product-types/${editingId}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload),
                 });
-                selectedMeasureId = editingId;
+                selectedTypeId = editingId;
                 setStatus(UI_TEXT.updated, 'ok');
             } else {
-                await requestJson('/api/measures', {
+                await requestJson('/api/product-types', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload),
@@ -760,7 +686,7 @@
             }
 
             closeEditor();
-            await loadMeasures();
+            await loadTypes();
         } catch (error) {
             setStatus(`No se pudo guardar: ${String(error.message || error)}`, 'error');
         }
@@ -780,7 +706,7 @@
     });
 
     document.getElementById('btnRefresh').addEventListener('click', async () => {
-        await loadMeasures();
+        await loadTypes();
         setStatus(UI_TEXT.refreshed, null);
     });
 
@@ -793,27 +719,31 @@
     });
 
     btnDelete.addEventListener('click', async () => {
-        await removeSelectedMeasure();
+        await removeSelectedType();
     });
 
     tableFilter.addEventListener('input', applyFilter);
 
     tableContainer.addEventListener('click', (event) => {
-        const row = event.target.closest('tr[data-measure-id]');
+        const row = event.target.closest('tr[data-type-id]');
         if (!row) return;
 
-        selectedMeasureId = Number(row.dataset.measureId);
+        selectedTypeId = Number(row.dataset.typeId);
         applyFilter();
-        const selected = getSelectedMeasure();
+        const selected = getSelectedType();
         if (selected) {
             setStatus(`Registro seleccionado: ${selected.name}`, null);
         }
     });
 
+    fields.code.addEventListener('blur', () => {
+        fields.code.value = fields.code.value.trim().toUpperCase();
+    });
+
     async function init() {
         clearForm();
         await loadCapabilities();
-        await loadMeasures();
+        await loadTypes();
         updateActionButtons();
     }
 

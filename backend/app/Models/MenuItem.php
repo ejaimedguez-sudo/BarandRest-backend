@@ -6,7 +6,36 @@ use Illuminate\Database\Eloquent\Model;
 
 class MenuItem extends Model
 {
-    protected $fillable = ['code','name','description','price','cost','category','is_recipe'];
+    protected $fillable = [
+        'code',
+        'name',
+        'product_type_id',
+        'menu_category_id',
+        'description',
+        'image_url',
+        'price',
+        'cost',
+        'manual_cost',
+        'profit_margin_percent',
+        'category',
+        'is_recipe',
+        'prep_time_minutes',
+        'dish',
+        'kitchen',
+        'servings',
+        'calories',
+        'equipment',
+    ];
+
+    public function productType()
+    {
+        return $this->belongsTo(ProductType::class, 'product_type_id');
+    }
+
+    public function menuCategory()
+    {
+        return $this->belongsTo(MenuCategory::class, 'menu_category_id');
+    }
 
     public function ingredients()
     {
@@ -19,7 +48,9 @@ class MenuItem extends Model
     }
 
     /**
-     * Calculate cost from ingredients (simple sum: ingredient.quantity * product.cost)
+     * Calculate cost from ingredients.
+     * - If ingredient has consumption_ml, cost is proportional to 1L bottle cost.
+     * - Otherwise, fallback to quantity * product.cost.
      */
     public function calculateCostFromIngredients(): float
     {
@@ -27,8 +58,15 @@ class MenuItem extends Model
         $this->loadMissing('ingredients.product');
         foreach ($this->ingredients as $ing) {
             $product = $ing->product;
-            $qty = is_numeric($ing->quantity) ? (float)$ing->quantity : 0.0;
-            $cost = $product->cost ?? 0.0;
+            $cost = is_numeric($product->cost ?? null) ? (float) $product->cost : 0.0;
+
+            if (is_numeric($ing->consumption_ml ?? null) && (float) $ing->consumption_ml > 0) {
+                $consumptionMl = (float) $ing->consumption_ml;
+                $total += ($cost / 1000.0) * $consumptionMl;
+                continue;
+            }
+
+            $qty = is_numeric($ing->quantity ?? null) ? (float) $ing->quantity : 0.0;
             $total += $qty * $cost;
         }
         return round($total, 4);

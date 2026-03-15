@@ -10,6 +10,7 @@
     <link rel="apple-touch-icon" href="/assets/branding/comanda-deg.png">
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/ui-frames-pro.css?v={{ $assetVersion }}">
     <style>
         :root,
         :root[data-theme="clasico"] {
@@ -34,6 +35,32 @@
             --badge-text: #d1fae5;
             --frame-bg: #2a1308;
             --loading-bg: rgba(26, 8, 3, 0.84);
+            --foldable-bg: rgba(255, 255, 255, 0.04);
+            --foldable-active-bg: color-mix(in srgb, var(--accent-soft) 70%, #ffd9a5 30%);
+            --foldable-text: #fff4ea;
+            --foldable-text-muted: #ffe1cb;
+            --foldable-active-text: #2b140a;
+            --menu-icon-stroke-width: 1.85;
+            --menu-icon-tone-opacity: 1;
+            --sidebar-scroll-safe: 7px;
+        }
+
+        @media (max-width: 1280px) {
+            :root {
+                --sidebar-scroll-safe: 6px;
+            }
+        }
+
+        @media (max-width: 980px) {
+            :root {
+                --sidebar-scroll-safe: 5px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            :root {
+                --sidebar-scroll-safe: 4px;
+            }
         }
 
         :root[data-theme="premium"] {
@@ -58,6 +85,13 @@
             --badge-text: #fef3c7;
             --frame-bg: #160b08;
             --loading-bg: rgba(20, 9, 5, 0.86);
+            --foldable-bg: rgba(255, 255, 255, 0.035);
+            --foldable-active-bg: color-mix(in srgb, var(--accent-soft) 65%, #f6d370 35%);
+            --foldable-text: #f8ecdb;
+            --foldable-text-muted: #e9d4bb;
+            --foldable-active-text: #26140d;
+            --menu-icon-stroke-width: 1.65;
+            --menu-icon-tone-opacity: 0.42;
         }
 
         * { box-sizing: border-box; }
@@ -113,12 +147,17 @@
         .hero h1 {
             margin: 0;
             font-size: clamp(22px, 3vw, 32px);
-            letter-spacing: 0.2px;
+            letter-spacing: 0.3px;
+            line-height: 1.12;
+            text-wrap: balance;
         }
 
         .hero p {
             margin: 6px 0 0;
             color: var(--muted);
+            font-size: 13px;
+            line-height: 1.55;
+            max-width: 70ch;
         }
 
         .badge {
@@ -136,6 +175,7 @@
             align-items: center;
             gap: 10px;
             flex-wrap: wrap;
+            justify-content: flex-end;
         }
 
         .theme-select {
@@ -156,6 +196,7 @@
         .control-stack label {
             font-size: 12px;
             color: var(--muted);
+            letter-spacing: .25px;
         }
 
         .layout {
@@ -174,18 +215,42 @@
         }
 
         .sidebar {
-            padding: 14px;
+            padding: 14px 9px 14px 14px;
             display: grid;
-            gap: 10px;
+            gap: 12px;
             align-content: start;
             height: calc(100vh - 120px);
             overflow-y: auto;
             overflow-x: hidden;
+            scrollbar-gutter: stable;
+            scrollbar-width: thin;
+            scrollbar-color: color-mix(in srgb, var(--accent) 66%, #ffffff 34%) transparent;
             transition: padding .2s ease;
         }
 
+        .sidebar::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: transparent;
+            margin-block: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 84%, #fff 16%), color-mix(in srgb, var(--accent) 58%, #000 42%));
+            border-radius: 999px;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+            box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 40%, transparent 60%);
+        }
+
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 90%, #fff 10%), color-mix(in srgb, var(--accent) 66%, #000 34%));
+        }
+
         .sidebar.collapsed {
-            padding: 12px 8px;
+            padding: 12px 6px;
             overflow-x: visible;
         }
 
@@ -196,6 +261,7 @@
             display: grid;
             gap: 6px;
             background: linear-gradient(155deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
         }
 
         .sidebar-user-head {
@@ -245,11 +311,21 @@
             background: rgba(255, 255, 255, 0.04);
             color: var(--text);
             border-radius: 10px;
-            padding: 6px 10px;
+            padding: 5px 10px;
             font: inherit;
             font-size: 12px;
             cursor: pointer;
-            min-height: 40px;
+            min-height: 34px;
+            transition: transform .14s ease, box-shadow .16s ease, background .16s ease, border-color .16s ease;
+        }
+
+        #btnToggleMenu {
+            min-width: 40px;
+            width: 40px;
+            padding: 5px;
+            font-size: 16px;
+            line-height: 1;
+            text-align: center;
         }
 
         .sidebar.collapsed .menu-toggle-btn {
@@ -258,19 +334,52 @@
             font-size: 11px;
         }
 
+        .sidebar.collapsed #btnToggleMenu {
+            width: auto;
+            min-width: 34px;
+            inline-size: fit-content;
+            font-size: 16px;
+            padding: 6px 8px;
+            margin-left: 0;
+        }
+
         .menu-toggle-btn:hover {
             border-color: color-mix(in srgb, var(--accent) 78%, #fff 22%);
             background: var(--accent-soft);
+            transform: translateY(-1px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        #btnToggleAdvanced {
+            color: var(--foldable-text, var(--text));
+            font-weight: 600;
+        }
+
+        #btnToggleAdvanced:hover,
+        #btnToggleAdvanced:focus-visible {
+            background: var(--foldable-active-bg, var(--accent-soft));
+            color: var(--foldable-active-text, var(--text));
         }
 
         .sidebar-content {
-            display: grid;
+            display: flex;
+            flex-direction: column;
             gap: 10px;
-            min-height: 0;
-            overflow-y: auto;
+            min-height: 100%;
+            overflow-y: visible;
             overflow-x: hidden;
+            padding-right: var(--sidebar-scroll-safe);
             opacity: 1;
             transition: opacity .2s ease;
+        }
+
+        .sidebar-content .action-btn,
+        .sidebar-content .menu-section-toggle,
+        .sidebar-content .helper-btn,
+        .sidebar-content .ops-btn {
+            width: 100%;
+            margin-right: 0;
+            max-width: 100%;
         }
 
         .sidebar.collapsed .sidebar-content {
@@ -304,6 +413,8 @@
             justify-content: center;
             padding: 10px 8px;
             border-radius: 12px;
+            width: 100%;
+            margin-right: 0;
         }
 
         .sidebar.collapsed .menu-section-toggle::after {
@@ -399,6 +510,35 @@
             gap: 8px;
         }
 
+        .menu-item-icon {
+            width: 18px;
+            height: 18px;
+            border-radius: 999px;
+            display: inline-grid;
+            place-items: center;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border);
+            color: var(--link);
+            flex: 0 0 18px;
+        }
+
+        .menu-item-icon svg,
+        .menu-section-icon svg {
+            width: 12px;
+            height: 12px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: var(--menu-icon-stroke-width, 1.8);
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            vector-effect: non-scaling-stroke;
+        }
+
+        .menu-item-icon svg .icon-tone,
+        .menu-section-icon svg .icon-tone {
+            stroke-opacity: var(--menu-icon-tone-opacity, 1);
+        }
+
         .menu-item-arrow {
             color: var(--accent);
             font-size: 13px;
@@ -435,12 +575,13 @@
 
         .menu-section-toggle {
             border: 1px solid var(--border);
-            background: rgba(255, 255, 255, 0.03);
-            color: var(--text);
+            background: var(--foldable-bg, rgba(255, 255, 255, 0.03));
+            color: var(--foldable-text, var(--text));
             border-radius: 10px;
             padding: 8px 10px;
             font: inherit;
             font-size: 12px;
+            font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.8px;
             cursor: pointer;
@@ -451,7 +592,8 @@
 
         .menu-section-toggle.active {
             border-color: color-mix(in srgb, var(--accent) 78%, #fff 22%);
-            background: var(--accent-soft);
+            background: var(--foldable-active-bg, var(--accent-soft));
+            color: var(--foldable-active-text, var(--text));
         }
 
         .menu-section-label {
@@ -498,13 +640,20 @@
 
         .menu-section-toggle:hover {
             border-color: color-mix(in srgb, var(--accent) 78%, #fff 22%);
-            background: var(--accent-soft);
+            background: var(--foldable-active-bg, var(--accent-soft));
+            color: var(--foldable-active-text, var(--text));
         }
 
         .menu-chevron {
             font-size: 14px;
-            color: var(--muted);
+            color: var(--foldable-text-muted, var(--muted));
             transition: transform .18s ease;
+        }
+
+        .menu-section-toggle.active .menu-chevron,
+        .menu-section-toggle:hover .menu-chevron {
+            color: currentColor;
+            opacity: 0.9;
         }
 
         .menu-section.collapsed .menu-chevron {
@@ -575,21 +724,33 @@
             gap: 8px;
         }
 
+        .ops-actions > * {
+            min-width: 0;
+        }
+
         .ops-btn {
             border: 1px solid var(--border);
             background: rgba(255, 255, 255, 0.04);
             color: var(--text);
             border-radius: 10px;
-            padding: 8px 10px;
+            padding: 6px 10px;
             font: inherit;
             font-size: 12px;
             cursor: pointer;
-            min-height: 40px;
+            min-height: 34px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            line-height: 1.2;
+            transition: transform .14s ease, box-shadow .16s ease, background .16s ease, border-color .16s ease;
         }
 
         .ops-btn:hover {
             border-color: color-mix(in srgb, var(--accent) 78%, #fff 22%);
             background: var(--accent-soft);
+            transform: translateY(-1px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }
 
         .ops-result {
@@ -624,7 +785,23 @@
             padding: 10px;
             background: rgba(255, 255, 255, 0.03);
             display: grid;
+            gap: 10px;
+        }
+
+        .help-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             gap: 8px;
+        }
+
+        .help-body {
+            display: grid;
+            gap: 10px;
+        }
+
+        .help-box.collapsed .help-body {
+            display: none;
         }
 
         .help-box h3 {
@@ -647,12 +824,14 @@
         .helper-note {
             font-size: 12px;
             color: var(--muted);
+            line-height: 1.5;
         }
 
         .help-actions {
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
+            align-items: center;
         }
 
         .about-modal {
@@ -774,16 +953,24 @@
             background: rgba(255, 255, 255, 0.04);
             color: var(--text);
             border-radius: 8px;
-            padding: 7px 10px;
+            padding: 5px 10px;
             font: inherit;
             font-size: 12px;
             cursor: pointer;
-            min-height: 38px;
+            min-height: 34px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            line-height: 1.2;
+            transition: transform .14s ease, box-shadow .16s ease, background .16s ease, border-color .16s ease;
         }
 
         .helper-btn:hover {
             border-color: color-mix(in srgb, var(--accent) 78%, #fff 22%);
             background: var(--accent-soft);
+            transform: translateY(-1px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }
 
         .advanced-tools {
@@ -829,18 +1016,34 @@
         }
 
         .tutorial-card {
-            position: fixed;
-            right: 18px;
-            bottom: 18px;
-            width: min(420px, calc(100vw - 24px));
+            position: relative;
+            width: 100%;
             border: 1px solid var(--border);
             border-radius: 14px;
             background: linear-gradient(160deg, var(--panel), var(--panel-soft));
             box-shadow: 0 16px 34px rgba(0, 0, 0, 0.36);
-            z-index: 5002;
+            z-index: 60;
             padding: 12px;
             display: none;
-            gap: 8px;
+            gap: 10px;
+            margin-top: auto;
+            overflow: hidden;
+        }
+
+        .tutorial-card.is-final {
+            border-color: color-mix(in srgb, var(--c1) 58%, #fff 42%);
+            box-shadow: 0 18px 36px rgba(242, 194, 48, 0.2), 0 16px 34px rgba(0, 0, 0, 0.36);
+        }
+
+        .tutorial-card::before {
+            content: "";
+            position: absolute;
+            inset: 0 auto auto 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--c1), var(--c2), var(--c3));
+            opacity: .9;
+            pointer-events: none;
         }
 
         .tutorial-card.active {
@@ -850,17 +1053,107 @@
         .tutorial-card h4 {
             margin: 0;
             font-size: 15px;
+            letter-spacing: .24px;
+        }
+
+        .tutorial-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .tutorial-head .tutorial-meta {
+            margin-right: auto;
+        }
+
+        .tutorial-collapse {
+            min-width: 86px;
+            text-align: center;
+            color: var(--foldable-text, var(--text));
+            font-weight: 600;
+        }
+
+        .tutorial-collapse:hover,
+        .tutorial-collapse:focus-visible {
+            background: var(--foldable-active-bg, var(--accent-soft));
+            color: var(--foldable-active-text, var(--text));
+        }
+
+        @media (prefers-contrast: more) {
+            .menu-section-toggle,
+            #btnToggleAdvanced,
+            .tutorial-collapse {
+                border-width: 2px;
+                letter-spacing: 0.9px;
+            }
+
+            .menu-section-toggle,
+            #btnToggleAdvanced,
+            .tutorial-collapse,
+            .menu-chevron {
+                color: var(--text);
+            }
+
+            .menu-section-toggle.active,
+            .menu-section-toggle:hover,
+            #btnToggleAdvanced:hover,
+            #btnToggleAdvanced:focus-visible,
+            .tutorial-collapse:hover,
+            .tutorial-collapse:focus-visible {
+                background: color-mix(in srgb, var(--accent) 58%, #fff 42%);
+                color: #1c110a;
+            }
+        }
+
+        @media (forced-colors: active) {
+            .menu-section-toggle,
+            #btnToggleAdvanced,
+            .tutorial-collapse {
+                forced-color-adjust: auto;
+                border-color: ButtonText;
+                background: ButtonFace;
+                color: ButtonText;
+            }
+
+            .menu-section-toggle.active,
+            .menu-section-toggle:hover,
+            #btnToggleAdvanced:hover,
+            #btnToggleAdvanced:focus-visible,
+            .tutorial-collapse:hover,
+            .tutorial-collapse:focus-visible {
+                background: Highlight;
+                color: HighlightText;
+                border-color: Highlight;
+            }
+
+            .menu-chevron {
+                color: currentColor;
+            }
+        }
+
+        .tutorial-body {
+            display: grid;
+            gap: 6px;
         }
 
         .tutorial-card p {
             margin: 0;
             color: var(--muted);
             font-size: 13px;
+            line-height: 1.5;
         }
 
         .tutorial-meta {
-            font-size: 12px;
-            color: var(--muted);
+            width: fit-content;
+            font-size: 11px;
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 3px 8px;
+            background: rgba(255, 255, 255, 0.06);
+            letter-spacing: .2px;
         }
 
         .tutorial-actions {
@@ -868,12 +1161,31 @@
             justify-content: flex-end;
             gap: 8px;
             flex-wrap: wrap;
+            align-items: center;
+            border-top: 1px solid var(--border);
+            padding-top: 8px;
+        }
+
+        .tutorial-card.is-final #btnTutorialNext {
+            border-color: rgba(242, 194, 48, 0.75);
+            background: linear-gradient(120deg, rgba(242, 194, 48, 0.28), rgba(242, 145, 27, 0.2));
+            color: #2f180c;
+            font-weight: 700;
+        }
+
+        .tutorial-card.collapsed {
+            gap: 8px;
+        }
+
+        .tutorial-card.collapsed .tutorial-body,
+        .tutorial-card.collapsed .tutorial-actions {
+            display: none;
         }
 
         .viewer {
             padding: 10px;
             display: grid;
-            gap: 10px;
+            gap: 12px;
         }
 
         .viewer-head {
@@ -885,17 +1197,20 @@
             border-radius: 12px;
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--border);
+            flex-wrap: wrap;
         }
 
         .viewer-head h3 {
             margin: 0;
             font-size: 15px;
+            letter-spacing: .2px;
         }
 
         .viewer-head a {
             color: #fef3c7;
             text-decoration: none;
             font-size: 13px;
+            line-height: 1.4;
         }
 
         .frame-wrap {
@@ -904,6 +1219,7 @@
             overflow: hidden;
             border: 1px solid var(--border);
             background: var(--frame-bg);
+            box-shadow: 0 16px 30px rgba(0, 0, 0, 0.24);
         }
 
         iframe {
@@ -923,6 +1239,9 @@
             color: var(--link);
             font-size: 14px;
             letter-spacing: 0.2px;
+            line-height: 1.5;
+            text-align: center;
+            padding: 12px;
             transition: opacity .2s ease;
         }
 
@@ -1002,7 +1321,7 @@
             <aside class="panel sidebar">
                 <div class="sidebar-head">
                     <h2>Panel de Inicio</h2>
-                    <button id="btnToggleMenu" class="menu-toggle-btn" type="button" aria-expanded="true">Plegar menu</button>
+                    <button id="btnToggleMenu" class="menu-toggle-btn" type="button" aria-expanded="true" aria-label="Contraer menu lateral" title="Contraer menu lateral">◀</button>
                 </div>
 
                 <div id="sidebarContent" class="sidebar-content">
@@ -1015,22 +1334,6 @@
                             </div>
                         </div>
                         <div class="build-info">Version: {{ env('APP_VERSION', 'v1.0.0') }}</div>
-                    </section>
-
-                    <section class="help-box" aria-label="Guia de uso rapido">
-                        <h3>Guia Rapida</h3>
-                        <ol>
-                            <li>Selecciona un rol operativo.</li>
-                            <li>Elige una opcion del menu izquierdo.</li>
-                            <li>Trabaja en la vista de la derecha.</li>
-                        </ol>
-                        <div class="helper-note">Atajo: pulsa <strong>/</strong> para buscar opciones.</div>
-                        <div class="help-actions">
-                            <button id="btnStartTutorial" class="helper-btn" type="button">Iniciar tutorial</button>
-                            <button id="btnExpandMenu" class="helper-btn" type="button">Mostrar todo el menu</button>
-                            <button id="btnRefreshUi" class="helper-btn" type="button">Actualizar interfaz</button>
-                            <button id="btnAbout" class="helper-btn" type="button">Acerca de</button>
-                        </div>
                     </section>
 
                     <input id="menuSearch" class="menu-search" type="search" placeholder="Buscar opcion..." aria-label="Buscar opcion del menu">
@@ -1062,6 +1365,43 @@
                             <a href="/docs/GUIA_USO_RAPIDO_ORDENA_FACIL.md" target="_blank" rel="noopener noreferrer">Abrir guia rapida de uso</a>
                         </div>
                     </div>
+
+                    <section id="helpBox" class="help-box" aria-label="Guia de uso rapido">
+                        <div class="help-head">
+                            <h3>Guia Rapida</h3>
+                            <button id="btnHelpCollapse" class="helper-btn tutorial-collapse" type="button" aria-expanded="true">Plegar</button>
+                        </div>
+                        <div class="help-body">
+                            <ol>
+                                <li>Selecciona un rol operativo.</li>
+                                <li>Elige una opcion del menu izquierdo.</li>
+                                <li>Trabaja en la vista de la derecha.</li>
+                            </ol>
+                            <div class="helper-note">Atajo: pulsa <strong>/</strong> para buscar opciones.</div>
+                            <div class="help-actions">
+                                <button id="btnStartTutorial" class="helper-btn" type="button">Iniciar tutorial</button>
+                                <button id="btnExpandMenu" class="helper-btn" type="button">Mostrar todo el menu</button>
+                                <button id="btnRefreshUi" class="helper-btn" type="button">Actualizar interfaz</button>
+                                <button id="btnAbout" class="helper-btn" type="button">Acerca de</button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="tutorialCard" class="tutorial-card" aria-live="polite" aria-label="Tutorial guiado">
+                        <div class="tutorial-head">
+                            <div class="tutorial-meta" id="tutorialMeta">Paso 1 de 1</div>
+                            <button id="btnTutorialCollapse" class="helper-btn tutorial-collapse" type="button" aria-expanded="true">Plegar</button>
+                        </div>
+                        <div class="tutorial-body" id="tutorialBody">
+                            <h4 id="tutorialTitle">Tutorial</h4>
+                            <p id="tutorialText"></p>
+                        </div>
+                        <div class="tutorial-actions">
+                            <button id="btnTutorialPrev" class="helper-btn" type="button">Anterior</button>
+                            <button id="btnTutorialNext" class="helper-btn" type="button">Siguiente</button>
+                            <button id="btnTutorialClose" class="helper-btn" type="button">Cerrar</button>
+                        </div>
+                    </section>
                 </div>
             </aside>
 
@@ -1080,16 +1420,6 @@
 
     <div id="tutorialOverlay" class="tutorial-overlay" aria-hidden="true"></div>
     <div id="tutorialFocus" class="tutorial-focus" aria-hidden="true"></div>
-    <section id="tutorialCard" class="tutorial-card" aria-live="polite" aria-label="Tutorial guiado">
-        <div class="tutorial-meta" id="tutorialMeta">Paso 1 de 1</div>
-        <h4 id="tutorialTitle">Tutorial</h4>
-        <p id="tutorialText"></p>
-        <div class="tutorial-actions">
-            <button id="btnTutorialPrev" class="helper-btn" type="button">Anterior</button>
-            <button id="btnTutorialNext" class="helper-btn" type="button">Siguiente</button>
-            <button id="btnTutorialClose" class="helper-btn" type="button">Cerrar</button>
-        </div>
-    </section>
 
     <section id="aboutModal" class="about-modal" aria-hidden="true" aria-label="Acerca de Ordena Facil">
         <div id="aboutBackdrop" class="about-backdrop"></div>
@@ -1154,7 +1484,7 @@
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js').catch(() => {});
+                navigator.serviceWorker.register('/service-worker.js?v={{ $assetVersion }}', { updateViaCache: 'none' }).catch(() => {});
             });
         }
 
@@ -1182,10 +1512,13 @@
         const opsResult = document.getElementById('opsResult');
         const tutorialOverlay = document.getElementById('tutorialOverlay');
         const tutorialFocus = document.getElementById('tutorialFocus');
+        const helpBox = document.getElementById('helpBox');
+        const btnHelpCollapse = document.getElementById('btnHelpCollapse');
         const tutorialCard = document.getElementById('tutorialCard');
         const tutorialMeta = document.getElementById('tutorialMeta');
         const tutorialTitle = document.getElementById('tutorialTitle');
         const tutorialText = document.getElementById('tutorialText');
+        const btnTutorialCollapse = document.getElementById('btnTutorialCollapse');
         const btnTutorialPrev = document.getElementById('btnTutorialPrev');
         const btnTutorialNext = document.getElementById('btnTutorialNext');
         const btnTutorialClose = document.getElementById('btnTutorialClose');
@@ -1269,9 +1602,12 @@
             localStorage.setItem('ordena-facil-menu-collapsed', collapsed ? '1' : '0');
             sidebar.classList.toggle('collapsed', collapsed);
             document.documentElement.style.setProperty('--sidebar-current-width', collapsed ? '86px' : '340px');
-            btnToggleMenu.textContent = collapsed ? 'Expandir' : 'Plegar menu';
-            btnToggleMenu.title = collapsed ? 'Expandir menu lateral' : 'Plegar menu lateral';
+            const actionLabel = collapsed ? 'Expandir menu lateral' : 'Contraer menu lateral';
+            btnToggleMenu.textContent = collapsed ? '▶' : '◀';
+            btnToggleMenu.title = actionLabel;
+            btnToggleMenu.setAttribute('aria-label', actionLabel);
             btnToggleMenu.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+            requestAnimationFrame(syncSidebarScrollSafe);
         }
 
         function getSectionStates() {
@@ -1286,6 +1622,44 @@
 
         function getAdvancedToolsVisible() {
             return localStorage.getItem('ordena-facil-advanced-tools') === '1';
+        }
+
+        function getTutorialCollapsed() {
+            return localStorage.getItem('ordena-facil-tutorial-collapsed') === '1';
+        }
+
+        function getHelpCollapsed() {
+            return localStorage.getItem('ordena-facil-help-collapsed') === '1';
+        }
+
+        function setTutorialCollapsed(collapsed, options = {}) {
+            const persist = options.persist !== false;
+
+            tutorialCard.classList.toggle('collapsed', collapsed);
+            btnTutorialCollapse.textContent = collapsed ? 'Expandir' : 'Plegar';
+            btnTutorialCollapse.title = collapsed ? 'Expandir guia tutorial' : 'Plegar guia tutorial';
+            btnTutorialCollapse.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+
+            if (persist) {
+                localStorage.setItem('ordena-facil-tutorial-collapsed', collapsed ? '1' : '0');
+            }
+
+            if (tutorialActive && collapsed) {
+                tutorialFocus.classList.remove('active');
+            }
+        }
+
+        function setHelpCollapsed(collapsed, options = {}) {
+            const persist = options.persist !== false;
+
+            helpBox.classList.toggle('collapsed', collapsed);
+            btnHelpCollapse.textContent = collapsed ? 'Expandir' : 'Plegar';
+            btnHelpCollapse.title = collapsed ? 'Expandir guia rapida' : 'Plegar guia rapida';
+            btnHelpCollapse.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+
+            if (persist) {
+                localStorage.setItem('ordena-facil-help-collapsed', collapsed ? '1' : '0');
+            }
         }
 
         function setAdvancedToolsVisible(visible) {
@@ -1393,6 +1767,12 @@
 
             btnTutorialPrev.disabled = tutorialStep === 0;
             btnTutorialNext.textContent = tutorialStep === tutorialSteps.length - 1 ? 'Finalizar' : 'Siguiente';
+            tutorialCard.classList.toggle('is-final', tutorialStep === tutorialSteps.length - 1);
+
+            if (tutorialCard.classList.contains('collapsed')) {
+                tutorialFocus.classList.remove('active');
+                return;
+            }
 
             // Delay helps after animated menu expansions.
             setTimeout(() => placeTutorialFocus(step.selector), 120);
@@ -1403,6 +1783,7 @@
             tutorialOverlay.classList.remove('active');
             tutorialFocus.classList.remove('active');
             tutorialCard.classList.remove('active');
+            tutorialCard.classList.remove('is-final');
         }
 
         async function refreshInterfaceNow() {
@@ -1429,6 +1810,7 @@
 
         function startTutorial() {
             setMenuCollapsed(false);
+            setTutorialCollapsed(false, { persist: false });
             tutorialActive = true;
             tutorialStep = 0;
             tutorialOverlay.classList.add('active');
@@ -1460,6 +1842,24 @@
             const viewerFrameHeight = Math.max(360, window.innerHeight - 220);
 
             document.documentElement.style.setProperty('--viewer-frame-height', `${viewerFrameHeight}px`);
+            syncSidebarScrollSafe();
+        }
+
+        function syncSidebarScrollSafe() {
+            if (!sidebar) return;
+
+            const viewportBase = window.innerWidth <= 640
+                ? 4
+                : window.innerWidth <= 980
+                    ? 5
+                    : window.innerWidth <= 1280
+                        ? 6
+                        : 7;
+
+            const gutter = Math.max(0, sidebar.offsetWidth - sidebar.clientWidth);
+            const safe = Math.max(viewportBase, gutter + 2);
+
+            document.documentElement.style.setProperty('--sidebar-scroll-safe', `${safe}px`);
         }
 
         function applyTheme(theme) {
@@ -1506,53 +1906,87 @@
             highlightActiveSection();
         }
 
+        function getMenuIconSvg(iconKey, type = 'item') {
+            const icons = {
+                home: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5.5 9.5V21h13V9.5"></path></svg>',
+                heart: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 7.6a5 5 0 0 0-7.1 0L12 9.3l-1.7-1.7a5 5 0 1 0-7.1 7.1l1.7 1.7L12 23l7.1-6.6 1.7-1.7a5 5 0 0 0 0-7.1z"></path></svg>',
+                grid: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="8" height="8"></rect><rect x="13" y="3" width="8" height="8"></rect><rect x="3" y="13" width="8" height="8"></rect><rect x="13" y="13" width="8" height="8"></rect></svg>',
+                ruler: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h18"></path><path d="M6 7v4"></path><path d="M10 7v3"></path><path d="M14 7v4"></path><path d="M18 7v3"></path><path d="M3 17h18"></path></svg>',
+                tag: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10 12 2H4v8l8 8 8-8z"></path><circle cx="7.5" cy="6.5" r="1"></circle></svg>',
+                list: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h12"></path><path d="M9 12h12"></path><path d="M9 18h12"></path><circle cx="4" cy="6" r="1"></circle><circle cx="4" cy="12" r="1"></circle><circle cx="4" cy="18" r="1"></circle></svg>',
+                box: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7.5 12 3l9 4.5-9 4.5-9-4.5z"></path><path d="M3 7.5V16.5L12 21l9-4.5V7.5"></path><path d="M12 12v9"></path></svg>',
+                table: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M3 10h18"></path><path d="M9 4v16"></path><path d="M15 4v16"></path></svg>',
+                cog: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2"></circle><path d="M19.4 15a7.8 7.8 0 0 0 .1-2l2-1.2-2-3.5-2.3.6a7.6 7.6 0 0 0-1.7-1l-.4-2.3h-4l-.4 2.3a7.6 7.6 0 0 0-1.7 1l-2.3-.6-2 3.5 2 1.2a7.8 7.8 0 0 0 .1 2l-2 1.2 2 3.5 2.3-.6a7.6 7.6 0 0 0 1.7 1l.4 2.3h4l.4-2.3a7.6 7.6 0 0 0 1.7-1l2.3.6 2-3.5-2-1.2z"></path></svg>',
+                refresh: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.6-6.4"></path><path d="M21 3v6h-6"></path></svg>',
+                user: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg>',
+                percent: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 5 5 19"></path><circle cx="7" cy="7" r="2.5"></circle><circle cx="17" cy="17" r="2.5"></circle></svg>',
+                wallet: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"></rect><path d="M15 12h6"></path><circle cx="16" cy="12" r=".8"></circle></svg>',
+                reports: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16"></path><path d="M7 16V10"></path><path d="M12 16V6"></path><path d="M17 16v-3"></path></svg>',
+                day: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M8 3v4"></path><path d="M16 3v4"></path><path d="M3 10h18"></path><path d="M8 14h4"></path></svg>',
+                week: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18"></path><path d="M9 10v11"></path><path d="M15 10v11"></path></svg>',
+                month: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M8 3v4"></path><path d="M16 3v4"></path><path d="M3 10h18"></path><path d="M7 14h10"></path><path d="M7 17h7"></path></svg>',
+                year: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18"></path><path d="M8 14h8"></path><path d="M8 17h8"></path><path d="M8 3v4"></path><path d="M16 3v4"></path></svg>',
+                sales: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16"></path><path d="M6 16 10 12l3 3 5-6"></path><path d="M18 9h-4"></path></svg>',
+                excel: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"></rect><path d="M8 8 12 16"></path><path d="M12 8 8 16"></path><path d="M14 8h4"></path></svg>',
+                pdf: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l5 5v13H7z"></path><path d="M14 3v5h5"></path><path d="M9 15h6"></path></svg>',
+            };
+
+            const fallback = type === 'section' ? icons.grid : icons.list;
+            const base = icons[iconKey] || fallback;
+            if (getTheme() !== 'premium') return base;
+
+            return base.replace(/<(path|rect|circle|line|polyline|polygon|ellipse)\b/, '<$1 class="icon-tone"');
+        }
+
         function renderMenu() {
             sectionCollapseState = getSectionStates();
 
             const sections = [
                 {
                     title: 'Principal',
-                    icon: '◉',
+                    icon: 'home',
                     color: 'principal',
                     items: [
-                        { label: 'Dashboard', hint: 'Vista general del negocio', src: '/dashboard', capability: 'view_dashboard' },
-                        { label: 'Salud del sistema', hint: 'Endpoint /up', src: '/up' }
+                        { label: 'Dashboard', icon: 'grid', hint: 'Vista general del negocio', src: '/dashboard', capability: 'view_dashboard' },
+                        { label: 'Salud del sistema', icon: 'heart', hint: 'Endpoint /up', src: '/up' }
                     ]
                 },
                 {
                     title: 'Inventario y Catalogo',
-                    icon: '◍',
+                    icon: 'box',
                     color: 'inventario',
                     items: [
-                        { label: 'Medidas', hint: 'Gestion de catalogo de medidas', src: '/catalog/measures', capability: 'manage_catalog' },
-                        { label: 'Productos', hint: 'Gestion de catalogo de productos', src: '/catalog/products', capability: 'manage_catalog' },
-                        { label: 'Menu Items', hint: 'Listado del menu', src: '/api/menu-items', capability: 'manage_catalog' },
-                        { label: 'Mesas', hint: 'Listado de mesas', src: '/api/tables', capability: 'manage_tables' }
+                        { label: 'Medidas', icon: 'ruler', hint: 'Gestion de catalogo de medidas', src: '/catalog/measures', capability: 'manage_catalog' },
+                        { label: 'Tipos de Producto', icon: 'tag', hint: 'Clasificacion para inventario y menu', src: '/catalog/product-types', capability: 'manage_catalog' },
+                        { label: 'Categorias de Menu', icon: 'list', hint: 'Clasifica cocteles, entradas, postres y mas', src: '/catalog/menu-categories', capability: 'manage_catalog' },
+                        { label: 'Productos', icon: 'box', hint: 'Gestion de catalogo de productos', src: '/catalog/products', capability: 'manage_catalog' },
+                        { label: 'Menu Items', icon: 'list', hint: 'Listado del menu', src: '/catalog/menu-items', capability: 'manage_catalog' },
+                        { label: 'Mesas', icon: 'table', hint: 'Listado de mesas', src: '/api/tables', capability: 'manage_tables' }
                     ]
                 },
                 {
                     title: 'Operacion',
-                    icon: '◎',
+                    icon: 'cog',
                     color: 'operacion',
                     items: [
-                        { label: 'Ordenes', hint: 'Flujo de ordenes', src: '/api/orders', capability: 'manage_orders' },
-                        { label: 'Clientes', hint: 'Base de clientes', src: '/api/customers', capability: 'manage_customers' },
-                        { label: 'Comisiones', hint: 'Comisiones registradas', src: '/api/commissions', capability: 'manage_commissions' },
-                        { label: 'Gastos', hint: 'Control de gastos', src: '/api/expenses', capability: 'manage_expenses' }
+                        { label: 'Ordenes', icon: 'refresh', hint: 'Flujo de ordenes', src: '/api/orders', capability: 'manage_orders' },
+                        { label: 'Clientes', icon: 'user', hint: 'Base de clientes', src: '/api/customers', capability: 'manage_customers' },
+                        { label: 'Comisiones', icon: 'percent', hint: 'Comisiones registradas', src: '/api/commissions', capability: 'manage_commissions' },
+                        { label: 'Gastos', icon: 'wallet', hint: 'Control de gastos', src: '/api/expenses', capability: 'manage_expenses' }
                     ]
                 },
                 {
                     title: 'Reportes',
-                    icon: '◈',
+                    icon: 'reports',
                     color: 'reportes',
                     items: [
-                        { label: 'Reporte Diario', hint: 'Resumen diario', src: '/api/reports/daily', capability: 'manage_reports' },
-                        { label: 'Reporte Semanal', hint: 'Resumen semanal', src: '/api/reports/weekly', capability: 'manage_reports' },
-                        { label: 'Reporte Mensual', hint: 'Resumen mensual', src: '/api/reports/monthly', capability: 'manage_reports' },
-                        { label: 'Reporte Anual', hint: 'Resumen anual', src: '/api/reports/yearly', capability: 'manage_reports' },
-                        { label: 'Reporte de Ventas', hint: 'Analitica de ventas', src: '/api/reports/sales', capability: 'manage_reports' },
-                        { label: 'Exportar Excel', hint: 'Generar exportacion', src: '/api/reports/export/excel', capability: 'manage_reports' },
-                        { label: 'Exportar PDF', hint: 'Generar exportacion', src: '/api/reports/export/pdf', capability: 'manage_reports' }
+                        { label: 'Reporte Diario', icon: 'day', hint: 'Resumen diario', src: '/api/reports/daily', capability: 'manage_reports' },
+                        { label: 'Reporte Semanal', icon: 'week', hint: 'Resumen semanal', src: '/api/reports/weekly', capability: 'manage_reports' },
+                        { label: 'Reporte Mensual', icon: 'month', hint: 'Resumen mensual', src: '/api/reports/monthly', capability: 'manage_reports' },
+                        { label: 'Reporte Anual', icon: 'year', hint: 'Resumen anual', src: '/api/reports/yearly', capability: 'manage_reports' },
+                        { label: 'Reporte de Ventas', icon: 'sales', hint: 'Analitica de ventas', src: '/api/reports/sales', capability: 'manage_reports' },
+                        { label: 'Exportar Excel', icon: 'excel', hint: 'Generar exportacion', src: '/api/reports/export/excel', capability: 'manage_reports' },
+                        { label: 'Exportar PDF', icon: 'pdf', hint: 'Generar exportacion', src: '/api/reports/export/pdf', capability: 'manage_reports' }
                     ]
                 }
             ];
@@ -1566,12 +2000,12 @@
                     const className = available ? 'action-btn' : 'action-btn is-disabled';
                     const hint = available ? item.hint : `${item.hint} - sin permiso para este rol`;
 
-                    return `<button class="${className}" data-menu-src="${item.src}" data-available="${available ? '1' : '0'}" ${disabled}><strong><span class="menu-item-row"><span class="menu-item-arrow">›</span><span>${item.label}</span></span></strong><span>${hint}</span></button>`;
+                    return `<button class="${className}" data-menu-src="${item.src}" data-available="${available ? '1' : '0'}" ${disabled}><strong><span class="menu-item-row"><span class="menu-item-icon">${getMenuIconSvg(item.icon, 'item')}</span><span>${item.label}</span></span></strong><span>${hint}</span></button>`;
                 }).join('');
                 return `
                     <section class="menu-section ${collapsed ? 'collapsed' : ''}" data-section-key="${key}">
                         <button class="menu-section-toggle" type="button" aria-expanded="${collapsed ? 'false' : 'true'}" data-section-title="${section.title}" aria-label="${section.title}" title="${section.title}">
-                            <span class="menu-section-label"><span class="menu-section-icon section-${section.color || 'default'}">${section.icon || '•'}</span><span>${section.title}</span></span>
+                            <span class="menu-section-label"><span class="menu-section-icon section-${section.color || 'default'}">${getMenuIconSvg(section.icon, 'section')}</span><span>${section.title}</span></span>
                             <span class="menu-chevron">▾</span>
                         </button>
                         <div class="menu-list">${buttons}</div>
@@ -1753,6 +2187,7 @@
 
             renderMenu();
             filterMenu(menuSearch.value || '');
+            requestAnimationFrame(syncSidebarScrollSafe);
 
             const canQueue = hasCapability('manage_reports');
             const canClear = hasCapability('manage_system');
@@ -1822,6 +2257,20 @@
             nextTutorialStep();
         });
 
+        btnTutorialCollapse.addEventListener('click', () => {
+            const collapsed = !tutorialCard.classList.contains('collapsed');
+            setTutorialCollapsed(collapsed);
+
+            if (tutorialActive && !collapsed) {
+                renderTutorialStep();
+            }
+        });
+
+        btnHelpCollapse.addEventListener('click', () => {
+            const collapsed = !helpBox.classList.contains('collapsed');
+            setHelpCollapsed(collapsed);
+        });
+
         btnTutorialPrev.addEventListener('click', () => {
             prevTutorialStep();
         });
@@ -1883,6 +2332,8 @@
         loadView('/dashboard', 'Dashboard Operativo');
         setMenuCollapsed(getMenuCollapsed());
         setAdvancedToolsVisible(getAdvancedToolsVisible());
+        setTutorialCollapsed(getTutorialCollapsed());
+        setHelpCollapsed(getHelpCollapsed());
         loadCapabilities();
     </script>
 </body>

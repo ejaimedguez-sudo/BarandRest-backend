@@ -42,8 +42,8 @@ class DashboardController extends Controller
                 ->get();
 
             $lowStock = DB::table('products')
-                ->whereColumn('stock', '<=', 'reorder_level')
-                ->select('id', 'name', 'stock', 'reorder_level')
+                ->whereRaw('stock <= COALESCE(reorder_point, reorder_level)')
+                ->select('id', 'name', 'stock', DB::raw('COALESCE(reorder_point, reorder_level) as reorder_point'))
                 ->limit(10)
                 ->get();
 

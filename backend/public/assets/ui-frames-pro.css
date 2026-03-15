@@ -1,0 +1,413 @@
+/* Shared professional frame styling for catalog screens */
+:root {
+    --of-space-xs: 4px;
+    --of-space-sm: 6px;
+    --of-space-md: 8px;
+    --of-space-lg: 10px;
+    --of-space-xl: 12px;
+    --of-radius-sm: 7px;
+    --of-radius-md: 8px;
+    --of-radius-lg: 9px;
+    --of-font-xs: 11px;
+    --of-font-sm: 11.5px;
+    --of-font-md: 12px;
+    --of-font-ui: 12.5px;
+    --of-control-h: 32px;
+    --of-btn-h: 28px;
+    --of-focus-ring: rgba(242, 145, 27, 0.7);
+}
+
+.catalog-standard .wrap {
+    gap: var(--of-space-lg) !important;
+}
+
+.catalog-standard .hero,
+.catalog-standard .panel,
+.catalog-standard .editor-frame {
+    border-radius: 14px !important;
+}
+
+.catalog-standard .panel .head,
+.catalog-standard .panel .body {
+    padding-left: var(--of-space-lg) !important;
+    padding-right: var(--of-space-lg) !important;
+}
+
+.catalog-standard .toolbar,
+.catalog-standard .frame-footer,
+.catalog-standard .form-actions {
+    gap: var(--of-space-sm) !important;
+}
+
+.catalog-standard .toolbar input,
+.catalog-standard .toolbar select,
+.catalog-standard .field input,
+.catalog-standard .field select,
+.catalog-standard .field textarea {
+    border-radius: var(--of-radius-md) !important;
+    font-size: var(--of-font-ui) !important;
+}
+
+.catalog-standard .toolbar input,
+.catalog-standard .toolbar select {
+    min-height: var(--of-control-h) !important;
+}
+
+.catalog-standard .panel .head .btn,
+.catalog-standard .frame-footer .btn,
+.catalog-standard .editor-head .btn,
+.catalog-standard .form-actions .btn,
+.catalog-standard .editor-footer .btn,
+.catalog-standard .recipe-actions .btn,
+.catalog-standard .recipe-footer .btn,
+.catalog-standard .profit-foot .btn,
+.catalog-standard .history-filters .btn {
+    min-height: var(--of-btn-h) !important;
+    border-radius: var(--of-radius-sm) !important;
+    font-size: var(--of-font-xs) !important;
+}
+
+.wrap {
+    animation: frameFadeIn .26s ease-out;
+    gap: 14px;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+}
+
+.wrap a:focus-visible,
+.wrap button:focus-visible,
+.wrap input:focus-visible,
+.wrap select:focus-visible,
+.wrap textarea:focus-visible {
+    outline: 2px solid var(--of-focus-ring);
+    outline-offset: 2px;
+}
+
+/* Shared type scale for consistent hierarchy across screens */
+.hero h1,
+.head h1 {
+    font-size: clamp(1.45rem, 1.6vw + 1rem, 2rem);
+    line-height: 1.12;
+    letter-spacing: .24px;
+    margin: 0;
+}
+
+.panel .head h2,
+.chart-head h2,
+.viewer-head h3,
+.about-head h3 {
+    font-size: clamp(1.02rem, .45vw + .92rem, 1.25rem);
+    line-height: 1.2;
+    letter-spacing: .2px;
+    margin: 0;
+}
+
+.card h2,
+.card h3,
+.about-panel h4 {
+    font-size: .82rem;
+    line-height: 1.25;
+    letter-spacing: .35px;
+}
+
+.hero p,
+.head p,
+.chart-head small,
+.helper-note,
+.status,
+.count,
+.bar-label,
+.sidebar-user-subtitle {
+    font-size: .8rem;
+    line-height: 1.5;
+}
+
+.badge,
+.tag,
+.tutorial-meta,
+.viewer-head a,
+.quick-links a {
+    font-size: .78rem;
+    line-height: 1.4;
+}
+
+.hero {
+    position: relative;
+    overflow: hidden;
+    border-radius: 16px;
+    border: 1px solid var(--border, rgba(255, 255, 255, 0.2));
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.16);
+    padding: 14px;
+}
+
+.hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, rgba(242, 194, 48, 0.08), transparent 42%, rgba(242, 70, 7, 0.1));
+    pointer-events: none;
+}
+
+.panel {
+    border-radius: 16px;
+    border: 1px solid var(--border, rgba(255, 255, 255, 0.2));
+    box-shadow: 0 16px 34px rgba(0, 0, 0, 0.16);
+    background-clip: padding-box;
+}
+
+.panel,
+.head,
+.card,
+.editor-frame,
+.frame-wrap {
+    overflow: hidden;
+}
+
+.head,
+.card {
+    border-radius: 16px;
+    border: 1px solid var(--border, rgba(255, 255, 255, 0.2));
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.14);
+    background-clip: padding-box;
+}
+
+.head {
+    position: relative;
+    overflow: hidden;
+}
+
+.head::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(105deg, rgba(242, 194, 48, 0.08), transparent 40%, rgba(242, 70, 7, 0.08));
+}
+
+.panel .head {
+    padding: 14px 14px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.panel .head h2,
+.chart-head h2,
+.head h1,
+.hero h1 {
+    overflow-wrap: anywhere;
+}
+
+.panel .body {
+    padding: 14px;
+}
+
+.panel .body > * + * {
+    margin-top: 10px;
+}
+
+.frame-footer,
+.form-actions,
+.hero-controls,
+.ops-actions,
+.help-actions,
+.about-actions,
+.tutorial-actions {
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.frame-footer > *,
+.form-actions > *,
+.hero-controls > *,
+.ops-actions > *,
+.help-actions > *,
+.about-actions > *,
+.tutorial-actions > * {
+    min-width: 0;
+}
+
+.table-wrap {
+    border-radius: 14px;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+}
+
+@supports (scrollbar-gutter: stable) {
+    .table-wrap {
+        scrollbar-gutter: stable both-edges;
+    }
+}
+
+tbody tr {
+    transition: background-color .16s ease, transform .14s ease;
+}
+
+tbody tr:hover {
+    transform: translateY(-1px);
+}
+
+.status {
+    border-radius: 12px;
+    line-height: 1.45;
+}
+
+.editor-overlay {
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+    background: rgba(0, 0, 0, 0.52);
+}
+
+@supports not ((-webkit-backdrop-filter: blur(3px)) or (backdrop-filter: blur(3px))) {
+    .editor-overlay {
+        background: rgba(0, 0, 0, 0.62);
+    }
+}
+
+.editor-frame {
+    border-radius: 16px;
+    border: 1px solid var(--border, rgba(255, 255, 255, 0.2));
+    box-shadow: 0 34px 72px rgba(0, 0, 0, 0.38);
+    background: linear-gradient(150deg, var(--panel), var(--panel-soft));
+}
+
+.editor-head {
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.editor-head h2 {
+    letter-spacing: .2px;
+}
+
+.form-grid {
+    gap: 12px;
+}
+
+.toolbar,
+.tools,
+.viewer-head {
+    gap: 10px;
+}
+
+.panel .body > .toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    padding: 8px;
+    margin: -2px 0 8px;
+    border: 1px solid var(--border, rgba(255, 255, 255, 0.2));
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--panel, #ffffff) 92%, rgba(0, 0, 0, 0.08));
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+}
+
+.status {
+    position: relative;
+    padding-left: 34px;
+}
+
+.status::before {
+    content: "i";
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    color: rgba(47, 24, 12, 0.9);
+    border: 1px solid var(--border, rgba(255, 255, 255, 0.2));
+    background: color-mix(in srgb, var(--panel-soft, #fff) 85%, rgba(0, 0, 0, 0.08));
+}
+
+.status.ok::before {
+    content: "\2713";
+    color: #065f46;
+    border-color: rgba(16, 185, 129, 0.45);
+    background: rgba(16, 185, 129, 0.12);
+}
+
+.status.error::before {
+    content: "!";
+    color: #991b1b;
+    border-color: rgba(239, 68, 68, 0.45);
+    background: rgba(239, 68, 68, 0.12);
+}
+
+.frame-footer .btn,
+.form-actions .btn,
+.panel .head .btn,
+.editor-head .btn {
+    min-height: 34px;
+    padding: 5px 10px;
+    border-radius: 9px;
+    font-size: 12px;
+}
+
+@media (max-width: 980px) {
+    .hero,
+    .panel,
+    .head,
+    .card,
+    .editor-frame {
+        border-radius: 14px;
+    }
+
+    .hero,
+    .head {
+        padding: 12px;
+    }
+
+    .panel .head,
+    .panel .body {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .panel .body > .toolbar {
+        position: static;
+        margin-top: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .wrap,
+    .btn,
+    tbody tr,
+    .editor-frame,
+    .editor-overlay {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+@media (pointer: coarse) {
+    .frame-footer .btn,
+    .form-actions .btn,
+    .panel .head .btn,
+    .editor-head .btn {
+        min-height: 38px;
+    }
+
+    tbody tr:hover {
+        transform: none;
+    }
+}
+
+@keyframes frameFadeIn {
+    from {
+        opacity: .75;
+        transform: translateY(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

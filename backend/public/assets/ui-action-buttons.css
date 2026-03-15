@@ -1,0 +1,142 @@
+.btn {
+    border: 1px solid var(--border, rgba(0, 0, 0, 0.2));
+    border-radius: 9px;
+    min-height: 34px;
+    padding: 5px 10px;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--text, #2f180c);
+    background: rgba(255, 255, 255, 0.08);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: 1.2;
+    white-space: normal;
+    max-width: 100%;
+    letter-spacing: .2px;
+    transition: transform .14s ease, box-shadow .16s ease, filter .14s ease, color .14s ease, background .16s ease, border-color .16s ease;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.btn-default {
+    min-height: 36px;
+    padding: 6px 12px;
+    border-radius: 9px;
+    font-size: 12px;
+}
+
+.btn-compact {
+    min-height: 30px;
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-size: 11.5px;
+    letter-spacing: .12px;
+}
+
+.btn:hover,
+.btn:focus-visible,
+.btn:active {
+    background: rgba(242, 145, 27, 0.24);
+    color: #2f180c;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.26);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+    filter: brightness(1.05);
+}
+
+.btn:focus-visible {
+    outline: 2px solid rgba(242, 145, 27, 0.72);
+    outline-offset: 2px;
+}
+
+.btn:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+    text-shadow: none;
+    filter: none;
+    pointer-events: none;
+}
+
+.btn.is-busy {
+    position: relative;
+    pointer-events: none;
+    opacity: .82;
+}
+
+.btn.is-busy::after {
+    content: '';
+    width: 12px;
+    height: 12px;
+    margin-left: 6px;
+    border-radius: 999px;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    animation: btnSpin .7s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .btn {
+        transition: none !important;
+    }
+
+    .btn:hover,
+    .btn:focus-visible,
+    .btn:active {
+        transform: none;
+    }
+
+    .btn.is-busy::after {
+        animation: none;
+    }
+}
+
+@keyframes btnSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.btn-add {
+    border-color: rgba(242, 145, 27, 0.78);
+    background: linear-gradient(120deg, rgba(242, 145, 27, 0.34), rgba(242, 70, 7, 0.24));
+    color: #3a1f10;
+}
+
+.btn-add:hover,
+.btn-add:focus-visible,
+.btn-add:active {
+    color: #2c170b;
+}
+
+.btn-edit {
+    border-color: rgba(242, 194, 48, 0.74);
+    background: linear-gradient(120deg, rgba(242, 194, 48, 0.3), rgba(242, 145, 27, 0.2));
+    color: #3d1e0e;
+}
+
+.btn-edit:hover,
+.btn-edit:focus-visible,
+.btn-edit:active {
+    color: #261207;
+}
+
+.btn-delete {
+    border-color: rgba(242, 70, 7, 0.52);
+    background: linear-gradient(120deg, rgba(255, 255, 255, 0.12), rgba(0, 0, 0, 0.05));
+    color: #2f1a0f;
+}
+
+.btn-delete:hover,
+.btn-delete:focus-visible,
+.btn-delete:active {
+    border-color: rgba(191, 19, 4, 0.95);
+    background: linear-gradient(120deg, rgba(191, 19, 4, 0.96), rgba(115, 12, 2, 0.95));
+    color: #ffffff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.34);
+}

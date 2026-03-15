@@ -6,7 +6,28 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    protected $fillable = ['sku', 'name', 'unit', 'cost', 'stock', 'reorder_level'];
+    protected $fillable = [
+        'sku',
+        'product_type_id',
+        'name',
+        'presentation',
+        'image_url',
+        'unit',
+        'cost',
+        'stock',
+        'daily_consumption',
+        'coverage_days',
+        'initial_stock',
+        'stock_min',
+        'stock_max',
+        'reorder_level',
+        'reorder_point',
+    ];
+
+    public function productType()
+    {
+        return $this->belongsTo(ProductType::class, 'product_type_id');
+    }
 
     public function menuItemIngredients()
     {
