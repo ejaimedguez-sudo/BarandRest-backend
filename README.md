@@ -106,3 +106,9 @@ Se agrego una implementacion paralela para cumplir requerimientos de aplicacion 
 Documento principal de esta nueva arquitectura:
 
 - `platform/README_PLATFORM.md`
+
+## Estandar UI de Catalogos
+
+Guia de homologacion visual para todos los frames CRUD (tokens, layout, escala de controles y checklist de nuevas vistas):
+
+- `docs/CATALOG_UI_DESIGN_SPEC.md`
