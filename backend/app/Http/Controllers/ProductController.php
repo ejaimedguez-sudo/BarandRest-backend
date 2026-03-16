@@ -192,6 +192,7 @@ class ProductController extends Controller
     public function update(Request $request, Product $product, CatalogImageCleanupService $catalogImageCleanup)
     {
         $previousImageUrl = $product->image_url;
+        $previousManagedPath = $catalogImageCleanup->managedPathFromUrl($previousImageUrl);
 
         $data = $request->validate([
             'sku' => 'nullable|string|unique:products,sku,'.$product->id,
@@ -209,11 +210,22 @@ class ProductController extends Controller
             'reorder_level' => 'nullable|numeric|min:0',
             'reorder_point' => 'nullable|numeric|min:0',
         ]);
+
+        // Protect existing image when frontend sends an empty string by mistake.
+        if (array_key_exists('image_url', $data) && trim((string) $data['image_url']) === '') {
+            unset($data['image_url']);
+        }
+
         $data = $this->normalizeAndValidateInventory($data);
         $data = $this->applyCoverageFromConsumption($data, $product);
         $product->update($data);
 
-        if (array_key_exists('image_url', $data) && $previousImageUrl !== $product->image_url) {
+        $currentManagedPath = $catalogImageCleanup->managedPathFromUrl($product->image_url);
+        $sameManagedFile = $previousManagedPath !== null
+            && $currentManagedPath !== null
+            && $previousManagedPath === $currentManagedPath;
+
+        if (array_key_exists('image_url', $data) && $previousImageUrl !== $product->image_url && ! $sameManagedFile) {
             $catalogImageCleanup->deleteIfOrphaned($previousImageUrl, $product->id, null);
         }
 
