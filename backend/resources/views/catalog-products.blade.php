@@ -775,6 +775,7 @@
                 </div>
                 <div class="media-controls">
                     <input id="image_url" name="image_url" type="hidden" maxlength="2048">
+                    <input id="image_path" name="image_path" type="hidden" maxlength="2048">
                     <input id="image_file" name="image_file" class="media-file-input-hidden" type="file" accept="image/jpeg,image/png,image/webp">
                     <p class="field-hint">Haz clic en el marco para seleccionar imagen. Formatos JPG/PNG/WEBP (max 5 MB).</p>
                 </div>
@@ -890,6 +891,7 @@
         unit: document.getElementById('unit'),
         presentation: document.getElementById('presentation'),
         image_url: document.getElementById('image_url'),
+        image_path: document.getElementById('image_path'),
         cost: document.getElementById('cost'),
         stock: document.getElementById('stock'),
         daily_consumption: document.getElementById('daily_consumption'),
@@ -984,6 +986,7 @@
             unit: fields.unit.value.trim(),
             presentation: fields.presentation.value.trim() || null,
             image_url: persistedImageUrl || null,
+            image_path: fields.image_path.value.trim() || null,
             cost: normalizeNumber(fields.cost.value),
             stock: normalizeNumber(fields.stock.value),
             daily_consumption: normalizeNumber(fields.daily_consumption.value),
@@ -1002,6 +1005,7 @@
         fields.unit.value = '';
         fields.presentation.value = '';
         fields.image_url.value = '';
+        fields.image_path.value = '';
         imageFileInput.value = '';
         fields.cost.value = '';
         fields.stock.value = '';
@@ -1020,6 +1024,29 @@
 
     function imageUrlFromValue(value) {
         return String(value || '').trim();
+    }
+
+    function managedImagePathFromUrl(urlValue) {
+        const source = imageUrlFromValue(urlValue);
+        if (!source) return '';
+
+        try {
+            const parsed = new URL(source, window.location.origin);
+            let path = decodeURIComponent(parsed.pathname || '').trim();
+            if (path.startsWith('/storage/')) {
+                path = path.slice(9);
+            } else if (path.startsWith('storage/')) {
+                path = path.slice(8);
+            } else {
+                path = path.replace(/^\/+/, '');
+            }
+
+            if (path.startsWith('catalog-images/')) return path;
+            const index = path.indexOf('catalog-images/');
+            return index >= 0 ? path.slice(index) : '';
+        } catch (_error) {
+            return '';
+        }
     }
 
     function appendPreviewBuster(urlValue) {
@@ -1411,6 +1438,7 @@
             fields.unit.value = product.unit || '';
             fields.presentation.value = product.presentation || '';
             fields.image_url.value = product.image_url || '';
+            fields.image_path.value = managedImagePathFromUrl(fields.image_url.value);
             fields.cost.value = product.cost ?? '';
             fields.stock.value = product.stock ?? '';
             fields.daily_consumption.value = product.daily_consumption ?? '';
@@ -1853,8 +1881,10 @@
             if (!url) {
                 throw new Error('La respuesta de carga no incluyo una URL valida.');
             }
+            const managedPath = String(payload?.path || managedImagePathFromUrl(url) || '').trim();
 
             fields.image_url.value = url;
+            fields.image_path.value = managedPath;
             committedImageUrl = url;
             imageFileInput.value = '';
             updateImagePreview(appendPreviewBuster(url));
