@@ -914,6 +914,7 @@
     let lastMainFieldsLayoutFrameWidth = null;
     let lastMenuCollapsedState = null;
     let tableFilterDebounceId = 0;
+    let imageUploadInProgress = false;
     const defaultFieldsThreeColumnsMinWidth = 940;
     const defaultFieldsLayoutHysteresisPx = 30;
     const menuCollapsedStorageKey = 'ordena-facil-menu-collapsed';
@@ -936,6 +937,7 @@
         refreshed: 'Listado actualizado.',
         uploadingImage: 'Subiendo imagen del producto...',
         uploadImageOk: 'Imagen subida correctamente. Guarda el producto para persistir el enlace.',
+        waitUploadBeforeSave: 'Espera a que termine la subida de la imagen antes de guardar.',
     };
     const toastRoot = document.createElement('div');
     toastRoot.className = 'toast-stack';
@@ -1076,6 +1078,10 @@
 
     function setImagePreviewLoading(isLoading) {
         imagePreview.classList.toggle('loading', Boolean(isLoading));
+    }
+
+    function updateSubmitAvailability() {
+        btnSubmit.disabled = !canManageCatalog || imageUploadInProgress;
     }
 
     function normalizeUploadMime(file) {
@@ -1533,7 +1539,11 @@
             field.disabled = !enabled;
         });
 
-        btnSubmit.disabled = !enabled;
+        if (!enabled) {
+            btnSubmit.disabled = true;
+        } else {
+            updateSubmitAvailability();
+        }
         btnCancelEdit.disabled = !enabled;
         btnCloseEditor.disabled = !enabled;
         imageFileInput.disabled = !enabled;
@@ -1708,6 +1718,12 @@
             return;
         }
 
+        if (imageUploadInProgress) {
+            setStatus(UI_TEXT.waitUploadBeforeSave, 'error');
+            showToast(UI_TEXT.waitUploadBeforeSave, 'error');
+            return;
+        }
+
         const editingId = fields.id.value ? Number(fields.id.value) : null;
         const selectedProduct = editingId ? getSelectedProduct() : null;
         const payload = collectPayload(selectedProduct?.image_url || '');
@@ -1825,6 +1841,8 @@
 
         updateImagePreviewFromFile(file);
 
+        imageUploadInProgress = true;
+        updateSubmitAvailability();
         imageFileInput.disabled = true;
         setImagePreviewLoading(true);
         setStatus(UI_TEXT.uploadingImage, null);
@@ -1844,9 +1862,13 @@
             setStatus(UI_TEXT.uploadImageOk, 'ok');
             showToast('Imagen subida correctamente.', 'ok');
         } catch (error) {
+            // Restore persisted preview when upload fails, avoiding a false local-only image state.
+            updateImagePreview(fields.image_url.value || committedImageUrl);
             setStatus(`No fue posible subir la imagen: ${String(error.message || error)}`, 'error');
             showToast('No fue posible subir la imagen.', 'error');
         } finally {
+            imageUploadInProgress = false;
+            updateSubmitAvailability();
             setImagePreviewLoading(false);
             imageFileInput.disabled = !canManageCatalog;
         }
