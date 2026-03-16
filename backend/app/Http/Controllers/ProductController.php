@@ -10,6 +10,23 @@ use Illuminate\Validation\ValidationException;
 
 class ProductController extends Controller
 {
+    private function rowsFingerprintSignature(iterable $rows): string
+    {
+        $parts = [];
+
+        foreach ($rows as $row) {
+            $updatedAt = $row->updated_at;
+            $updatedToken = $updatedAt ? $updatedAt->format('Y-m-d H:i:s.u') : '';
+            $parts[] = implode('|', [
+                (string) $row->id,
+                $updatedToken,
+                (string) ($row->image_url ?? ''),
+            ]);
+        }
+
+        return sha1(implode(';', $parts));
+    }
+
     private function applyCoverageFromConsumption(array $data, ?Product $existing = null): array
     {
         $stock = array_key_exists('stock', $data)
@@ -89,6 +106,7 @@ class ProductController extends Controller
         if ($request->boolean('paginate')) {
             $perPage = max(1, min((int) $request->query('per_page', 50), 200));
             $payload = $query->paginate($perPage)->appends($request->query());
+            $rowsSignature = $this->rowsFingerprintSignature($payload->getCollection());
 
             $fingerprint = implode('|', [
                 'products',
@@ -96,7 +114,7 @@ class ProductController extends Controller
                 (string) $payload->currentPage(),
                 (string) $payload->perPage(),
                 (string) $payload->total(),
-                (string) optional($payload->getCollection()->max('updated_at'))->timestamp,
+                $rowsSignature,
                 (string) $term,
             ]);
 
@@ -104,11 +122,12 @@ class ProductController extends Controller
         }
 
         $rows = $query->get();
+        $rowsSignature = $this->rowsFingerprintSignature($rows);
         $fingerprint = implode('|', [
             'products',
             'full',
             (string) $rows->count(),
-            (string) optional($rows->max('updated_at'))->timestamp,
+            $rowsSignature,
             (string) $term,
         ]);
 
