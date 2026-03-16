@@ -6,10 +6,33 @@ use App\Models\Product;
 use App\Services\CatalogImageCleanupService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 class ProductController extends Controller
 {
+    private function normalizeImageReferences(array $data): array
+    {
+        $imageUrl = trim((string) ($data['image_url'] ?? ''));
+        $imagePath = trim((string) ($data['image_path'] ?? ''));
+
+        if ($imageUrl === '' && $imagePath !== '') {
+            $normalizedPath = ltrim($imagePath, '/');
+
+            if (str_starts_with($normalizedPath, 'storage/')) {
+                $normalizedPath = substr($normalizedPath, 8);
+            }
+
+            if (str_starts_with($normalizedPath, 'catalog-images/')) {
+                $data['image_url'] = Storage::disk('public')->url($normalizedPath);
+            }
+        }
+
+        unset($data['image_path']);
+
+        return $data;
+    }
+
     private function rowsFingerprintSignature(iterable $rows): string
     {
         $parts = [];
@@ -172,6 +195,7 @@ class ProductController extends Controller
             'name' => 'required|string|max:255',
             'presentation' => 'nullable|string|max:120',
             'image_url' => 'nullable|string|max:2048',
+            'image_path' => 'nullable|string|max:2048',
             'unit' => 'required|string|max:50',
             'cost' => 'nullable|numeric|min:0',
             'stock' => 'nullable|numeric|min:0',
@@ -182,6 +206,7 @@ class ProductController extends Controller
             'reorder_level' => 'nullable|numeric|min:0',
             'reorder_point' => 'nullable|numeric|min:0',
         ]);
+        $data = $this->normalizeImageReferences($data);
         $data = $this->normalizeAndValidateInventory($data);
         $data = $this->applyCoverageFromConsumption($data);
         $product = Product::create($data);
@@ -219,6 +244,7 @@ class ProductController extends Controller
             'name' => 'sometimes|required|string|max:255',
             'presentation' => 'nullable|string|max:120',
             'image_url' => 'nullable|string|max:2048',
+            'image_path' => 'nullable|string|max:2048',
             'unit' => 'sometimes|required|string|max:50',
             'cost' => 'nullable|numeric|min:0',
             'stock' => 'nullable|numeric|min:0',
@@ -229,6 +255,7 @@ class ProductController extends Controller
             'reorder_level' => 'nullable|numeric|min:0',
             'reorder_point' => 'nullable|numeric|min:0',
         ]);
+        $data = $this->normalizeImageReferences($data);
 
         // Protect existing image when frontend sends an empty string by mistake.
         if (array_key_exists('image_url', $data) && trim((string) $data['image_url']) === '') {
